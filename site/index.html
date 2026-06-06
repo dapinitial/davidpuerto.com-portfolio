@@ -11,24 +11,7 @@
   <meta property="og:description"
     content="UX/UI prototyping for Microsoft, Meta, Nordstrom, SonoSite, and Zillow.">
   <meta property="og:image" content="/preview.png">
-  <script>
-    // Pre-paint gate, three jobs, all before first paint:
-    // 1. scroll restoration off — a hard refresh mid-page would otherwise
-    //    paint a frame of wherever you left off (e.g. Zillow) pre-preloader
-    // 2. .is-enhanced hides the fixed-stack sections (no plain-flow flash)
-    // 3. .is-covered paints an opaque cover until the preloader takes over
-    // Failsafe: if home.js never boots, unhide after 3s.
-    (function () {
-      try { history.scrollRestoration = 'manual'; scrollTo(0, 0); } catch (e) {}
-      if (matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-        var c = document.documentElement.classList;
-        c.add('is-enhanced', 'is-covered');
-        window.__enhanceFailsafe = setTimeout(function () {
-          c.remove('is-enhanced', 'is-covered');
-        }, 3000);
-      }
-    })();
-  </script>
+  <script src="/boot/home-gate.js"></script>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/elements/site-header.css">
   <link rel="stylesheet" href="/css/elements/scroll-progress.css">

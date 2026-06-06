@@ -46,6 +46,14 @@ mm.add(
     clearTimeout(window.__enhanceFailsafe);
     root.classList.add('is-enhanced');
 
+    // Crossing the desktop boundary mid-scroll can strand a half-blurred
+    // frame from the outgoing context — strip filters when blur isn't ours.
+    if (!desktop) {
+      gsap.set(document.querySelectorAll('.section h2, .section .text img'), {
+        clearProps: 'filter',
+      });
+    }
+
     // The pen's zoom-scroll keyframes ran with ease-in-out — content punches
     // into focus and holds. Linear scrub reads mushy; ease each phase instead.
     const EASE = 'power1.inOut';
