@@ -1,0 +1,38 @@
+# DigitalOcean App Platform spec — davidpuerto.com
+# Push-to-deploy from GitHub main. No Docker, no registry, no SSH.
+# Domains are added AFTER the app checks out on its default URL (see M7).
+name: davidpuerto-com
+region: nyc
+services:
+  - name: web
+    environment_slug: node-js
+    github:
+      repo: dapinitial/davidpuerto.com-portfolio
+      branch: main
+      deploy_on_push: true
+    build_command: npm run build
+    run_command: node server/index.js
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb # ~$5/mo, always-on
+    health_check:
+      http_path: /api/check-auth
+    envs:
+      - key: NODE_ENV
+        value: 'production'
+        scope: RUN_TIME # run-only: keeps build installing all deps
+      - key: COOKIE_SECRET
+        type: SECRET
+        scope: RUN_TIME
+      - key: PASSWORD_HASH
+        type: SECRET
+        scope: RUN_TIME
+      - key: GMAIL_USER
+        type: SECRET
+        scope: RUN_TIME
+      - key: GMAIL_APP_PASSWORD
+        type: SECRET
+        scope: RUN_TIME
+      - key: CONTACT_TO
+        value: me@davidpuerto.com
+        scope: RUN_TIME

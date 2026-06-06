@@ -8,6 +8,9 @@
 
 neon-text {
   color: #fff;
+  /* Own the line-height: the site rhythm computes body line-height in px,
+     which inherits and crushes these display-size letters into each other. */
+  line-height: 1.2;
   display: grid;
   place-content: center;
   place-items: center;

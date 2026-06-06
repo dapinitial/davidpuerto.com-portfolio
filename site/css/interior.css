@@ -74,6 +74,25 @@
     color: #ccc;
   }
 
+  /* Light sections flip the ink (ported from the old reset's
+     .light-content .light-section overrides) */
+  .light-section h1,
+  .light-section h2,
+  .light-section h3,
+  .light-section h4,
+  .light-section h5,
+  .light-section h6 {
+    color: #000;
+  }
+
+  .light-section p {
+    color: #444;
+  }
+
+  .light-section blockquote {
+    color: #000;
+  }
+
   /* Old spacer trick: <hr /><hr /> pairs create vertical rhythm */
   hr {
     border: 0;

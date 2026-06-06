@@ -4,8 +4,10 @@ import './elements/site-preloader.js';
 import './elements/scroll-progress.js';
 import { InfinityLoader } from './elements/infinity-loader.js';
 
-// Inject the scroll-progress ring on every page (old clientLayout chrome)
-if (!document.querySelector('scroll-progress')) {
+// Inject the scroll-progress ring on every page EXCEPT the homepage —
+// the zoom-scroll experience has its own dot indicator + snap navigation.
+const isHomepage = document.querySelector('.indicator-nav');
+if (!isHomepage && !document.querySelector('scroll-progress')) {
   document.body.append(document.createElement('scroll-progress'));
 }
 

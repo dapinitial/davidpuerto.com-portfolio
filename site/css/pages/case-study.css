@@ -1,19 +1,34 @@
 /* Case studies — flattened merge of casestudies.module.css (+New).
    Class names kebab-cased; shared by all five case-study pages. */
 
+/* Unlayered on purpose: element CSS (scroll-down.css) is unlayered and would
+   beat any @layer rule — this must out-cascade it to pin the indicator. */
+.cs-hero .scroll-down {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
 @layer page {
+  /* True centering — replaces the old height/negative-margin optical hacks
+     that were tuned against the old page chrome. */
   .cs-hero {
+    display: grid;
+    place-content: center;
     margin: 0 auto;
-    padding: 20px 0;
+    padding: 0;
     position: relative;
+    min-height: 100svh;
     z-index: 1;
   }
 
   .cs-hero neon-text {
-    min-height: 30vh;
-    height: calc(100svh - 110px);
-    margin-top: -140px;
+    min-height: 0;
+    height: auto;
+    margin: 0;
   }
+
 
   /* Skewed-top body section */
   .cs-body {

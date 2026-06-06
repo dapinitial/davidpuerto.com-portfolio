@@ -28,22 +28,19 @@ scroll-progress .progress-wrap.visible {
   transform: translateY(0);
 }
 
-/* The up-arrow glyph (the old component used a rotated down-arrow svg) */
 scroll-progress .progress-wrap::after {
   content: url('/images/svg/down-arrow.svg');
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  transform: scale(0.7) rotate(-180deg);
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: scale(0.7);
   transition: 0.2s linear transform;
   z-index: 1;
 }
 
 scroll-progress .progress-wrap:hover::after {
-  transform: scale(0.65) rotate(-180deg);
+  transform: rotate(-180deg) scale(0.65);
 }
 
 scroll-progress .progress-circle path {
