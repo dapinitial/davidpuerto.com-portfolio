@@ -89,12 +89,13 @@ accordion-list .button-icon {
   width: 60px;
   background: rgba(0, 0, 0, 0.1) !important;
   border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background 0.2s ease, transform 0.2s ease;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s ease;
   position: absolute;
   right: 0;
+  top: 50%;
+  translate: 0 -50%; /* explicit vertical centering within the dt */
 }
 
 accordion-list .button-icon::after {

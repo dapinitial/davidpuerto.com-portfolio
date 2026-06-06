@@ -57,6 +57,8 @@ class SlowedPin extends HTMLElement {
       );
 
       // Pin the text and let it drift down for the height of the column.
+      // invalidateOnRefresh: the 45 testimonial images lazy-load, so the
+      // column height (and thus the drift distance) grows after init.
       gsap.to(slowedText, {
         scrollTrigger: {
           trigger: slowedText,
@@ -64,6 +66,7 @@ class SlowedPin extends HTMLElement {
           pin: true,
           start: 'top top',
           end: () => `+=${imagesWrap.offsetHeight}`,
+          invalidateOnRefresh: true,
         },
         y: () => window.innerHeight - slowedText.offsetHeight,
       });

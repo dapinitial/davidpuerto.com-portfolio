@@ -110,15 +110,18 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const scribbleCopy = document.querySelector('.initial-scribble .scribble-copy');
   const scribblePinned = document.querySelector('.initial-scribble .pinned-column');
   if (scribbleCopy && scribblePinned) {
-    const containerHeight = scribblePinned.offsetHeight;
+    // Function-based + invalidateOnRefresh: the whiteboard photo lazy-loads,
+    // so heights measured at init are garbage (a baked negative `end` made
+    // the pin flap — the "glitchy blinky" scribble). Re-measured on refresh.
     gsap.timeline({
       scrollTrigger: {
         trigger: scribbleCopy,
-        start: `top top+=${containerHeight}`,
-        end: () => `+=${containerHeight - 360}`,
+        start: () => `top top+=${scribblePinned.offsetHeight}`,
+        end: () => `+=${Math.max(0, scribblePinned.offsetHeight - 360)}`,
         pin: scribbleCopy,
         pinSpacing: false,
         scrub: true,
+        invalidateOnRefresh: true,
       },
     });
   }
