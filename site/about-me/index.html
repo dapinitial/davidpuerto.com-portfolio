@@ -1,23 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About Me — David Puerto</title>
-    <script>(function(){try{if(sessionStorage.getItem("dp-arriving")<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/main.css">matchMedia("(prefers-reduced-motion: no-preference)").matches){document.documentElement.classList.add("is-arriving");window.__arriveFailsafe=setTimeout(function(){document.documentElement.classList.remove("is-arriving")},3000)}}catch(e){}})()</script>
+  <meta name="description" content="Things you might not know about David Puerto — climbing, running, cooking, side projects, and roller rinks.">
+  <script>(function(){try{if(sessionStorage.getItem("dp-arriving")&&matchMedia("(prefers-reduced-motion: no-preference)").matches){document.documentElement.classList.add("is-arriving");window.__arriveFailsafe=setTimeout(function(){document.documentElement.classList.remove("is-arriving")},3000)}}catch(e){}})()</script>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/elements/site-header.css">
   <link rel="stylesheet" href="/css/elements/infinity-loader.css">
-  <link rel="stylesheet" href="/css/elements/site-preloader.css">
+  <link rel="stylesheet" href="/css/elements/rain-fall.css">
+  <link rel="stylesheet" href="/css/elements/clipped-image.css">
+  <link rel="stylesheet" href="/css/pages/about.css">
   <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/about.js"></script>
 </head>
+
 <body>
   <site-header></site-header>
-  <main style="padding-top: 64px;">
-    <section>
-      <h1>About Me</h1>
-      <p>Coming together in the rebuild. <a href="/">Go home</a>.</p>
-    </section>
+  <main>
+    <article class="dark-section">
+      <h2 class="text-align-center about-heading">
+        <em>What are some things<br /> you</em> <span class="text-mask">might not know</span> <em>about me...</em>
+      </h2>
+      <rain-fall></rain-fall>
+      <clipped-image image="/images/spacelabforever.jpg" video="/images/about.mov"></clipped-image>
+    </article>
+
+    <article class="dark-section">
+      <div class="container">
+        <h4><em>I take</em> <span class="text-mask">calculated</span> <em>risks</em></h4>
+        <p>Alpine escapades coming soon...</p>
+      </div>
+    </article>
+
+    <article class="light-section">
+      <div class="container">
+        <h4><em>I run, swim, and more on</em> <span class="text-mask">Strava</span></h4>
+        <p>Training + Performance data coming soon...</p>
+      </div>
+    </article>
+
+    <article class="dark-section">
+      <div class="container">
+        <h4><em>Have mercy</em> <span class="text-mask">on the dishwasher</span></h4>
+        <p>Recipes for paella, pastelon, and arepas coming soon...</p>
+      </div>
+    </article>
+
+    <article class="light-section">
+      <div class="container">
+        <h4><em>I have some</em> <span class="text-mask">Side Projects</span></h4>
+        <p>Life hacks, coding, vehicle modification, home improvements, etc. coming soon...</p>
+      </div>
+    </article>
+
+    <article class="dark-section">
+      <div class="container">
+        <h4><em>I can still</em> <span class="text-mask">get down at the roller rink</span></h4>
+        <p>Details coming soon...</p>
+      </div>
+    </article>
   </main>
 </body>
+
 </html>

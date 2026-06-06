@@ -1,23 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contact — David Puerto</title>
-    <script>(function(){try{if(sessionStorage.getItem("dp-arriving")<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/main.css">matchMedia("(prefers-reduced-motion: no-preference)").matches){document.documentElement.classList.add("is-arriving");window.__arriveFailsafe=setTimeout(function(){document.documentElement.classList.remove("is-arriving")},3000)}}catch(e){}})()</script>
+  <meta name="description" content="Get in touch with David Puerto — design engineer. Response in 2-3 business days.">
+  <script>(function(){try{if(sessionStorage.getItem("dp-arriving")&&matchMedia("(prefers-reduced-motion: no-preference)").matches){document.documentElement.classList.add("is-arriving");window.__arriveFailsafe=setTimeout(function(){document.documentElement.classList.remove("is-arriving")},3000)}}catch(e){}})()</script>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/elements/site-header.css">
   <link rel="stylesheet" href="/css/elements/infinity-loader.css">
-  <link rel="stylesheet" href="/css/elements/site-preloader.css">
+  <link rel="stylesheet" href="/css/elements/rain-fall.css">
+  <link rel="stylesheet" href="/css/elements/neon-text.css">
+  <link rel="stylesheet" href="/css/elements/glass-button.css">
+  <link rel="stylesheet" href="/css/pages/contact.css">
   <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/contact.js"></script>
 </head>
+
 <body>
   <site-header></site-header>
-  <main style="padding-top: 64px;">
-    <section>
-      <h1>Contact</h1>
-      <p>Coming together in the rebuild. <a href="/">Go home</a>.</p>
+  <main>
+    <section class="dark-section full-screen centered contact-hero">
+      <rain-fall fullpage></rain-fall>
+      <neon-text goodbye="contact me@davidpuerto.com" hello="Response in <br />2-3 business days."></neon-text>
+
+      <form class="contact-form" novalidate>
+        <label>
+          <span>Name</span>
+          <input type="text" name="name" autocomplete="name" maxlength="200" required>
+        </label>
+        <label>
+          <span>Email</span>
+          <input type="email" name="from" autocomplete="email" maxlength="200" required>
+        </label>
+        <label>
+          <span>Message</span>
+          <textarea name="message" rows="5" maxlength="5000" required></textarea>
+        </label>
+        <!-- honeypot: humans never see or fill this -->
+        <label class="hp" aria-hidden="true">
+          <span>Company</span>
+          <input type="text" name="company" tabindex="-1" autocomplete="off">
+        </label>
+        <button type="submit" class="glass-button"><span>Send it</span></button>
+        <p class="form-status" role="status"></p>
+      </form>
     </section>
   </main>
 </body>
+
 </html>

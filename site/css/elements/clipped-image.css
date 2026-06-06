@@ -1,0 +1,77 @@
+/* <clipped-image> — flattened from clippedImage.module.css */
+
+clipped-image {
+  display: block;
+  background-color: #0c0c0c;
+  overflow: hidden;
+}
+
+clipped-image .ci-wrapper {
+  position: relative;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  width: 100vw;
+  overflow: hidden;
+}
+
+clipped-image .ci-pin {
+  position: relative;
+  display: block;
+}
+
+clipped-image .ci-media {
+  position: relative;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  overflow: hidden;
+  clip-path: circle(22%);
+  margin: 0 auto;
+}
+
+clipped-image .ci-media img {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: block;
+  z-index: 0;
+  object-position: center;
+  object-fit: cover;
+}
+
+clipped-image .ci-video {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+clipped-image .ci-video video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+clipped-image .ci-gradient {
+  position: absolute;
+  height: 30%;
+  width: 100%;
+  bottom: 0;
+  opacity: 0;
+  background-color: #0c0c0c;
+  z-index: 10;
+  mask-image: linear-gradient(transparent, #0c0c0c 85%);
+  -webkit-mask-image: linear-gradient(transparent, #0c0c0c 85%);
+}
+
+clipped-image .ci-content {
+  position: relative;
+  width: 100%;
+  height: auto;
+  padding-bottom: 40px;
+  margin: 0 auto;
+  z-index: 10;
+  text-align: center;
+}

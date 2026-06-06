@@ -1,0 +1,42 @@
+/* <tts-button> — flattened from textToSpeechButton.module.css */
+
+tts-button .tts {
+  background: 0;
+  border: 1px solid #eee;
+  border-radius: 32px;
+  color: #eee;
+  font-size: 12px;
+  font-weight: 400;
+  height: 48px;
+  outline: 0;
+  display: flex;
+  gap: 8px;
+  padding: 8px 20px;
+  place-content: center;
+  place-items: center;
+  cursor: pointer;
+  animation: tts-bounce 0.75s 1;
+}
+
+tts-button .tts::after {
+  content: 'Read aloud (beta)';
+}
+
+tts-button .tts.speaking::after {
+  content: 'Stop reading';
+}
+
+tts-button .tts:hover {
+  background: #222;
+}
+
+tts-button .tts svg {
+  fill: currentColor;
+}
+
+@keyframes tts-bounce {
+  0% { transform: scale(1, 1) translate(0, 0); }
+  30% { transform: scale(1, 0.8) translate(0, 10px); }
+  75% { transform: scale(1, 1.1) translate(0, -25px); }
+  100% { transform: scale(1, 1) translate(0, 0); }
+}

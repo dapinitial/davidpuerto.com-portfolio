@@ -1,0 +1,70 @@
+@layer page {
+  .contact-hero {
+    padding-block: calc(var(--spacing) * 3);
+  }
+
+  .contact-hero neon-text {
+    min-height: 30vh;
+  }
+
+  .contact-form {
+    width: min(80vw, 420px);
+    margin: calc(var(--spacing) * 2) auto 0;
+    display: grid;
+    gap: var(--spacing);
+    position: relative;
+    z-index: 10;
+  }
+
+  .contact-form label {
+    display: grid;
+    gap: 6px;
+  }
+
+  .contact-form label span {
+    --font-size-min: 12;
+    --font-size-max: 14;
+
+    color: #aaa;
+    font-size: var(--font-size);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid #333;
+    border-radius: 6px;
+    color: var(--color-text);
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 0.65em 0.85em;
+    transition: border-color 0.187s ease-in-out;
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-color: var(--color-secondary);
+    outline: none;
+  }
+
+  .contact-form .glass-button {
+    justify-self: start;
+  }
+
+  /* honeypot — visually gone, still in the form data */
+  .contact-form .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form-status {
+    color: #aaa;
+    min-height: 1.5em;
+    margin: 0;
+  }
+}

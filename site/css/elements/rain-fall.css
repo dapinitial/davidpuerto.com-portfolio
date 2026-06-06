@@ -1,0 +1,91 @@
+/* <rain-fall> — flattened from rain.module.css.
+   Default: section-scale drips. With [fullpage]: viewport-scale drips. */
+
+rain-fall {
+  display: block;
+  position: absolute;
+  top: -30px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+rain-fall[fullpage] {
+  bottom: 0;
+  height: 100vh;
+}
+
+rain-fall .drip {
+  width: 200px;
+  height: 250px;
+  position: absolute;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+}
+
+rain-fall[fullpage] .drip {
+  height: 65vh;
+}
+
+/* Falling drop */
+rain-fall .drip::before {
+  position: absolute;
+  content: '';
+  width: 15px;
+  height: 15px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  opacity: 0;
+  animation: rain-drip 4s ease infinite;
+}
+
+rain-fall[fullpage] .drip::before {
+  animation-name: rain-drip-fullpage;
+}
+
+/* Splash ring */
+rain-fall .drip::after {
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  content: '';
+  width: 0;
+  height: 0;
+  border: solid 4px rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  opacity: 0;
+  animation: rain-splash 4s ease infinite;
+}
+
+@keyframes rain-drip {
+  10% { top: 0; opacity: 0.99; animation-timing-function: cubic-bezier(0.24, 0, 0.76, 0.14); }
+  25% { opacity: 0.99; top: 200px; animation-timing-function: ease-out; width: 15px; height: 15px; left: 92.5px; }
+  30% { opacity: 0.99; top: 160px; width: 5px; height: 5px; animation-timing-function: ease-in; left: 97.5px; }
+  33% { top: 200px; opacity: 0; animation-timing-function: ease-out; left: 97.5px; }
+  33.001% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes rain-drip-fullpage {
+  10% { top: 0; opacity: 0.99; animation-timing-function: cubic-bezier(0.24, 0, 0.76, 0.14); }
+  25% { opacity: 0.99; top: 58vh; animation-timing-function: ease-out; width: 15px; height: 15px; left: 92.5px; }
+  30% { opacity: 0.99; top: 40vh; width: 5px; height: 5px; animation-timing-function: ease-in; left: 97.5px; }
+  33% { top: 65vh; opacity: 0; animation-timing-function: ease-out; left: 97.5px; }
+  33.001% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes rain-splash {
+  0% { opacity: 0; }
+  25% { bottom: 50px; left: 100px; opacity: 0; width: 0; height: 0; }
+  25.001% { opacity: 0.4; }
+  33% { bottom: 0; left: 0; opacity: 0; width: 200px; height: 100px; }
+  33.001% { bottom: 50px; left: 100px; opacity: 0.6; width: 0; height: 0; }
+  43% { bottom: 0; left: 0; opacity: 0; width: 200px; height: 100px; }
+  43.001% { opacity: 0; }
+}

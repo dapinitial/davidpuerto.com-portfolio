@@ -1,4 +1,44 @@
 @layer components {
+  /* Full-bleed section utilities (ported from the old global reset) */
+  .light-section,
+  .dark-section {
+    position: relative;
+    margin: 0;
+    text-align: left;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+  }
+
+  .light-section.full-screen,
+  .dark-section.full-screen {
+    min-height: 100svh;
+  }
+
+  .light-section.half-height,
+  .dark-section.half-height {
+    min-height: 50svh;
+  }
+
+  .light-section {
+    color: #000;
+    background-color: #fff;
+  }
+
+  .dark-section {
+    color: #fff;
+    background-color: #0c0c0c;
+  }
+
+  .centered {
+    display: grid;
+    place-content: center;
+  }
+
+  .text-align-center {
+    text-align: center;
+  }
+
   /* Buttons (the pen's .text button, generalized) */
   .button,
   button {

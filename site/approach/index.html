@@ -1,23 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Approach — David Puerto</title>
-    <script>(function(){try{if(sessionStorage.getItem("dp-arriving")<link rel="stylesheet" href="/css/main.css"><link rel="stylesheet" href="/css/main.css">matchMedia("(prefers-reduced-motion: no-preference)").matches){document.documentElement.classList.add("is-arriving");window.__arriveFailsafe=setTimeout(function(){document.documentElement.classList.remove("is-arriving")},3000)}}catch(e){}})()</script>
+  <meta name="description" content="Design approach and process — elevating digital experiences through empathy, prototyping, and innovation. Prototypes are worth 1,000 meetings.">
+  <script>(function(){try{if(sessionStorage.getItem("dp-arriving")&&matchMedia("(prefers-reduced-motion: no-preference)").matches){document.documentElement.classList.add("is-arriving");window.__arriveFailsafe=setTimeout(function(){document.documentElement.classList.remove("is-arriving")},3000)}}catch(e){}})()</script>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/elements/site-header.css">
   <link rel="stylesheet" href="/css/elements/infinity-loader.css">
-  <link rel="stylesheet" href="/css/elements/site-preloader.css">
+  <link rel="stylesheet" href="/css/elements/rain-fall.css">
+  <link rel="stylesheet" href="/css/elements/neon-text.css">
+  <link rel="stylesheet" href="/css/elements/scroll-down.css">
+  <link rel="stylesheet" href="/css/elements/tts-button.css">
+  <link rel="stylesheet" href="/css/pages/approach.css">
   <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/approach.js"></script>
 </head>
+
 <body>
   <site-header></site-header>
-  <main style="padding-top: 64px;">
-    <section>
-      <h1>Approach</h1>
-      <p>Coming together in the rebuild. <a href="/">Go home</a>.</p>
+  <main>
+    <rain-fall fullpage></rain-fall>
+    <section class="approach-hero">
+      <neon-text goodbye='"Leave it better than you found it", "Prototypes are worth 1,000 meetings"'
+        hello="design approach &amp; process"></neon-text>
+      <div class="scroll-down"><p>Scroll down</p></div>
+    </section>
+
+    <section class="approach-body">
+      <div class="row bodycopy-details">
+        <div class="column"><tts-button target="#article"></tts-button></div>
+        <div class="column reading-duration">
+          <p>~4 minutes to read article</p>
+          <p>Last updated 1/1/2024 via GitHub</p>
+        </div>
+      </div>
+
+      <article id="article" class="bodycopy">
+        <h1>Design Approach: Elevating digital experiences through empathy, prototyping, innovation.</h1>
+
+        <h2>Introduction</h2>
+        <p>My design approach is rooted in a deep commitment to producing and improving digital experiences by
+          infusing them with data, empathy, and innovation. Just as climbers meticulously prepare for an ascent by
+          setting objectives, strategizing with partners, mastering systems for mechanical advantage, maintaining
+          physical readiness, and staying vigilant of changing weather and terrain conditions—I embark on every
+          project with the same attention to detail, striving to leave a compelling impression on my audience.
+          It's a journey and an adventure and sometimes we have to improvise. My role as a UX Engineer and product
+          designer is nothing short of being a guide, enabling us to summit mountain after mountain after
+          mountain...</p>
+
+        <h2>User-Centric Innovation</h2>
+        <p>At the heart of my design philosophy is a relentless dedication to enhancing peoples' lives. I
+          constantly challenge myself with the fundamental questions:</p>
+        <ol>
+          <li>"Will our solution significantly enhance the current experience?"</li>
+          <li>"How can we empirically demonstrate its validity?"</li>
+          <li>"What are the tangible and intangible costs involved?"</li>
+          <li>"What is the learning curve, and how quickly can they adapt?"</li>
+          <li>"How effectively does our solution scale?"</li>
+          <li>"Who have we left out?"</li>
+          <li>"What technological challenges and constraints must we overcome?"</li>
+          <li>"Is this still the best solution?"</li>
+        </ol>
+
+        <img class="article-image" alt="David Puerto whiteboarding for Facebook." width="320" height="420"
+          src="/images/jpg/facebookWhiteboard.jpg" loading="lazy" />
+
+        <p>These questions serve as my guiding principles, ensuring that the work is not merely a technical
+          exercise playing to my design biases, but a meaningful improvement rooted in outcomes and supported by
+          data. As a designer, I'm in search of a solution to a problem. This solution remains mindful of the jobs
+          that must be done, respecting budgets, needs, and timelines.</p>
+
+        <h2>Design as Empowerment</h2>
+        <p>As a design practioner, My design philosophy extends beyond aesthetics; it encompasses empowerment. By
+          bridging the gap between design and implementation, I empower individuals and organizations to achieve
+          more by realizing our potential. My multidisciplinary journey as a designer and software engineer has
+          taught me the importance of collaboration, fostering relationships, and trust-building.</p>
+
+        <h2>Prototyping as Catalyst:</h2>
+        <p>Prototyping is the linchpin of my design process. Prototypes are not disposable artifacts; they are
+          valuable tools that illuminate challenges and refine solutions. Each iteration gives us reusable assets
+          for future prototypes. I've learned to carefully assess addressing solving problems that don't exist by
+          remaining mindful in the search of a better solution.</p>
+
+        <h5 class="subheading">Prototyping helps formulate the main trajectory of a design by framing the mind
+          around a continuous pursuit of better concepts.</h5>
+
+        <p>Starting with whiteboard ideation and collaborative sessions with engineers and product teams, we
+          evaluate what jobs the people we are designing for need to carry out. During this "throwing spaghetti
+          and seeing what sticks" phase, we build off the most feasible wins, applying tried and true design
+          thinking as we chart our course. From here we transform concepts into shareable treatments, user flows,
+          scenarios, personas, and wireframes to keep our focus and avoid scope creep as we begin exploring these
+          wireframe pathways with prototypes.</p>
+
+        <p>The browser becomes our canvas, a secure space to collaborate and share our work as we interface with
+          real data and employ code to shape interactions testing our design hypothesis, verifying and validating
+          proceived notions along the way. This process ensures a comprehensive approach to problem-solving where
+          we earn trust and validate our ideas in the medium we are designing for as we harness the power of
+          programming to randomize our datasets and simulate seemingly authentic workflows delivering models that
+          people can examine and explore. Through this period of design discovery further insights may be gleaned
+          and addressed.</p>
+
+        <p>These prototypes extend far beyond visual representations; they are functional assets that facilitate
+          feedback and further development using simulated and actual data. Through active engagement in the
+          design process, we uncover the work that truly matters. As the design process proceeds, leveraging tools
+          like Figma or Sketch and other design tools, we begin to transform prototypes into works of art with
+          editable design deliverables importing directly from the browser-based prototypes, refining namings
+          resulting in design language and patterns.</p>
+
+        <h2>Conclusion:</h2>
+        <p>In the realm of design, actions speak louder than words. My design philosophy centers on delivering
+          tangible, testable, and impactful results. We owe it to ourselves and our audience to ensure that they
+          can access and rely on our designs to render across any device or platform, and that their basic needs
+          are met. This is my standard and this is my craft that I am sedulously dedicated to honing.</p>
+
+        <p>I think in terms of systems. I understand that the backbone of creating excellent digital and
+          accessible web experiences is harnessing web technologies for data manipulation across those
+          systems.</p>
+
+        <p>I have proven track record for deep understanding of the technical concepts at play and the ability to
+          synthesize complexity down to simplicity.</p>
+
+        <p>I revel in the opportunity to make product decisions, construct design solutions, and participate in
+          defining the vision of the end-to-end user experience. I love working across disciplines and
+          collaborating with other teams to bring about the best outcome. As an end-user advocate, I drive
+          peoples' needs towards goals through pragmatic and intuitive design solutions.</p>
+
+        <p>I understand and am wholeheartedly enthusiastic about modern web development. I am well-versed in the
+          application of user-centered philosophies and interactive media design best practices. I distill
+          evolving design work into patterns and capture those in articulate and insightful guidance for others to
+          use as a creative springboard.</p>
+
+        <p>As I align with Microsoft's vision of "empowering every person and every organization on the planet to
+          achieve more," I recognize that my diverse experiences have converged to this pivotal moment. My design
+          approach is a fusion of innovation, empathy, and the unwavering commitment to making a significant
+          difference in the digital landscape.</p>
+
+        <blockquote>
+          <h5 class="subheading">"If a picture is worth a thousand words—<br /> a prototype is worth a thousand
+            meetings."</h5>
+        </blockquote>
+      </article>
     </section>
   </main>
 </body>
+
 </html>

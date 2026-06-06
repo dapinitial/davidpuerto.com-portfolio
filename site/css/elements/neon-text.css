@@ -1,0 +1,90 @@
+/* <neon-text> — flattened from neonText.module.css, font self-hosted. */
+
+@font-face {
+  font-family: 'NeonTubes';
+  font-display: swap;
+  src: url('/fonts/neontubes.woff2') format('woff2');
+}
+
+neon-text {
+  color: #fff;
+  display: grid;
+  place-content: center;
+  place-items: center;
+  height: auto;
+  font-family: 'NeonTubes', cursive;
+  white-space: nowrap;
+  z-index: 10;
+  position: relative;
+  margin: -20px auto 0 0;
+  min-height: 10vh;
+  text-align: left;
+  transform-style: preserve-3d;
+  transform: perspective(5000px) rotateY(var(--rotateX, 0)) rotateX(var(--rotateY, 0));
+  opacity: 0;
+  transition: 0.3s linear opacity;
+  will-change: opacity;
+}
+
+neon-text.lit {
+  opacity: 1;
+}
+
+neon-text span {
+  place-items: center;
+  position: relative;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+neon-text .space {
+  display: inline-block;
+  width: 0.25em;
+}
+
+neon-text .goodbye {
+  color: #aaa;
+  transform: rotate(-1deg);
+  text-shadow: 0 0 0 transparent, 0 0 10px rgba(255, 255, 255, 0.9);
+  animation: neon-blink 4s infinite alternate;
+  position: relative;
+  font-size: clamp(10px, 1.2vw, 56px);
+  margin-right: auto;
+}
+
+neon-text .hello {
+  text-align: left;
+  transform: rotate(1deg);
+  color: white;
+  text-shadow:
+    0 0 0 transparent,
+    0 0 10px white,
+    0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(255, 255, 255, 1);
+  animation: neon-buzz 1s infinite alternate;
+  font-size: clamp(32px, 8vw, 96px);
+}
+
+neon-text .hello div,
+neon-text .goodbye div {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+neon-text .short-out {
+  animation: neon-blink 3s ease-in-out infinite;
+}
+
+@keyframes neon-buzz {
+  70% { opacity: 0.8; }
+}
+
+@keyframes neon-blink {
+  40% { opacity: 0.9; }
+  42% { opacity: 0.8; }
+  43% { opacity: 0.9; }
+  45% { opacity: 0.2; }
+  46% { opacity: 0.9; }
+}
