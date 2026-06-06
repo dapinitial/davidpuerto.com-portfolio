@@ -1,0 +1,127 @@
+.progressWrap {
+  background: transparent;
+  backdrop-filter: blur(2px);
+  backface-visibility: hidden;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 50px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, .4);
+  cursor: pointer;
+  font-weight: 400;
+  margin-bottom: 70px;
+  position: fixed;
+  right: 10px;
+  bottom: -61px;
+  height: 40px;
+  text-align: center;
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
+  width: 40px;
+  z-index: 99;
+  will-change: transform;
+}
+
+:global(.lightmode) .progressWrap {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.progressWrap::after,
+.progressWrap::before {
+  cursor: pointer;
+  font-family: 'system-ui';
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 40px;
+  left: 0;
+  top: 0;
+  height: 40px;
+  position: absolute;
+  text-align: center;
+  width: 40px;
+  transform: scale(.7);
+  transition: 0.2s linear color;
+  will-change: color;
+  z-index: 1;
+}
+
+.progressWrap::after {
+  content: url(/images/svg/down-arrow.svg);
+  fill: #fff;
+}
+
+.progressWrap:hover::after {
+  content: url(/images/svg/down-arrow.svg);
+  fill: white;
+  transform: rotate(-180deg) scale(.65);
+}
+
+.progressWrap::before::content g {
+  content: url(/images/svg/down-arrow.svg);
+  fill: red;
+  background: rgba(0, 0, 0, 0.84);
+  background-clip: text;
+  opacity: 0;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.progressWrap:hover::before {
+  background: white;
+}
+
+:global(.lightmode) .progressWrap::after {
+  content: url(/images/svg/down-arrow.svg);
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+:global(.lightmode) .progressWrap:hover::after {
+  content: url('/images/svg/down-arrow.svg');
+  fill: black;
+}
+
+:global(.lightmode) .progressWrap::before {
+  content: '↑';
+  background: rgba(255, 255, 255, 0.3);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+}
+
+:global(.lightmode) .progressWrap:hover::before {
+  background: rgba(255, 255, 255, 1);
+}
+
+.progressWrap svg path {
+  fill: none;
+}
+
+.progressCircle path {
+  /* stroke: linear-gradient(to right,
+      #c6f961 0%,
+      #a5e65d 22%,
+      #ffffff 45%,
+      #d5ff9d 50%,
+      #c6f961 55%,
+      #b9da56 78%,
+      #8fb02a 100%); */
+  stroke-width: 4;
+  stroke-linecap: round;
+  box-sizing: border-box;
+}
+
+.progressWrapBackground {
+  /* -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  background: rgba(0, 0, 0, 0.24);*/
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  margin-left: -10px;
+  margin-top: -10px;
+  margin-bottom: -40px;
+  position: absolute;
+  height: 130px;
+  width: 64px;
+  z-index: -1;
+}

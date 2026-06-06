@@ -1,0 +1,97 @@
+.navigateCaseStudies {
+  transition:
+    opacity 0.5s ease,
+    visibility 0.5s ease;
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 20;
+}
+
+.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+:global(.dark-content) .previousCaseStudy,
+:global(.dark-content) .nextCaseStudy {
+  color: #ccc;
+  transition: .3s color linear;
+
+  &:hover {
+    color: #fff;
+    transition: .3s color linear;
+  }
+
+}
+
+:global(.light-content) .previousCaseStudy,
+:global(.light-content) .nextCaseStudy {
+  color: #000;
+  transition: .3s color linear;
+
+  &:hover {
+    color: #222;
+    transition: .3s color linear;
+  }
+
+}
+
+.previousCaseStudy,
+.nextCaseStudy {
+  margin: 0 10px;
+  text-align: center;
+  white-space: nowrap;
+  width: -webkit-fill-available;
+  font-weight: bold;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-weight: 400;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+
+  &::after {
+    content: none !important;
+  }
+
+  &::before {
+    content: ' ';
+    display: 'block';
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.4);
+    height: 40px;
+    width: 260px;
+    position: relative;
+  }
+}
+
+.previousCaseStudy {
+  position: fixed;
+  top: 50vh;
+  left: -130px;
+  transform: rotate(-90deg);
+  width: 260px;
+}
+
+.nextCaseStudy {
+  position: fixed;
+  top: 50vh;
+  right: -130px;
+  transform: rotate(90deg);
+  width: 260px;
+}
+
+/* @media screen and (max-width: 1000px) {
+    .previousCaseStudy {
+        left: -130px;
+    }
+
+    .nextCaseStudy {
+        right: -130px;
+    }
+} */

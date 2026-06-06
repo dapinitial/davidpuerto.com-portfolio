@@ -1,0 +1,109 @@
+h2,
+h4 {
+  text-transform: uppercase;
+}
+
+.textMask {
+  font-weight: 900;
+  text-transform: uppercase;
+  background: url(/images/bg.jpg) 0 0 / cover no-repeat;
+  color: #00a3bb;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0px 0px 0px rgba(255, 0, 174, 0.44);
+  animation: backgroundAnimation 15s ease-in-out infinite;
+}
+
+@keyframes backgroundAnimation {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  10% {
+    background-position: 30% 10%;
+  }
+
+  20% {
+    background-position: 70% 40%;
+  }
+
+  30% {
+    background-position: 100% 20%;
+  }
+
+  40% {
+    background-position: 80% 80%;
+  }
+
+  50% {
+    background-position: 40% 60%;
+  }
+
+  60% {
+    background-position: 20% 30%;
+  }
+
+  70% {
+    background-position: 50% 80%;
+  }
+
+  80% {
+    background-position: 90% 50%;
+  }
+
+  90% {
+    background-position: 30% 90%;
+  }
+
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.image {
+  border-radius: 50%;
+  height: 180px;
+  margin-top: 24px;
+  margin: 0 auto;
+  display: flex;
+  place-content: center;
+  animation: bounce 0.35s;
+  animation-direction: alternate;
+  animation-timing-function: cubic-bezier(.5, 0.05, 1, .5);
+  animation-iteration-count: 1;
+}
+
+@keyframes bounce {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+    transform: translateY(-250%);
+  }
+
+  to {
+    transform: translate3d(0, 200px, 0);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  opacity: 0;
+  animation: fadeIn 1s forwards 0s;
+}
+
+.introText {
+  opacity: 0;
+  animation: fadeIn 1s forwards 0s;
+}

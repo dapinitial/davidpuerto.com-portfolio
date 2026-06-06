@@ -1,0 +1,128 @@
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cursor {
+  pointer-events: none;
+  opacity: 0.99 !important;
+  position: relative;
+  top: -100px;
+  left: -100px;
+  z-index: 9999;
+  transform: translate3d(0, 0, 0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+.cursor__inner {
+  fill: none;
+  stroke: #999;
+  stroke-width: 3;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.cursor__text {
+  fill: #999;
+  font-size: 24px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+/* Loader effect when the preloader is active */
+.cursor::after {
+  content: " ";
+  display: flex;
+  position: absolute;
+  z-index: 9999;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #ff0000;
+  border-left: 4px solid transparent;
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  box-sizing: border-box;
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: rotating 0.8s linear infinite;
+  opacity: 1;
+  overflow: visible;
+}
+
+@keyframes rotating {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+a:hover .cursor__inner,
+a:focus .cursor__inner {
+  cursor: pointer;
+  transform: scale(3) rotate(-360deg);
+}
+
+@media (any-pointer: fine) {
+  .cursor {
+    animation: spin 0.2s infinite linear;
+    opacity: .99;
+    overflow: visible;
+    pointer-events: none;
+    position: fixed;
+    z-index: 9999;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+    will-change: transform;
+  }
+
+  .cursor::after {
+    content: " ";
+    display: flex;
+    position: absolute;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    border-right: 4px solid transparent;
+    border-bottom: 4px solid #ff0000;
+    border-left: 4px solid transparent;
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    transform: translate(-50%, -50%) rotate(0deg);
+    animation: rotating 0.8s linear infinite;
+    opacity: 1;
+    overflow: visible;
+  }
+
+  .cursor__inner {
+    fill: none;
+    stroke-width: 3;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+    will-change: transform;
+  }
+}
+
+.hide-ball .cursor {
+  opacity: 0 !important;
+}
+
+:global(.parallaxElement:hover) .cursor {
+  transform: scale(1.2);
+  border-color: #ff0000;
+}

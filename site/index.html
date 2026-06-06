@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>David Puerto — Design Engineer · UX/UI Prototyping</title>
+  <meta name="description"
+    content="Design engineer prototyping stateful UI for Microsoft, Meta, Nordstrom, SonoSite, and Zillow — from Azure Sovereign Clouds to Facebook's cloud IDE to award-winning housing tech.">
+  <meta property="og:title" content="David Puerto — Design Engineer">
+  <meta property="og:description"
+    content="UX/UI prototyping for Microsoft, Meta, Nordstrom, SonoSite, and Zillow.">
+  <meta property="og:image" content="/preview.png">
+  <script>
+    // Pre-paint enhancement gate: hides the fixed-stack sections before first
+    // paint so plain-flow content never flashes ("buttons all over the place").
+    // Failsafe: if home.js never boots (network/error), unhide after 3s so a
+    // broken script can't strand a blank page. home.js clears the timer.
+    (function () {
+      if (matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+        var c = document.documentElement.classList;
+        c.add('is-enhanced');
+        window.__enhanceFailsafe = setTimeout(function () { c.remove('is-enhanced'); }, 3000);
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/elements/site-header.css">
+  <link rel="stylesheet" href="/css/elements/glass-button.css">
+  <link rel="stylesheet" href="/css/elements/site-preloader.css">
+  <link rel="stylesheet" href="/css/elements/infinity-loader.css">
+  <link rel="stylesheet" href="/css/pages/home.css">
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/home.js"></script>
+</head>
+
+<body>
+  <site-preloader></site-preloader>
+  <site-header></site-header>
+  <h1 class="sr-only">David Puerto — Design Engineer</h1>
+
+  <div class="glow" aria-hidden="true">
+    <i></i><i></i><i></i><i></i><i></i>
+  </div>
+
+  <nav class="indicator-nav" aria-label="Case study sections">
+    <ul class="indicator">
+      <li><a href="#microsoft"><span class="sr-only">Microsoft</span></a></li>
+      <li><a href="#facebook"><span class="sr-only">Facebook</span></a></li>
+      <li><a href="#nordstrom"><span class="sr-only">Nordstrom</span></a></li>
+      <li><a href="#sonosite"><span class="sr-only">SonoSite</span></a></li>
+      <li><a href="#zillow"><span class="sr-only">Zillow</span></a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="microsoft" class="section">
+      <div class="content">
+        <h2>
+          <strong>Microsoft</strong>
+          Personnel &amp;
+          <strong>Azure</strong> <em>Sovereign</em> Clouds
+        </h2>
+        <div class="text">
+          <img src="/images/microsoft.png" alt="Microsoft Personnel and Sovereign Clouds UX UI" />
+          <p>As Personnel's design quality gatekeeper, I prototyped stateful UI live on Teams for PM-design
+            collaboration using a custom framework rolled in-house (React/TS, CSS Modules, Msal.js, and GraphAPI);
+            safeguarding against third-party telemetry during <strong>JEDI</strong>.</p>
+          <p>Later, I evolved my skills on Azure's Sovereign Clouds prototyping and delivering end-to-end UI solutions
+            for Shadow Control, Secure Sovereign Manager, Video Escort Monitoring, Real-time Insights, and DRI
+            Portals.</p>
+          <a class="glass-button" href="/case-studies/microsoft/"><span>Read Case Study</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="facebook" class="section">
+      <div class="content">
+        <h2>
+          <strong>Meta</strong><br />
+          (<em><sub>fb</sub></em>)IDE
+          codename:
+          <em>Lyric</em>
+        </h2>
+        <div class="text">
+          <img src="/images/facebook.png"
+            alt="Facebook, Meta, FBIDE codename Lyric. Zero-install, cloud-based IDE integrated into Facebook Platform." />
+          <p>The mission was clear: Prepare the UX/UI for open-sourcing Facebook's <em>zero-install, cloud-based
+              IDE</em>, tailored for PHP5 (Hack) and HipHop (VM), integrating directly with the Facebook platform,
+            providing comprehensive tools for building workflows and software. From a low-fi engineering proof of
+            concept, our team transformed (fb)IDE into <strong>Lyric</strong>—a formidable product for more than just
+            Facebook code. Lyric was re-branded Nuclide and shipped as a set of extensions for Atom and VSCode.</p>
+          <a class="glass-button" href="/case-studies/facebook/"><span>Read Case Study</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="nordstrom" class="section">
+      <div class="content">
+        <h2>
+          <strong>Nordstrom</strong>
+          <em>Enterprise Price Suite</em><br />AI/ML &amp;<br />
+          CompIntel
+        </h2>
+        <div class="text">
+          <img src="/images/nordstrom.png"
+            alt="Nordstrom. CompIntel. Errors and Warnings Console. Daily Assignment super admin tools. CommonUI." />
+          <p>Our engineering team developed a 0→1 application (<strong>CompIntel</strong>), delivering an experience
+            that gave rise to the PRICE organization's unified enterprise application and Nordstrom's CommonUI design
+            system. Our team made the verification and validation process more efficient, boosting productivity,
+            eliminating the need to manually traverse multiple spreadsheets, and surpassing execution targets while
+            providing human-in-the-loop tools that continue to train algorithms for better price matching.</p>
+          <a class="glass-button" href="/case-studies/nordstrom/"><span>Read Case Study</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="sonosite" class="section">
+      <div class="content">
+        <h2><strong>SonoSite</strong><br />
+          iViz think
+          StarTrek's <em>Tricorder</em>
+        </h2>
+        <div class="text">
+          <img src="/images/iviz.png" alt="Prototyping the first handheld ultrasound device." />
+          <p>Joining a team of industrial designers and hardware engineers, I was challenged to prototype an
+            innovative gesture-based UI for the first handheld ultrasound device—not unakin to <strong>Star Trek's
+              tricorder.</strong></p>
+          <ul>
+            <li>
+              <a href="https://youtu.be/emJUu9OrdJc" target="_blank" rel="noopener">
+                See how iViz is assisting global health in Gambia.</a>
+            </li>
+            <li>
+              <a href="https://youtu.be/XHgTSYLgOVI" target="_blank" rel="noopener">See iViz in action at the race
+                track.</a>
+            </li>
+            <li><a href="https://youtu.be/qPcUkbd7izs" target="_blank" rel="noopener">Watch iViz Promo Video</a></li>
+          </ul>
+          <a class="glass-button" href="/case-studies/sonosite/"><span>Read Case Study</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="zillow" class="section">
+      <div class="content">
+        <h2><strong>Zillow</strong><br />&amp; <em>then there <br /> was that one time...</em></h2>
+        <div class="text">
+          <img src="/images/zillow.png"
+            alt="SmartMove: a mobile-first PWA built on the Zillow platform, drawing data from Data.gov and federal and state databases to find home-buying assistance programs. Awarded first place at Seattle's #hackHousing hackathon, February 2015, and featured on the front page of GeekWire." />
+          <p>
+            <strong>Awarded 1<sup>st</sup> Place</strong> at <em>Seattle's largest hackathon</em> (#hackHousing) to
+            date, our team of three designed SmartMove—an innovative, data-driven application streamlining the
+            home-buying process and unearthing dozens of hidden programs that exist to assist people with
+            substantially lowering the cost of homeownership.
+          </p>
+          <ul>
+            <li><a
+                href="https://www.geekwire.com/2015/hacking-housing-market-tech-teams-use-open-data-help-people-find-affordable-homes/"
+                target="_blank" rel="noopener">See us on the front page of GeekWire</a></li>
+            <li><a href="https://www.huduser.gov/portal/pdredge/pdr_edge_frm_asst_sec_022315.html" target="_blank"
+                rel="noopener">Learn about SmartMove on HUD</a></li>
+            <li><a
+                href="https://zillow.mediaroom.com/2015-01-23-Zillow-and-University-of-Washington-to-Host-Hack-Housing-Empowering-Smarter-Decisions-A-Weekend-Hackathon"
+                target="_blank" rel="noopener">Learn about SmartMove on Zillow</a></li>
+          </ul>
+          <a class="glass-button" href="/case-studies/zillow/"><span>Read Case Study</span></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>nada más <span class="emoji">✌️</span></p>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,254 @@
+/* <site-header> — fixed chrome bar, hamburger, overlay nav with cube-flip links.
+   Flattened from the old header/hamburger/menu/logo/logout CSS modules.
+   Dark theme (the whole site is dark). */
+
+/* Backdrop blur re-samples per frame during live resize — pause it */
+html.is-resizing site-header .site-chrome {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+site-header .site-chrome {
+  /* The original declared 32px in a content-box world (+8px padding each
+     side = 48px visual). We're border-box, so say what we mean: 48px. */
+  height: 48px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding: 8px 16px;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ---------- Logo ---------- */
+site-header .logo {
+  cursor: pointer;
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  position: relative;
+  z-index: 1002;
+}
+
+site-header .logo svg {
+  width: 25px;
+  height: auto;
+  fill: #fff;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+site-header .logo .logo-shape {
+  transition: d 0.3s ease;
+}
+
+site-header .crumb {
+  color: #ccc;
+  font-size: 16px;
+  text-transform: none;
+}
+
+/* ---------- Logout ---------- */
+site-header .logout {
+  border: 0;
+  outline: 0;
+  background: 0;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: underline;
+  position: relative;
+  z-index: 1002;
+}
+
+site-header .logout:hover {
+  color: #00a3bb;
+  text-decoration: none;
+}
+
+/* ---------- Hamburger ---------- */
+site-header .hamburger {
+  border: 0;
+  background: 0;
+  color: #fff;
+  position: relative;
+  width: 24px;
+  padding: 0;
+  cursor: pointer;
+  z-index: 1002;
+}
+
+site-header .hamburger::before {
+  content: 'Menu';
+  font-weight: 500;
+  font-size: 14px;
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  text-shadow: 0 1px 2px black;
+}
+
+site-header.open .hamburger::before {
+  content: 'Close';
+}
+
+site-header .hamburger span {
+  display: block;
+  height: 2px;
+  width: 100%;
+  margin: 4px 0;
+  background: #fff;
+  border-radius: 3px;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  box-shadow: 0 1px 2px black;
+}
+
+site-header.open .hamburger span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+site-header.open .hamburger span:nth-child(2) {
+  opacity: 0;
+}
+
+site-header.open .hamburger span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ---------- Overlay nav ---------- */
+site-header .overlay {
+  position: fixed;
+  inset: 0;
+  height: 100svh;
+  z-index: 1001;
+  opacity: 0;
+  overflow: hidden;
+  text-transform: uppercase;
+  visibility: hidden;
+  background: rgba(0, 0, 0, 0.94);
+  transition: opacity 0.187s linear, visibility 0.187s linear;
+}
+
+site-header.open .overlay {
+  opacity: 0.99;
+  visibility: visible;
+}
+
+site-header .menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+site-header .menu[hidden] {
+  display: none;
+}
+
+site-header .menu li {
+  padding: 0;
+  margin-bottom: 8vh;
+  overflow: hidden;
+}
+
+site-header .menu li:last-of-type {
+  margin-bottom: 0;
+}
+
+site-header .menu li a,
+site-header .menu li .submenu-toggle {
+  border: 0;
+  background: 0;
+  padding: 0;
+  cursor: pointer;
+  /* <button> doesn't inherit text-transform (UA stylesheet resets it) —
+     without this, "Case Studies" renders lowercase while the links uppercase */
+  text-transform: inherit;
+  position: relative;
+  display: block;
+  width: 100vw;
+  height: 110px;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  transform: translateY(100%);
+  transition: transform 0.2s linear;
+}
+
+site-header.open .menu li a,
+site-header.open .menu li .submenu-toggle {
+  transform: translateY(0);
+}
+
+/* Cube-flip link faces */
+site-header .menu li a::before,
+site-header .menu li a::after,
+site-header .menu li .submenu-toggle::before,
+site-header .menu li .submenu-toggle::after {
+  content: attr(data-navlinkname);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Mona-Sans', var(--font-family-default, sans-serif);
+  font-weight: 900;
+  font-size: calc(1rem + 4.5vw);
+  line-height: 110px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  backface-visibility: hidden;
+}
+
+site-header .menu li a::before,
+site-header .menu li .submenu-toggle::before {
+  color: #ccc;
+  transform: rotateX(0deg) translateZ(55px);
+}
+
+site-header .menu li a::after,
+site-header .menu li .submenu-toggle::after {
+  font-weight: 200;
+  letter-spacing: 0.25vw;
+  color: #00a3bb;
+  transform: rotateX(-90deg) translateZ(55px);
+  opacity: 0;
+}
+
+site-header .menu li a:hover::before,
+site-header .menu li a:focus-visible::before,
+site-header .menu li .submenu-toggle:hover::before,
+site-header .menu li .submenu-toggle:focus-visible::before {
+  transform: rotateX(90deg) translateZ(55px);
+  opacity: 0;
+}
+
+site-header .menu li a:hover::after,
+site-header .menu li a:focus-visible::after,
+site-header .menu li .submenu-toggle:hover::after,
+site-header .menu li .submenu-toggle:focus-visible::after {
+  transform: rotateX(0deg) translateZ(55px);
+  opacity: 1;
+}
+
+/* Keep the page from scrolling behind the open overlay */
+body.menu-open {
+  overflow: hidden;
+}

@@ -1,0 +1,35 @@
+.form {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+
+  & input {
+    min-width: 320px;
+    padding: 12px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-family: 'Poppins';
+  }
+
+  h2 {
+    color: #fff;
+  }
+
+  & button {
+    background: 0;
+    outline: 0;
+    border: 1px solid #999;
+    color: #eee;
+    font-size: 16px;
+    padding: 8px;
+
+    &:hover {
+      background: rgba(255, 255, 255, .1);
+    }
+  }
+
+  .error {
+    margin-top: 10px;
+    color: pink;
+  }
+}

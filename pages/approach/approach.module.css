@@ -1,0 +1,189 @@
+.section:first-of-type {
+  margin: 0 auto;
+  padding: 20px 0;
+  z-index: 1;
+}
+
+.section>[class*="neonText"] {
+  min-height: 30vh;
+  height: calc(100vh - 100px);
+  margin-top: -100px;
+}
+
+.homepageSection {
+  display: grid;
+  place-content: center;
+  background: #111;
+  width: 100%;
+  position: relative;
+  padding: 40px 32px 80px 32px;
+  z-index: 2;
+
+  &::before {
+    transform: skewY(-4deg);
+    transform-origin: 100% 0;
+    position: absolute;
+    background: inherit;
+    /* Make this inherit if we want the same color as the parent div. For our purposes here, we will overwrite it with a different color to be able to easily see where the pseudo element is. */
+    background: #111;
+    content: '';
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: -32px;
+    height: 80px;
+    /* height and top will usually be the same */
+    z-index: -1;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+.aboutSection {
+  margin: 0 auto;
+  font-weight: 400;
+  font-size: clamp(15px, 24px, 24px);
+  font-family: 'Poppins', sans-serif;
+}
+
+.blankSpace {
+  height: 100px;
+}
+
+.image {
+  float: right;
+  margin-bottom: 40px;
+  border: 4px solid #222;
+}
+
+.bodycopy {
+  margin: 20px 0 60px 0;
+  max-width: calc(100vw - 80px);
+  width: clamp(32ch, 960px, 64ch);
+}
+
+.bodycopy p,
+.bodycopy ol {
+  margin: 0;
+  color: #949494;
+  margin-bottom: 24px;
+  font-kerning: auto;
+  letter-spacing: 0.15px;
+  margin-bottom: 24px;
+  font-size: clamp(1.2rem, 1.2vw, 1.1875rem);
+  line-height: clamp(24px, 4vw, 2vw);
+}
+
+.bodycopy::marker {
+  color: #ccc;
+  font-weight: 700;
+  padding-right: 24px;
+}
+
+.bodycopy ol {
+  margin-left: 40px;
+
+  & li {
+    padding-left: 8px;
+    margin-bottom: 20px;
+    color: #ccc;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.bodycopy h1 {
+  color: #eee;
+  font-weight: 900;
+  font-size: 40px;
+  margin: 4rem 0;
+}
+
+.bodycopy h2,
+.bodycopy h3,
+.bodycopy h4 {
+  color: #eee;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  speak: none;
+}
+
+.bodycopy h5 {
+  color: #eee;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  speak: none;
+}
+
+.bodycopy blockquote {
+  margin: 0;
+  padding-bottom: 10px;
+}
+
+.subheading {
+  color: #eee;
+  text-transform: uppercase;
+  font-size: 40px;
+  text-align: left;
+}
+
+@media screen and (max-width: 460px) {
+  .subheading {
+    font-size: 32px;
+  }
+
+  .textToSpeakButtonColumn,
+  .readingDurationColumn {
+    flex: 1 1 100% !important;
+    margin: 0 auto !important;
+
+    & button {
+      margin: 0 auto;
+      margin-bottom: 10px;
+    }
+
+    & p {
+      margin: 0 auto;
+    }
+  }
+}
+
+.blockquote {
+  margin: 0;
+}
+
+.bodycopyDetails {
+  margin-top: 40px;
+  padding: 16px 32px;
+  background: #181715;
+  border-radius: 48px;
+}
+
+.textToSpeakButtonColumn {
+  flex: 0 1 auto;
+}
+
+.readingDurationColumn {
+  place-content: center;
+  place-items: center;
+  align-items: center;
+  align-content: center;
+  display: flex;
+
+  & p {
+    font-size: 10px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    margin-left: auto;
+    color: #ccc !important;
+    text-align: right;
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}

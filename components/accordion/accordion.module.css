@@ -1,0 +1,136 @@
+/* Accordion Container */
+.accordion {
+  padding: 20px 0;
+  margin: 0;
+}
+
+.biggerAcc,
+:global(.light-content) .biggerAcc,
+:global(.dark-section) .biggerAcc,
+:global(.light-content .light-section) .biggerAcc {
+  border-top: none;
+  border-bottom: none;
+  padding: 0px 0;
+}
+
+.accordion.biggerAcc dt {
+  font-size: calc(1rem + 1vw);
+  line-height: calc(1rem + 1.5vw);
+  padding-top: 24px;
+}
+
+/* Title Styling */
+.accordionTitle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  color: transparent;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #000 50%, #999 50%) var(--_p, 0%) / 200% no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition: background-position 0.4s ease, color 0.4s ease;
+
+  & em {
+    font-family: 'Mona-Sans', sans-serif;
+    font-weight: 400;
+  }
+}
+
+:global(.uppercase-titles) .accordionTitle {
+  text-transform: uppercase;
+}
+
+/* Hover Effect */
+.accordion:hover .accordionTitle:not(:hover):not(.active) {
+  --_p: 100%;
+  opacity: 0.8;
+}
+
+/* Active or Hovered Title Styling */
+.accordionTitle.active,
+.accordionTitle:hover {
+  --_p: 0%;
+  color: transparent;
+}
+
+/* Content Styling */
+.accordionContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  font-size: 18px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.show {
+  max-height: 500px;
+  opacity: 1;
+}
+
+.iconWrap {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttonIcon {
+  height: 60px;
+  width: 60px;
+  background: rgba(0, 0, 0, 0.1) !important;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+  position: absolute;
+  right: 0;
+
+  &::after {
+    content: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.15514 12.7061C1.63269 12.1837 1.63269 11.3429 2.15514 10.8204C2.41637 10.5592 2.75514 10.4286 3.098 10.4286C3.44086 10.4286 3.77963 10.5592 4.04086 10.8204L8.66943 15.449V1.33469C8.66943 0.6 9.26535 0 10.0041 0C10.7388 0 11.3388 0.595918 11.3388 1.33469V15.449L15.9592 10.8204C16.4817 10.298 17.3225 10.298 17.8449 10.8204C18.3674 11.3429 18.3674 12.1837 17.8449 12.7061L10.9429 19.6082C10.6939 19.8571 10.3551 20 10 20C9.64494 20 9.30616 19.8612 9.05718 19.6082L2.15514 12.7061Z' fill='%23000000' /%3E%3C/svg%3E");
+    transform: rotate(-90deg);
+    place-self: center;
+    transition: transform 0.2s ease 0s;
+  }
+}
+
+.accordionTitle:hover .buttonIcon {
+  background: rgba(0, 0, 0, 1) !important;
+
+  &::after {
+    content: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.15514 12.7061C1.63269 12.1837 1.63269 11.3429 2.15514 10.8204C2.41637 10.5592 2.75514 10.4286 3.098 10.4286C3.44086 10.4286 3.77963 10.5592 4.04086 10.8204L8.66943 15.449V1.33469C8.66943 0.6 9.26535 0 10.0041 0C10.7388 0 11.3388 0.595918 11.3388 1.33469V15.449L15.9592 10.8204C16.4817 10.298 17.3225 10.298 17.8449 10.8204C18.3674 11.3429 18.3674 12.1837 17.8449 12.7061L10.9429 19.6082C10.6939 19.8571 10.3551 20 10 20C9.64494 20 9.30616 19.8612 9.05718 19.6082L2.15514 12.7061Z' fill='%23ffffff' /%3E%3C/svg%3E");
+  }
+}
+
+.accordionTitle.active .buttonIcon {
+  background: rgba(0, 0, 0, 1) !important;
+
+  &::after {
+    content: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.15514 12.7061C1.63269 12.1837 1.63269 11.3429 2.15514 10.8204C2.41637 10.5592 2.75514 10.4286 3.098 10.4286C3.44086 10.4286 3.77963 10.5592 4.04086 10.8204L8.66943 15.449V1.33469C8.66943 0.6 9.26535 0 10.0041 0C10.7388 0 11.3388 0.595918 11.3388 1.33469V15.449L15.9592 10.8204C16.4817 10.298 17.3225 10.298 17.8449 10.8204C18.3674 11.3429 18.3674 12.1837 17.8449 12.7061L10.9429 19.6082C10.6939 19.8571 10.3551 20 10 20C9.64494 20 9.30616 19.8612 9.05718 19.6082L2.15514 12.7061Z' fill='%23ffffff' /%3E%3C/svg%3E");
+    transform: rotate(0deg);
+    transition: transform 0.2s ease 0s;
+  }
+}
+
+.active .buttonIcon i {
+  transform: rotate(90deg);
+}
+
+:global(.light-content) .buttonIcon,
+:global(.dark-section) .buttonIcon {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+:global(.light-content) .accordionTitle:hover .buttonIcon,
+:global(.dark-section) .accordionTitle.active .buttonIcon {
+  background: rgba(255, 255, 255, 1);
+  color: #000;
+}

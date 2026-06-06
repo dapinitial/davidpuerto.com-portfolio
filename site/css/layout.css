@@ -1,0 +1,71 @@
+@layer layout {
+  header,
+  main,
+  section,
+  article,
+  aside,
+  nav,
+  form,
+  div,
+  footer {
+    /* Section spacing scales up with the viewport */
+    --section-spacing-multiplier: 1;
+    --section-spacing: calc(var(--spacing, 1.5rem) * var(--section-spacing-multiplier));
+  }
+
+  @media (min-width: 40em) {
+    header, main, section, article, aside, nav, form, div, footer {
+      --section-spacing-multiplier: 2;
+    }
+  }
+
+  @media (min-width: 60em) {
+    header, main, section, article, aside, nav, form, div, footer {
+      --section-spacing-multiplier: 3;
+    }
+  }
+
+  @media (min-width: 80em) {
+    header, main, section, article, aside, nav, form, div, footer {
+      --section-spacing-multiplier: 4;
+    }
+  }
+
+  @media (min-width: 100em) {
+    header, main, section, article, aside, nav, form, div, footer {
+      --section-spacing-multiplier: 5;
+    }
+  }
+
+  header,
+  section,
+  footer {
+    /* Limit width while maintaining padding and centering */
+    padding-inline: max(var(--section-spacing), calc(50% - var(--max-content-width, 100rem) / 2));
+  }
+
+  section {
+    padding-block: var(--section-spacing);
+  }
+
+  /* Simple layout primitives (replaces the old Row/Column/Container React components) */
+  .container {
+    margin-inline: auto;
+    max-width: var(--max-content-width, 100rem);
+    padding-inline: var(--section-spacing);
+    width: 100%;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing, 1.5rem);
+  }
+
+  .column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+}

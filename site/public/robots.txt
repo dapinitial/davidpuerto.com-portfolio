@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /login
+Disallow: /private/
+Disallow: /case-studies
+Disallow: /case-studies/
+Allow: /public/
+
+Sitemap: https://www.davidpuerto.com/sitemap.xml

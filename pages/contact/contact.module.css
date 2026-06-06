@@ -1,0 +1,277 @@
+.section:first-of-type {
+  margin: 0 auto;
+  padding: 20px 0;
+  z-index: 1;
+}
+
+.section>[class*="neonText"] {
+  min-height: 30vh;
+  height: calc(100vh - 100px);
+  margin-top: -100px;
+}
+
+.homepageSection {
+  display: grid;
+  place-content: center;
+  background: #111;
+  width: 100%;
+  position: relative;
+  padding: 40px 32px 80px 32px;
+  z-index: 2;
+
+  &::before {
+    transform: skewY(-4deg);
+    transform-origin: 100% 0;
+    position: absolute;
+    background: inherit;
+    /* Make this inherit if we want the same color as the parent div. For our purposes here, we will overwrite it with a different color to be able to easily see where the pseudo element is. */
+    background: #111;
+    content: '';
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: -32px;
+    height: 80px;
+    /* height and top will usually be the same */
+    z-index: -1;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+.contentSection {
+  display: grid;
+  background: #111;
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  padding: 100px 32px 32px 32px;
+  z-index: 2;
+
+  & h4 {
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  &:before {
+    transform: skewY(-4deg);
+    transform-origin: 100% 0;
+    position: absolute;
+    background: inherit;
+    /* Make this inherit if we want the same color as the parent div. For our purposes here, we will overwrite it with a different color to be able to easily see where the pseudo element is.*/
+    background: #111;
+    content: '';
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: -32px;
+    height: 80px;
+    /* height and top will usually be the same*/
+    z-index: -1;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+.blankSpace {
+  height: 100px;
+}
+
+.contactform {
+  width: min(80vw, 400px);
+  margin: 40px auto 100px;
+  position: relative;
+  text-align: left;
+  text-transform: lowercase;
+  z-index: 2;
+
+  & fieldset {
+    border: 1px solid #222;
+    padding: 16px;
+  }
+
+  & legend {
+    font-size: 14px;
+    text-transform: uppercase;
+    color: #eee;
+    font-weight: 400;
+    margin-bottom: 40px;
+  }
+
+  &.dimmed {
+    & .formlabel {
+      color: rgba(255, 255, 255, 0.75);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    & input,
+    & input[type='text'],
+    & input[type='email'],
+    & input[type='number'],
+    & textarea {
+      pointer-events: none !important;
+      background-color: transparent !important;
+      color: #fff !important;
+
+      &:disabled {
+        cursor: wait;
+        background: rgba(255, 255, 255, 0.2);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+
+    & input[type='number'] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    & .buttonbar {
+      text-align: right !important;
+      justify-content: flex-end;
+      display: flex;
+
+      & [type='submit'] {
+        outline: 0;
+        border: none;
+        border: 1px solid white;
+        text-align: right;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+
+      & button:disabled {
+        cursor: wait;
+        background: rgba(255, 255, 255, 0.2);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+  }
+
+  & .inputBox {
+    position: relative;
+
+    & label {
+      color: #949494;
+      font-weight: 100;
+      font-weight: normal;
+      font-size: clamp(1.2rem, 1.2vw, 1.1875rem);
+      font-family: 'Poppins', sans-serif;
+      position: absolute;
+      padding: 10px 0;
+      top: 0;
+      left: 10px;
+      pointer-events: none;
+      transition: 0.5s;
+    }
+
+    & input:focus~label,
+    & input:valid~label,
+    & textarea:focus~label,
+    & textarea:valid~label {
+      color: white;
+      font-size: 16px;
+      top: -34px;
+      transition: 0.5s;
+    }
+
+    & textarea {
+      &:hover {
+        border: none;
+        border-bottom: 1px solid white;
+      }
+    }
+  }
+
+  & input[type='text'],
+  & input[type='email'],
+  & textarea {
+    cursor: pointer;
+    background: transparent;
+    border-radius: 3px;
+    border-spacing: none;
+    outline: none;
+    color: white;
+    font-weight: 100;
+    font-weight: normal;
+    font-size: clamp(1.2rem, 1.2vw, 1.1875rem);
+    font-family: 'Poppins', sans-serif;
+    padding: 10px 20px;
+    text-transform: lowercase;
+    transition: 0.3s;
+
+    &:hover,
+    &:focus {
+      border: 1px solid white;
+      transition: 0.3s;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  & [type='submit'] {
+    border: 1px solid #151515;
+    background: #222;
+    text-align: right;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    padding: 10px 20px;
+    transition: 0.3s;
+    color: #ccc;
+    display: flex;
+    margin-left: auto;
+    place-content: center;
+    place-items: center;
+
+    & svg {
+      margin-right: 10px;
+    }
+
+    &:hover,
+    & :focus {
+      border: 1px solid white;
+      transition: 0.3s;
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  & input[type='text'],
+  & input[type='email'],
+  & input[type='number'],
+  & textarea {
+    border: none;
+    border-bottom: 1px solid #2f2f2f;
+    background: #151515;
+    width: calc(100%);
+    padding: 12px;
+    margin-bottom: 40px;
+    color: #fff;
+    font-size: 16px;
+
+    /* &::placeholder {
+      text-transform: lowercase;
+    }*/
+  }
+
+  & textarea {
+    height: 140px;
+  }
+}
+
+.errormessage {
+  color: #ffbbbb;
+  font-weight: 100;
+  margin-top: 16px;
+  text-align: center;
+  text-transform: lowercase;
+  background: #2d2627;
+  border: 1px solid slateblue;
+  padding: 7px;
+  border-radius: 4px;
+}

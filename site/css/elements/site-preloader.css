@@ -1,0 +1,98 @@
+/* <site-preloader> — main page loader. Flattened from preloader.module.css. */
+
+site-preloader .preloader-wrap {
+  background: black;
+  display: grid;
+  place-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  cursor: not-allowed;
+  animation: preloader-fade-in 0.3s ease forwards;
+}
+
+site-preloader .outer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+site-preloader .percentage-wrapper {
+  background-color: black;
+  display: grid;
+  place-content: center;
+  position: relative;
+  width: 9vw;
+}
+
+site-preloader .percentage {
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 200;
+  font-size: calc(1rem + 2vw);
+  line-height: calc(1rem + 2.5vw);
+  margin: 1px 20px 0 auto;
+  color: #00a3bb;
+}
+
+site-preloader .percentage-intro {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 300;
+  line-height: 20px;
+  position: absolute;
+  right: 0;
+  bottom: 60px;
+  left: 0;
+  text-align: center;
+}
+
+site-preloader .percentage-intro h5 {
+  margin: 0 0 4px;
+}
+
+site-preloader .loadbar {
+  /* Original value — effectively invisible on black, and that's intentional:
+     the visible progress is the gradient sweeping through the letters. */
+  background: rgba(0, 0, 0, 0.1);
+  width: 0;
+  height: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+site-preloader .preloader-intro {
+  position: relative;
+  display: inline-flex;
+  color: #777;
+  overflow: hidden;
+  z-index: 0;
+}
+
+site-preloader .loading-text {
+  display: flex;
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 900;
+  font-size: calc(1rem + 2vw);
+  line-height: calc(1rem + 2.5vw);
+  position: relative;
+  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.25) 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@keyframes preloader-fade-in {
+  from { opacity: 0; }
+  to { opacity: 0.99; }
+}
+
+@media only screen and (max-width: 600px) {
+  site-preloader .percentage {
+    margin-right: 32px;
+  }
+}

@@ -1,0 +1,45 @@
+.caseStudyFooter {
+  opacity: 0;
+  margin: 0 auto;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 20px;
+  color: #fff;
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 900;
+  font-size: calc(1rem + 5.15vw);
+  line-height: calc(1rem + 5.5vw);
+}
+
+.pageTitle {
+  text-decoration: none;
+  color: inherit;
+}
+
+.nextHeroTitle span {
+  display: inline-block;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.nextHeroTitle span em {
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.nextHeroSubtitle span {
+  display: inline-block;
+  transition: transform 0.3s, opacity 0.3s;
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  letter-spacing: .2rem;
+  color: #999;
+}
+
+:global(.light-section) .footer {
+  color: #000;
+}
+
+:global(.dark-section) .footer {
+  color: #fff;
+}

@@ -1,0 +1,85 @@
+/* Hamburger Menu */
+.hamburger {
+  color: #fff;
+  position: fixed;
+  top: -16px;
+  right: 20px;
+  width: 24px;
+  cursor: pointer;
+  z-index: 100;
+  text-shadow: 0px 1px 2px black;
+}
+
+:global(.light-content) .hamburger::before {
+  color: #000;
+  text-shadow: none;
+}
+
+:global(.dark-content) .hamburger::before {
+  color: #fff;
+}
+
+:global(.light-content) .hamburger span {
+  background: #000;
+  box-shadow: none;
+}
+
+:global(.dark-content) .hamburger span {
+  background: #fff;
+}
+
+:global(.menu-open) .hamburger {
+  top: -12px;
+}
+
+.hamburger::before {
+  content: "Menu";
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 30px;
+  position: relative;
+  left: -60px;
+  top: 27px;
+  color: #000;
+  display: flex;
+}
+
+:global(.menu-open) .hamburger::before {
+  content: "Close";
+  top: 23px;
+  color: #fff;
+}
+
+.hamburger span {
+  display: flex;
+  height: 2px;
+  width: 100%;
+  margin: 4px 0;
+  background: #fff;
+  border-radius: 3px;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  box-shadow: 0px 1px 2px black;
+
+}
+
+.hamburger.open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* When menu is open */
+:global(.menu-open) .hamburger span {
+  background: #fff !important;
+}
+
+:global(.menu-open) .hamburger span:first-of-type {
+  top: -7.5px;
+  position: relative;
+}

@@ -1,0 +1,32 @@
+/* <infinity-loader> — flattened from preloaderInfinite.module.css */
+
+infinity-loader {
+  position: fixed;
+  inset: 0;
+  background-color: #0e0e0e;
+  display: grid;
+  place-content: center;
+  z-index: 99999;
+  pointer-events: none;
+  opacity: 1;
+}
+
+infinity-loader.exit {
+  animation: infinity-fade-out 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) 0.25s forwards;
+}
+
+infinity-loader.exit svg {
+  animation: infinity-bounce-out 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+@keyframes infinity-bounce-out {
+  0% { transform: scale(1); opacity: 1; }
+  30% { transform: scale(1.1); }
+  60% { transform: scale(0.9); }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+
+@keyframes infinity-fade-out {
+  from { opacity: 0.99; }
+  to { opacity: 0; }
+}

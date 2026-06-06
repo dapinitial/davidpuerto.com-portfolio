@@ -1,0 +1,81 @@
+.contentRow {
+  background-color: #0c0c0c;
+  overflow: hidden;
+}
+
+.darkSection {
+  background-color: #0c0c0c;
+}
+
+.clippedImageWrapper {
+  position: relative;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  max-width: 1000% !important;
+  width: 100vw !important;
+  overflow: hidden;
+}
+
+.clippedImagePin {
+  position: relative;
+  display: block;
+}
+
+.clippedImage {
+  position: relative;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  overflow: hidden;
+  clip-path: circle(22%);
+  margin: 0 auto;
+}
+
+.clippedImage img {
+  width: 100%;
+  height: 100% !important;
+  position: relative;
+  display: block;
+  z-index: 0;
+  object-position: center;
+  object-fit: cover;
+}
+
+.contentVideoWrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.bgvid {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.clippedImageGradient {
+  position: absolute;
+  height: 30%;
+  width: 100%;
+  bottom: 0;
+  opacity: 0;
+  background-color: #0c0c0c;
+  z-index: 10;
+  mask-image: linear-gradient(transparent, #0c0c0c 85%);
+}
+
+.clippedImageContent {
+  position: relative;
+  width: 100%;
+  height: auto;
+  padding-bottom: 40px;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+.textAlignCenter {
+  text-align: center;
+}

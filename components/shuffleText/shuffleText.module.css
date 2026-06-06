@@ -1,0 +1,51 @@
+.textContainer {
+  height: calc(100% - 10svh);
+  width: 100%;
+  display: grid;
+  place-content: center;
+  font-size: clamp(20px, 5vw, 50px);
+  font-weight: 300;
+  color: #c0c5c7;
+  letter-spacing: 2px;
+  text-align: center;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  position: relative;
+  z-index: 1;
+}
+
+.word {
+  color: white;
+  margin-right: 15px;
+  display: inline-block;
+  position: relative;
+  will-change: transform, opacity;
+}
+
+.word:last-child {
+  margin-right: 0;
+}
+
+.letter {
+  display: inline-block;
+  position: relative;
+  opacity: 0;
+  min-width: 15px;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.bold {
+  color: transparent;
+  font-weight: 700;
+  background-image: linear-gradient(to top, #888d95 0%, #ffffff 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  transition: color 150ms linear;
+}
+
+@media screen and (max-width: 640px) {
+  .textContainer {
+    margin: -25px auto;
+  }
+}

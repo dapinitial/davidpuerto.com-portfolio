@@ -1,0 +1,398 @@
+/* Homepage — zoom-scroll experience.
+   All motion is GSAP-driven (js/home.js). This file is layout + theme only:
+   no scroll-snap, no animation-timeline, no @supports forks. Works everywhere. */
+
+@layer page {
+  /* ---------- Per-section theme ---------- */
+  #microsoft {
+    --color-highlight: var(--color-primary);
+    --color-selector: var(--color-secondary);
+    --image: url('/images/microsoft.png');
+  }
+
+  #facebook {
+    --color-highlight: var(--color-yellow);
+    --color-selector: var(--color-green);
+    --image: url('/images/facebook.png');
+  }
+
+  #nordstrom {
+    --color-highlight: var(--color-purple);
+    --color-selector: var(--color-red-2);
+    --image: url('/images/nordstrom.png');
+  }
+
+  #sonosite {
+    --color-highlight: var(--color-secondary);
+    --color-selector: var(--color-primary);
+    --image: url('/images/iviz.png');
+  }
+
+  #zillow {
+    --color-highlight: var(--color-zillow);
+    --color-selector: var(--color-green-2);
+    --image: url('/images/zillow.png');
+  }
+
+  /* ---------- Sections: readable, normal-flow by default (no JS needed) ---------- */
+  html {
+    overscroll-behavior: none;
+    scrollbar-width: none; /* hide scrollbar (Firefox) */
+  }
+
+  body::-webkit-scrollbar,
+  body::-webkit-scrollbar-button {
+    display: none; /* hide scrollbar (Chrome/Safari) */
+  }
+
+  body {
+    background-color: var(--color-background, black);
+  }
+
+  /* .content stays transparent — the glow layers shine through from behind */
+
+  .section {
+    min-height: 100svh;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-block: var(--spacing);
+    padding-inline: inherit;
+    position: relative;
+    height: 100%;
+  }
+
+  .content strong,
+  .content code {
+    color: var(--color-highlight);
+  }
+
+  .content ul {
+    --font-size-min: 14;
+    --font-size-max: 16;
+
+    font-size: var(--font-size);
+    font-weight: 400;
+    list-style-position: inside;
+    margin: 0;
+    padding: 0;
+  }
+
+  .content li {
+    margin-bottom: calc(var(--spacing) / 2);
+  }
+
+  .content li::marker {
+    content: ' ';
+    color: var(--color-highlight);
+  }
+
+  /* Links inherit the section's accent — same palette as the nav dots */
+  .content a {
+    color: var(--color-highlight);
+  }
+
+  .content a:hover,
+  .content a:focus {
+    color: var(--color-text);
+  }
+
+  .content h2 {
+    line-height: 1;
+    margin-block: var(--spacing);
+    text-shadow: 1px 2px 0.1em hsla(0, 0%, 0%, 0.5);
+    width: 100%;
+  }
+
+  .text {
+    --intrinsic-width: 587;
+    --intrinsic-height: 930;
+    --height: 200px;
+  }
+
+  .text img {
+    display: block;
+    opacity: 0.84;
+    position: absolute;
+    inset: 0;
+    object-fit: scale-down;
+    object-position: top center;
+    z-index: -1;
+    margin-top: 10vw;
+  }
+
+  .text .glass-button {
+    margin-top: calc(var(--spacing) / 2);
+  }
+
+  /* ---------- Desktop: side-by-side with shape-outside float image ---------- */
+  @media (min-width: 64rem) {
+    .content {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    .content h2 {
+      flex: 1;
+      margin-block-end: 0;
+    }
+
+    .text {
+      --height: min(100svh, 33vw * var(--intrinsic-height) / var(--intrinsic-width));
+      --offset: calc(var(--height) / 3);
+
+      flex: 1;
+      font-weight: 200;
+      padding-block-start: var(--spacing);
+      position: relative;
+      z-index: -1;
+    }
+
+    .text img {
+      float: inline-start;
+      height: var(--height);
+      margin-left: calc((1 - var(--intrinsic-width) / var(--intrinsic-height)) * -100%);
+      margin-top: 0;
+      opacity: 0.5;
+      position: relative;
+      inset: auto;
+      shape-outside: var(--image);
+      shape-margin: var(--spacing);
+    }
+
+    .text img + * {
+      margin-top: calc(var(--spacing) * 3);
+    }
+  }
+
+  @media (min-width: 64rem) and (min-height: 45rem) {
+    .text img + * {
+      margin-top: calc(var(--spacing) * 4);
+    }
+  }
+
+  @media (min-width: 90rem) and (min-height: 35rem) {
+    .text img + * {
+      margin-top: var(--offset);
+    }
+  }
+
+  /* ---------- Small screens: keep text clear of the image ---------- */
+  @media (max-width: 600px) {
+    .section .content {
+      padding-top: 6rem;
+    }
+
+    .section .content .text img {
+      margin-top: 8rem;
+    }
+
+    .text {
+      line-height: 1.5rem;
+    }
+  }
+
+  /* ---------- Dot indicator nav ---------- */
+  .indicator-nav {
+    --indicator-number: 5;
+    --indicator-top: 50svh;
+    --indicator-right: var(--spacing);
+
+    --indicator-size: 1em;
+    --indicator-padding: calc((var(--min-tap-size) - var(--indicator-size)) / 2);
+    --indicator-clipped-margins: var(--indicator-padding) * 2;
+    --indicator-total-size: calc(var(--indicator-size) + var(--indicator-padding) * 2);
+
+    --indicator-gap: var(--min-tap-space);
+    --indicator-total-gap: calc(var(--indicator-gap) * (var(--indicator-number) - 1));
+
+    --indicator-total-height: calc(var(--indicator-total-size) * var(--indicator-number) + var(--indicator-total-gap) - var(--indicator-clipped-margins));
+
+    position: fixed;
+    inset-block-start: var(--indicator-top);
+    inset-inline-end: var(--indicator-right);
+    margin-block-start: calc(var(--indicator-total-height) / -2);
+    z-index: 100;
+
+    /* Hidden until GSAP drives it (no-JS page is plain flow — dots would lie) */
+    display: none;
+  }
+
+  @media (pointer: fine) {
+    .indicator-nav {
+      --indicator-padding: 0.25em;
+    }
+  }
+
+  html.is-enhanced .indicator-nav {
+    display: block;
+  }
+
+  .indicator {
+    display: flex;
+    flex-direction: column;
+    gap: var(--indicator-gap);
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+
+    /* Section 1's accent from the first paint (GSAP scrubs it from here) */
+    --color-indicator: var(--color-primary);
+  }
+
+  /* The traveling dot — GSAP drives --indicator-y and --color-indicator */
+  .indicator::before {
+    content: '';
+    border-radius: 50%;
+    color: var(--color-indicator, var(--color-text));
+    background-color: currentColor;
+    box-shadow: inset 0 0 0 4px var(--color-background);
+    position: absolute;
+    inset-inline: 0;
+    margin-inline: auto;
+    padding: 3px;
+    width: var(--indicator-size);
+    height: var(--indicator-size);
+    transform: translateY(var(--indicator-y, 0px));
+    z-index: -1;
+  }
+
+  .indicator li:first-of-type {
+    margin-block-start: calc(var(--indicator-padding) * -1);
+  }
+
+  .indicator li:last-of-type {
+    margin-block-end: calc(var(--indicator-padding) * -1);
+  }
+
+  .indicator li,
+  .indicator a {
+    display: block;
+  }
+
+  .indicator li {
+    position: relative; /* anchor for the zillow burst particles */
+  }
+
+  .indicator a {
+    --color-link: #ccc;
+
+    padding: var(--indicator-padding);
+  }
+
+  .indicator a::before {
+    content: '';
+    border: 1px solid;
+    border-radius: 50%;
+    display: block;
+    width: var(--indicator-size);
+    height: var(--indicator-size);
+  }
+
+  /* KEXP-style burst particles (zillow dot finale) — WAAPI-driven, self-removing */
+  .burst-particle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* `translate` composes with animated transforms, so centering survives flight */
+    translate: -50% -50%;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  /* ---------- Background glow (the "pop") ---------- */
+  .glow {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow i {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    /* Subtle bottom-anchored ambient wash — modern "aurora" rather than spotlight.
+       Endpoints share the layer's hue at alpha 0 — fading to `transparent`
+       interpolates through transparent BLACK and reads as a grey haze. */
+    background: radial-gradient(90% 60% at 50% 100%, var(--glow-from), var(--glow-to) 72%);
+  }
+
+  .glow i:nth-child(1) { --glow-from: rgba(251, 131, 109, 0.22); --glow-to: rgba(251, 131, 109, 0); }
+  .glow i:nth-child(2) { --glow-from: rgba(237, 180, 23, 0.22); --glow-to: rgba(237, 180, 23, 0); }
+  .glow i:nth-child(3) { --glow-from: rgba(171, 101, 192, 0.22); --glow-to: rgba(171, 101, 192, 0); }
+  .glow i:nth-child(4) { --glow-from: rgba(0, 163, 187, 0.22); --glow-to: rgba(0, 163, 187, 0); }
+  .glow i:nth-child(5) { --glow-from: rgba(18, 119, 225, 0.22); --glow-to: rgba(18, 119, 225, 0); }
+
+  /* Glow is pure decoration — drop it entirely during live resizes */
+  html.is-resizing .glow {
+    display: none;
+  }
+
+  /* Mandatory snap re-aligns scroll EVERY resize frame, dragging all the
+     scrubbed GSAP timelines with it. Lift it during the drag; it re-engages
+     and re-aligns the moment the lid comes off. */
+  html.is-resizing.is-enhanced {
+    scroll-snap-type: none;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    --font-size-min: 14;
+    --font-size-max: 16;
+
+    font-size: var(--font-size);
+    text-align: center;
+    position: relative;
+    z-index: 100;
+  }
+
+  /* ---------- Enhanced mode (added by js/home.js before GSAP init) ----------
+     Sections become transparent 100svh scroll-track; content is a fixed,
+     GSAP-driven stack. autoAlpha reveals only the active section. */
+  html.is-enhanced {
+    /* The pen's native scroll mechanics — Baseline everywhere, including iOS.
+       GSAP handles ONLY the visuals; the browser owns snapping. */
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+
+  html.is-enhanced .section {
+    height: 100svh;
+    min-height: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  /* No will-change here on purpose: a persistent layer hint makes the browser
+     cache the soft mid-animation raster — edges stay smudgy at rest. Without
+     it, everything re-rasterizes crisp the moment motion stops. */
+  html.is-enhanced .content {
+    overflow: hidden;
+    position: fixed;
+    inset: 0;
+    visibility: hidden; /* GSAP autoAlpha takes over */
+    z-index: 1;
+  }
+
+  html.is-enhanced .content h2,
+  html.is-enhanced .text {
+    /* Make room for the scroll indicators */
+    padding-inline-end: calc(var(--min-tap-size) + var(--spacing));
+  }
+
+  @media (min-width: 64rem) {
+    html.is-enhanced .content h2,
+    html.is-enhanced .text {
+      padding-inline-end: 0;
+    }
+  }
+}

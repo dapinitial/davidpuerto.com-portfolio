@@ -1,0 +1,35 @@
+@layer components {
+  /* Buttons (the pen's .text button, generalized) */
+  .button,
+  button {
+    cursor: pointer;
+    border: 1px solid #555;
+    background: 0;
+    color: #fff;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    transition: 0.187s ease-in-out;
+  }
+
+  .button:hover,
+  .button:focus,
+  button:hover,
+  button:focus {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+
+  /* Emoji hue-shift trick from the pen footer */
+  .emoji {
+    background-color: var(--color-background);
+    position: relative;
+  }
+
+  .emoji::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-primary);
+    mix-blend-mode: hue;
+  }
+}

@@ -1,0 +1,139 @@
+/* .glass-button — liquid-glass pill CTA (dark-theme adaptation of the
+   classic glass button). Single element, no wrappers:
+
+     <a class="glass-button" href="..."><span>Read Case Study</span></a>
+
+   Pure CSS, GPU-friendly (transform/opacity/background-position transitions).
+   Degrades gracefully without backdrop-filter. */
+
+.glass-button {
+  --border-width: clamp(1px, 0.0625em, 4px);
+  --anim-time: 400ms;
+  --anim-ease: cubic-bezier(0.25, 1, 0.5, 1);
+
+  all: unset;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  border-radius: 999vw;
+  background: linear-gradient(
+    -75deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.14),
+    rgba(255, 255, 255, 0.04)
+  );
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.25),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.25),
+    0 0.25em 0.4em -0.125em rgba(0, 0, 0, 0.5),
+    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+  -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));
+  transition: transform var(--anim-time) var(--anim-ease),
+    box-shadow var(--anim-time) var(--anim-ease);
+}
+
+.glass-button:hover {
+  transform: scale(0.975);
+  box-shadow:
+    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.25),
+    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.35),
+    0 0.15em 0.3em -0.1em rgba(0, 0, 0, 0.6),
+    0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.25);
+}
+
+.glass-button:active {
+  transform: scale(0.95);
+}
+
+/* Label */
+.glass-button span {
+  position: relative;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 0.12em 0.12em rgba(0, 0, 0, 0.35);
+  padding-inline: 1.5em;
+  padding-block: 0.75em;
+  transition: text-shadow var(--anim-time) var(--anim-ease);
+}
+
+.glass-button:hover span {
+  text-shadow: 0 0.025em 0.025em rgba(0, 0, 0, 0.2);
+}
+
+/* Shine sweep across the face — band parks fully off-canvas at rest
+   (stops pushed past the visible window) so no glint smears the edge. */
+.glass-button span::after {
+  content: '';
+  display: block;
+  position: absolute;
+  z-index: 1;
+  width: calc(100% - var(--border-width));
+  height: calc(100% - var(--border-width));
+  top: calc(0% + var(--border-width) / 2);
+  left: calc(0% + var(--border-width) / 2);
+  box-sizing: border-box;
+  border-radius: 999vw;
+  overflow: clip;
+  background: linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.25) 55% 60%,
+    rgba(255, 255, 255, 0) 68%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
+  transition: background-position calc(var(--anim-time) * 1.25) var(--anim-ease);
+}
+
+.glass-button:hover span::after {
+  background-position: 25% 50%;
+}
+
+.glass-button:active span::after {
+  background-position: 50% 15%;
+}
+
+/* Gradient outline ring */
+.glass-button::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: 999vw;
+  width: calc(100% + var(--border-width));
+  height: calc(100% + var(--border-width));
+  top: calc(0% - var(--border-width) / 2);
+  left: calc(0% - var(--border-width) / 2);
+  padding: var(--border-width);
+  box-sizing: border-box;
+  background: conic-gradient(
+      from -75deg at 50% 50%,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0) 5% 40%,
+      rgba(255, 255, 255, 0.5) 50%,
+      rgba(255, 255, 255, 0) 60% 95%,
+      rgba(255, 255, 255, 0.5)
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3));
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.35);
+}
+
+.glass-button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 3px;
+}

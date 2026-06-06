@@ -1,0 +1,12 @@
+#logo #logo-path {
+  position: relative;
+}
+
+#logo #logo-path:after {
+  content: ' ';
+  display: block;
+  background: white;
+  position: absolute;
+  bottom: 0;
+  right: 12px;
+}

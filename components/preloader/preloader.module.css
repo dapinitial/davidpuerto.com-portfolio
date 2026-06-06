@@ -1,0 +1,185 @@
+.preloaderWrap {
+  background: black;
+  display: grid;
+  place-content: center;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  cursor: not-allowed;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  animation: fadeIn 0.3s ease forwards;
+  visibility: visible;
+  opacity: 1;
+}
+
+.outer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.percentageWrapper {
+  background-color: black;
+  display: grid;
+  place-content: center;
+  position: relative;
+  width: 9vw;
+}
+
+.percentage {
+  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.2) 50%);
+  background-clip: text;
+  background-position: 100% 0;
+  background-size: 200% 100%;
+  color: transparent;
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 200;
+  font-size: calc(1rem + 2vw);
+  line-height: calc(1rem + 2.5vw);
+  margin: 1px auto 0 auto;
+  opacity: 0.99;
+  margin-right: 20px;
+  color: #00a3bb;
+}
+
+.percentageIntro {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+  line-height: 20px;
+  position: absolute;
+  right: 0;
+  bottom: 60px;
+  left: 0;
+  font-weight: 300;
+}
+
+.loadbar {
+  background: rgba(0, 0, 0, 0.1);
+  width: 0;
+  height: 5px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.preloaderIntro {
+  position: relative;
+  display: inline-flex;
+  color: #777;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.preloaderIntro span {
+  display: flex;
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 900;
+  font-size: calc(1rem + 2vw);
+  line-height: calc(1rem + 2.5vw);
+  position: relative;
+  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.25) 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-transform: uppercase;
+}
+
+.svgWrapper {
+  display: grid;
+  place-content: center;
+  will-change: transform, opacity;
+  margin-left: 132px;
+}
+
+.exitPreloader {
+  opacity: 0;
+  transition: linear .2s opacity;
+  animation: bounceScaleOut 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+}
+
+.hidden {
+  animation: fadeOut 0.5s ease forwards;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+@keyframes bounceScaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  30% {
+    transform: scale(1.1);
+    opacity: .99;
+  }
+
+  60% {
+    transform: scale(0.9);
+    opacity: .99;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: .99;
+  }
+}
+
+@keyframes bounceScaleOut {
+  0% {
+    transform: scale(1);
+    opacity: .99;
+  }
+
+  30% {
+    transform: scale(1.1);
+    opacity: .99;
+  }
+
+  60% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: .99;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: .99;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .percentage {
+    margin-right: 32px;
+  }
+}

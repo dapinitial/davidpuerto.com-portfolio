@@ -1,0 +1,104 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #26272e;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  animation: fadeInBackground 0.6s forwards;
+  cursor: auto;
+}
+
+.modalContent {
+  padding: 20px;
+  border-radius: 10px;
+  min-width: fit-content;
+  min-height: fit-content;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  transform: scale(0.8);
+  opacity: 0;
+  animation: bouncePopIn 0.6s forwards ease-in-out;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 100;
+  background: rgb(0, 0, 0);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.closeButton:hover {
+  animation: bounceHover 0.6s ease;
+  background: #222;
+}
+
+.fullImage {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes fadeInBackground {
+  0% {
+    background: rgba(38, 39, 46, 1);
+    opacity: 0;
+  }
+
+  100% {
+    background: rgba(38, 39, 46, .84);
+    opacity: 1;
+  }
+}
+
+@keyframes bouncePopIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceHover {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+}

@@ -1,0 +1,125 @@
+.audioPlayer {
+  color: #999;
+  font-family: sans-serif !important;
+  font-size: 12px;
+  height: 36px;
+  width: calc(100% - 20px);
+  pointer-events: all;
+  position: fixed;
+  bottom: 0;
+  text-align: center;
+  z-index: 1;
+}
+
+.notBreak {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hideAudioPlayer {
+  visibility: hidden;
+}
+
+.audioLabelOverflow {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  color: grey;
+}
+
+:global(.lightmode) .audioLabelOverflow {
+  color: white;
+}
+
+.textScrollContainer {
+  display: inline-block;
+  animation: scrollText 9s linear infinite;
+  transition: animation-play-state 0.5s;
+  will-change: transform;
+}
+
+.textScrollContainer:hover {
+  animation-play-state: paused;
+}
+
+@media screen and (min-width: 600px) {
+  .textScrollContainer {
+    animation: none;
+    transform: none;
+  }
+}
+
+.kexpLogo {
+  margin-left: -12px !important;
+  display: flex;
+  position: relative;
+  cursor: pointer;
+  transform: scale(0.4);
+}
+
+.audioPlayer.notBreak .kexpLogo:hover~g#KEXPLogo {
+  fill: #c6f961 !important;
+}
+
+.iconBars {
+  transform: scale(0.75);
+  position: absolute;
+  top: -60px;
+  width: var(--bar-size);
+  height: var(--bar-size);
+  visibility: hidden;
+}
+
+.animating {
+  visibility: visible;
+}
+
+.iconBars .bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  width: var(--bar-width);
+  background-color: var(--bar-color);
+  animation: up-down var(--bar-speed) infinite;
+}
+
+.iconBars .bar:nth-child(2) {
+  left: calc(var(--bar-width) + var(--bar-gutter-width));
+  animation-delay: calc(-1 * var(--bar-speed) / 3 * 2.1);
+}
+
+.iconBars .bar:nth-child(3) {
+  left: calc(var(--bar-width) * 2 + var(--bar-gutter-width) * 2.25);
+  animation-delay: calc(-1 * var(--bar-speed) / 3);
+}
+
+.iconBars .bar:nth-child(4) {
+  left: calc(var(--bar-width) * 3 + var(--bar-gutter-width) * 3.75);
+  animation-delay: calc(-1 * var(--bar-speed) / 2);
+}
+
+@keyframes scrollText {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes up-down {
+  from {
+    top: var(--bar-size);
+  }
+
+  50% {
+    top: 0;
+  }
+
+  to {
+    top: var(--bar-size);
+  }
+}

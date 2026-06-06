@@ -1,0 +1,128 @@
+/* Fluid responsive typography with vertical rhythm.
+   Every element gets a --font-size / --line-height that scales between
+   a min (at 320px viewport) and max (at 1440px viewport) via clamp(). */
+@layer rhythm {
+  * {
+    --font-size-min: 16;
+    --font-size-max: 20;
+    --font-size-min-viewport: 320;
+    --font-size-max-viewport: 1440;
+
+    /* px → rem conversion factor (1px = 0.0625rem) */
+    --font-size-units: calc(0.0625rem);
+
+    --_font-size-step: calc(
+      (var(--font-size-max) - var(--font-size-min)) /
+      (var(--font-size-max-viewport) - var(--font-size-min-viewport))
+    );
+    --_font-size-base-value: calc(
+      var(--font-size-min) - var(--font-size-min-viewport) * var(--_font-size-step)
+    );
+
+    --font-size: clamp(
+      min(var(--font-size-min), var(--font-size-max)) * var(--font-size-units),
+      var(--_font-size-base-value) * var(--font-size-units) + var(--_font-size-step) * 100vw,
+      max(var(--font-size-max), var(--font-size-min)) * var(--font-size-units)
+    );
+
+    /* line-height locked to current font-size via em */
+    --line-height-units: 1em;
+    --line-height-min: 1.2;
+    --line-height-max: 1.6;
+    --line-height-min-viewport: calc(320 / var(--font-size-min));
+    --line-height-max-viewport: calc(1440 / var(--font-size-max));
+
+    --_line-height-step: calc(
+      (var(--line-height-max) - var(--line-height-min)) /
+      (var(--line-height-max-viewport) - var(--line-height-min-viewport))
+    );
+    --_line-height-base-value: calc(
+      var(--line-height-min) - var(--line-height-min-viewport) * var(--_line-height-step)
+    );
+
+    --line-height: clamp(
+      min(var(--line-height-min), var(--line-height-max)) * var(--line-height-units),
+      var(--_line-height-base-value) * var(--line-height-units) + var(--_line-height-step) * 100vw,
+      max(var(--line-height-max), var(--line-height-min)) * var(--line-height-units)
+    );
+  }
+
+  body {
+    --font-size-min: 16;
+    --font-size-max: 20;
+    --line-height-min: 1.2;
+    --line-height-max: 1.6;
+
+    font-size: var(--font-size);
+    line-height: var(--line-height);
+
+    --font-size-default: var(--font-size);
+    --line-height-default: var(--line-height);
+
+    /* Rhythm constants — treat as CONST, never overwrite */
+    --RHYTHM_UNITS: var(--font-size);
+    --RHYTHM: clamp(
+      min(var(--line-height-min), var(--line-height-max)) * var(--RHYTHM_UNITS),
+      var(--_line-height-base-value) * var(--RHYTHM_UNITS) + var(--_line-height-step) * 100vw,
+      max(var(--line-height-max), var(--line-height-min)) * var(--RHYTHM_UNITS)
+    );
+
+    /* Safe to overwrite locally */
+    --spacing: var(--RHYTHM);
+
+    --base-font-size-min: var(--font-size-min);
+    --base-font-size-max: var(--font-size-max);
+    --base-line-height-min: var(--line-height-min);
+    --base-line-height-max: var(--line-height-max);
+
+    /* Heading scale: Major Second (1.125) at small → Minor Sixth (1.6) at large */
+    --pl: 1.125;
+    --pu: 1.6;
+
+    --s1-min: calc(var(--base-font-size-min) / var(--pl));
+    --s1-max: calc(var(--base-font-size-max) / var(--pu));
+
+    --h6-min: var(--base-font-size-min);
+    --h6-max: var(--base-font-size-max);
+
+    --h5-min: calc(var(--base-font-size-min) * var(--pl));
+    --h5-max: calc(var(--base-font-size-max) * var(--pu));
+
+    --h4-min: calc(var(--h5-min) * var(--pl));
+    --h4-max: calc(var(--h5-max) * var(--pu));
+
+    --h3-min: calc(var(--h4-min) * var(--pl));
+    --h3-max: calc(var(--h4-max) * var(--pu));
+
+    --h2-min: calc(var(--h3-min) * var(--pl));
+    --h2-max: calc(var(--h3-max) * var(--pu));
+
+    --h1-min: calc(var(--h2-min) * var(--pl));
+    --h1-max: calc(var(--h2-max) * var(--pu));
+  }
+
+  h1,
+  h2 {
+    --line-height-min: 1.25;
+    --line-height-max: 1;
+
+    font-size: var(--font-size);
+    font-weight: 200;
+    line-height: var(--line-height);
+  }
+
+  h1 {
+    --font-size-min: var(--h1-min);
+    --font-size-max: var(--h1-max);
+  }
+
+  h2 {
+    --font-size-min: var(--h2-min);
+    --font-size-max: var(--h2-max);
+  }
+
+  h3 {
+    --font-size-min: var(--h3-min);
+    --font-size-max: var(--h3-max);
+  }
+}

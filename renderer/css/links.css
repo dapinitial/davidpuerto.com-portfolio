@@ -1,0 +1,90 @@
+/* a,
+a div {
+  text-decoration: none;
+  background-clip: text;
+  background-image: var(--gradient-shimmer);
+  background-size: 300% 300%;
+  background-position: 0% 50%;
+  color: transparent;
+  -webkit-background-clip: text;
+  outline: none;
+  position: relative;
+  z-index: 1;
+  transition: background-position 500ms ease-in-out;
+  animation: shimmer var(--shimmer-animation-duration) 1 linear;
+}
+
+a::after {
+  content: '';
+  height: 1.5px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-image: var(--gradient-shimmer);
+  background-size: 300% 300%;
+  background-position: 0% 50%;
+  transition: width 0.4s ease-in-out;
+}
+
+a:hover::after,
+a:focus::after {
+  width: 0%;
+}
+
+a:hover,
+a:focus,
+a:hover div,
+a:focus div {
+  outline: none;
+  background-image: var(--gradient-hover);
+  background-position: 100% 50%;
+  transition: background-position 500ms ease-in-out;
+  animation: shimmer var(--shimmer-animation-duration) infinite linear;
+}
+
+a.active::after {
+  content: '';
+  height: 1.5px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-image: var(--gradient-active);
+  background-size: 300% 300%;
+  background-position: 0% 50%;
+}
+
+a:hover::after,
+a:focus::after {
+  width: 0%;
+}
+
+*/
+.skipLink {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  background-color: #000;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 10px 20px;
+  z-index: 9999;
+  text-decoration: none;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease-in-out,
+    transform 0.4s ease-in-out;
+}
+
+.skipLink:focus {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.skipLink:hover::after,
+.skipLink:focus::after {
+  width: 100%;
+}
