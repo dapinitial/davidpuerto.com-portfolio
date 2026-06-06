@@ -1,0 +1,76 @@
+/* <pill-list> — row of pills that light up one-by-one.
+   Items are light-DOM <li> children. Pair with js/elements/pill-list.js. */
+
+pill-list {
+  display: inline-flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  align-items: center;
+  width: 100%;
+}
+
+@media screen and (max-width: 485px) {
+  pill-list {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  pill-list li {
+    font-size: 10px !important;
+  }
+}
+
+pill-list li {
+  list-style: none;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  margin: 0 calc(14px * 0.25);
+  background: transparent;
+  display: inline-block;
+  border-radius: 6px;
+  color: #aaaaaa;
+  border: 1px solid #46484b;
+  padding: calc(14px * 0.8) calc(14px * 1.6);
+  appearance: none;
+  transition: all 0.2s ease-out;
+  transition-delay: 1400ms;
+  will-change: transform;
+}
+
+pill-list li::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  left: calc(14px * 0.7);
+  top: 0;
+  width: 1px;
+  background: #46484b;
+  transform: scaleY(0);
+  transition: transform 0.2s ease-in-out;
+  transition-delay: 1400ms;
+  will-change: transform;
+}
+
+pill-list li:hover {
+  border: 1px solid #46484b;
+}
+
+pill-list li.active {
+  background: linear-gradient(0deg, rgb(75 75 75) 11.4%, rgb(64 64 64) 70.2%);
+  border: 1px solid #46484b;
+}
+
+pill-list li.active + li.active {
+  border-radius: 0 6px 6px 0;
+  margin-left: calc(14px * -2);
+  padding-left: 24px;
+  border-left: none;
+}
+
+pill-list li.active + li.active::before {
+  transform: scaleY(1);
+}

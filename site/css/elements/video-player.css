@@ -1,0 +1,99 @@
+/* <video-player> — poster + pulsing play button over a native <video>.
+   Element adds .card.results-table to itself (styles in pages/case-study.css).
+   Pair with js/elements/video-player.js. */
+
+video-player {
+  display: block;
+}
+
+video-player .video-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  z-index: 1;
+}
+
+video-player video {
+  width: auto;
+  max-width: 75vw;
+  height: auto;
+}
+
+video-player .video-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  margin: auto;
+  box-sizing: content-box;
+  display: block;
+  width: 32px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  padding: 18px 20px 18px 28px;
+  cursor: pointer;
+  background: transparent;
+}
+
+video-player .video-play-button[hidden] {
+  display: none;
+}
+
+video-player .video-play-button::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  margin: auto;
+  display: block;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(45deg, rgba(129, 129, 129, 0.9) 15%, rgba(255, 255, 255, 0.95) 70%);
+  border-radius: 50%;
+  animation: video-player-pulse 1500ms ease-out infinite;
+}
+
+video-player .video-play-button::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  margin: auto;
+  display: block;
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(45deg, #535353 15%, rgb(255, 255, 255) 70%);
+  border-radius: 50%;
+  transition: all 200ms;
+  box-shadow: 0 2px 7px #000000;
+}
+
+video-player .video-play-button:hover::after {
+  background-color: #535353;
+}
+
+video-player .video-play-button span {
+  display: block;
+  position: relative;
+  z-index: 3;
+  width: 0;
+  height: 0;
+  border-left: 30px solid #222;
+  border-top: 18px solid transparent;
+  border-bottom: 18px solid transparent;
+  border-radius: 4px;
+}
+
+@keyframes video-player-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}

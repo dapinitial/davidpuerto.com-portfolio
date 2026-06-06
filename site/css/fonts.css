@@ -48,3 +48,11 @@
   font-display: swap;
   src: url('/fonts/mona-sans-ultralight-wide.woff') format('woff');
 }
+
+/* Poppins — case-study article face (latin, static weights) */
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 100; font-display: swap; src: url('/fonts/poppins-100.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/poppins-300.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/poppins-400.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/poppins-700.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/poppins-800.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 900; font-display: swap; src: url('/fonts/poppins-900.woff2') format('woff2'); }

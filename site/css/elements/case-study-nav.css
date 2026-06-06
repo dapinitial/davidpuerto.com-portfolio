@@ -1,0 +1,41 @@
+/* <case-study-nav> — flattened from navigateCaseStudies.module.css */
+
+case-study-nav {
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+  position: fixed;
+  top: 56px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 20;
+}
+
+case-study-nav.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+case-study-nav a {
+  margin: 0 10px;
+  padding: 8px 20px;
+  text-align: center;
+  white-space: nowrap;
+  color: #ccc;
+  font-weight: 400;
+  text-decoration: none;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  transition: 0.3s color linear;
+}
+
+case-study-nav a:hover {
+  color: #fff;
+}
