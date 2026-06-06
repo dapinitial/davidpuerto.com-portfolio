@@ -1,0 +1,61 @@
+/* <reveal-gallery> — flattened from revealGallery.module.css. */
+
+reveal-gallery {
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+reveal-gallery .reveal-img {
+  width: auto;
+  height: auto;
+  position: absolute;
+  display: block;
+  top: 0;
+  left: auto;
+  right: auto;
+  margin: auto;
+  z-index: 0;
+  opacity: 0.95;
+}
+
+reveal-gallery .reveal-img-fixed {
+  width: 50%;
+  max-width: 600px;
+  position: relative;
+  margin: 0 auto;
+  z-index: 10;
+}
+
+reveal-gallery .reveal-img:first-child {
+  left: 0;
+  transform: rotate(-4deg);
+}
+
+reveal-gallery .reveal-img:last-child {
+  right: 0;
+  transform: rotate(4deg);
+}
+
+reveal-gallery img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  position: relative;
+  display: block;
+  object-position: center;
+  object-fit: contain;
+  margin: auto;
+}
+
+.rounded-borders reveal-gallery img {
+  border-radius: 8px;
+}
+
+/* prefers-reduced-motion fallback: static fanned collage */
+reveal-gallery.static .reveal-img {
+  height: 100%;
+}

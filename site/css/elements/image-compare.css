@@ -1,0 +1,199 @@
+/* <image-compare> — flattened from imageComparison.module.css.
+   Labels are real elements (.ic-label-*) fed by before-label/after-label
+   attributes instead of the old hardcoded ::before/::after content. */
+
+image-compare {
+  display: block;
+  min-height: 942px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 99;
+  user-select: none;
+  -webkit-user-select: none;
+  border: 1px solid #444;
+  touch-action: none;
+  cursor: ew-resize;
+}
+
+image-compare img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+
+/* Corner labels */
+image-compare .ic-label {
+  display: block;
+  background: rgba(0, 0, 0, 0.84);
+  backdrop-filter: blur(2px);
+  font-family: 'Poppins', sans-serif;
+  position: absolute;
+  overflow: visible !important;
+  padding: 12px;
+  bottom: 0;
+  z-index: 1001;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+image-compare .ic-label-before {
+  left: 0;
+}
+
+image-compare .ic-label-after {
+  right: 0;
+}
+
+/* End-of-drag pulses (same mapping as the old animateBefore/animateAfter) */
+image-compare.animate-before .ic-label-after {
+  animation: image-compare-pulse 1.5s infinite ease-in-out;
+  opacity: 1;
+}
+
+image-compare.animate-before .ic-label-before {
+  opacity: 0;
+}
+
+image-compare.animate-after .ic-label-before {
+  animation: image-compare-pulse 1.5s infinite ease-in-out;
+  opacity: 1;
+}
+
+image-compare.animate-after .ic-label-after {
+  opacity: 0;
+}
+
+@keyframes image-compare-pulse {
+  0% {
+    background-color: rgba(0, 119, 255, 0.4);
+    color: black;
+  }
+
+  50% {
+    background-color: rgba(255, 255, 255, 0.4);
+    color: black;
+  }
+
+  100% {
+    background-color: rgba(106, 0, 255, 0.4);
+    color: black;
+  }
+}
+
+image-compare .ic-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+image-compare .ic-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  overflow: hidden;
+}
+
+image-compare .ic-slider {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  z-index: 10;
+  cursor: ew-resize;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(-50%);
+}
+
+image-compare .ic-line {
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  background-color: rgba(106, 0, 255, 0.7);
+  z-index: 9;
+}
+
+image-compare .ic-thumb {
+  position: absolute;
+  top: 50%;
+  left: -12px;
+  width: 24px;
+  height: 24px;
+  background-color: #ffffff;
+  border: 2px solid rgba(106, 0, 255, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(106, 0, 255, 0.5);
+  z-index: 20;
+  cursor: ew-resize;
+  transition: transform 0.3s linear;
+  will-change: transform;
+}
+
+image-compare .ic-thumb:hover {
+  transform: scale(1.2);
+}
+
+image-compare .ic-thumb::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(106, 0, 255, 0.5);
+  border-radius: 50%;
+  animation: image-compare-pulse-radar 2s infinite ease-in-out;
+  z-index: -1;
+}
+
+@keyframes image-compare-pulse-radar {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+image-compare .ic-thumb::after {
+  content: 'Slide to see the evolution';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
+}
+
+image-compare .ic-thumb:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  image-compare .ic-thumb::before,
+  image-compare.animate-before .ic-label-after,
+  image-compare.animate-after .ic-label-before {
+    animation: none;
+  }
+}

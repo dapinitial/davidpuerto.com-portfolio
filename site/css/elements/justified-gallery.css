@@ -1,0 +1,56 @@
+/* Justified gallery — pure CSS, no JS needed (the old React component was
+   purely presentational, like .scroll-down). Markup:
+
+     <div class="justified-gallery">
+       <div class="collage-thumb">
+         <a href="..." class="image-link" target="_blank" rel="noopener noreferrer">
+           <img src="..." alt="..." loading="lazy">
+           <div class="thumb-info">Caption</div>
+         </a>
+       </div>
+       ...
+     </div>
+*/
+
+.justified-gallery {
+  box-sizing: border-box;
+  padding: 0;
+  width: calc(100% + 20px);
+  margin-left: -10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.justified-gallery .collage-thumb {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  width: calc(33.33% - 10px);
+}
+
+.justified-gallery .collage-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.justified-gallery .thumb-info {
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  opacity: 0;
+  color: #fff;
+  padding: 20px;
+  box-sizing: border-box;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.justified-gallery .collage-thumb:hover .thumb-info {
+  opacity: 1;
+  bottom: -5px;
+}

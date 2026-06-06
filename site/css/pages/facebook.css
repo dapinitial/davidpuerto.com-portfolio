@@ -1,0 +1,313 @@
+/* Facebook (FBIDE "Lyric") case study — flattened merge of the page's slice
+   of casestudiesNew.module.css plus the presentational components it used:
+   clientLayout/leadIn, clientLayout/hero, backstory, caseStudyFooter. */
+
+@layer page {
+  h1 {
+    text-transform: uppercase;
+  }
+
+  /* ---- Hero (leadIn + hero, flattened) ---- */
+  .hero-wrapper {
+    margin-bottom: 80vh;
+    padding: 0;
+  }
+
+  .lead-in {
+    background: black;
+    margin-top: 48px;
+    padding: 4vw;
+    position: relative;
+    z-index: 2;
+    height: fit-content;
+  }
+
+  @keyframes facebook-slide-in {
+    0% {
+      transform: translateY(100%);
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 0.99;
+    }
+  }
+
+  .lead-in .hero-title {
+    color: #fff;
+    font-size: calc(1rem + 5.15vw);
+    font-weight: 500;
+    line-height: calc(1rem + 5.5vw);
+    position: relative;
+  }
+
+  .lead-in .hero-title div {
+    overflow: hidden;
+  }
+
+  .lead-in .hero-title div span {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+    will-change: transform;
+    animation: facebook-slide-in 0.2s forwards linear;
+  }
+
+  .lead-in .hero-key-points li div {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+    will-change: transform;
+    animation: facebook-slide-in 0.2s forwards 0.25s linear;
+  }
+
+  .lead-in .hero-key-points li {
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 30px;
+    list-style-type: none;
+    overflow: hidden;
+    padding-left: 50%;
+    text-align: left;
+  }
+
+  .hero {
+    background: black;
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 2;
+    padding: 0;
+  }
+
+  @keyframes facebook-hero-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .hero-image-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    animation: facebook-hero-fade-in 0.2s ease-in;
+    will-change: opacity;
+    z-index: 1;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    clip-path: inset(0 35vw 0 35vw);
+    transform: scale(0.85);
+    transition: transform 0.3s ease-out, clip-path 0.3s ease-out;
+    will-change: transform, opacity, clip-path;
+  }
+
+  .hero-content {
+    font-weight: 300;
+    padding: 2vh 2vw;
+    background: rgba(0, 0, 0, 0.8);
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    transform: translateY(100%);
+    max-width: 100%;
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.2);
+    transition: opacity 0.25s ease-in-out;
+    will-change: transform, opacity;
+  }
+
+  /* ---- Breakdown of role ---- */
+  .breakdown-of-role {
+    font-family: 'Poppins';
+    width: fit-content;
+    place-content: center;
+    padding-top: 6vh !important;
+    padding-bottom: 6vh;
+  }
+
+  .breakdown-of-role h4 {
+    color: #eee;
+    text-align: left;
+    margin-right: auto;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+  }
+
+  .breakdown-of-role p {
+    color: #777;
+    font-family: 'Poppins';
+    max-width: 100%;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+  }
+
+  .breakdown-of-role ul {
+    max-width: 100%;
+    margin: 0 0 0 1em;
+    will-change: transform, opacity;
+    transform: translateZ(0);
+  }
+
+  .breakdown-of-role ul li {
+    color: #777;
+    will-change: transform, opacity;
+    font-family: 'Poppins';
+    transform: translateZ(0);
+  }
+
+  .breakdown-of-role .background {
+    font-size: 24px;
+    max-width: fit-content;
+  }
+
+  /* The old inline column styles, flattened */
+  .breakdown-of-role > .column:nth-child(1) {
+    flex: 0 1 25%;
+    margin-right: 10ch;
+  }
+
+  .breakdown-of-role > .column:nth-child(2) {
+    flex: 0 1 auto;
+    margin-right: 10ch;
+  }
+
+  .breakdown-of-role > .column:nth-child(3) {
+    flex: 0 1 40%;
+  }
+
+  /* ---- Backstory ---- */
+  .back-story-container {
+    grid-template-rows: auto 1fr;
+    padding: 4vh;
+  }
+
+  .back-story-container > .column:nth-child(1),
+  .back-story-container > .column:nth-child(2) {
+    flex: 0 1 25%;
+  }
+
+  .back-story-container h6 {
+    font-weight: 300;
+  }
+
+  .back-story-container .has-indent {
+    margin-right: 30px;
+    display: inline;
+    vertical-align: top;
+    line-height: inherit;
+    font-size: 16px;
+    text-transform: initial;
+    opacity: 0.4;
+    font-family: 'Mona-Sans', sans-serif;
+    font-weight: 500;
+  }
+
+  /* ---- So... why an IDE in the browser? ---- */
+  .so-why-container {
+    display: grid;
+    place-content: center;
+    text-align: center;
+    position: relative;
+    height: 100%;
+    grid-template-rows: auto 1fr;
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .so-why-container-title {
+    text-align: center;
+    width: fit-content;
+    margin: 2vw auto;
+    z-index: 1;
+  }
+
+  /* ---- Initial scribble (pinned whiteboard column) ---- */
+  .initial-scribble div .pin-spacer {
+    flex-basis: content !important;
+  }
+
+  .initial-scribble .pinned-column img {
+    max-width: calc(100% - 2vw);
+  }
+
+  /* ---- Image comparison wrapper (old inline style) ---- */
+  .image-compare-wrap {
+    height: auto;
+    min-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* ---- Case study footer ---- */
+  .case-study-footer {
+    opacity: 0;
+    margin: 0 auto;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    font-family: 'Mona-Sans', sans-serif;
+    font-weight: 900;
+    font-size: calc(1rem + 5.15vw);
+    line-height: calc(1rem + 5.5vw);
+  }
+
+  .case-study-footer .next-hero-title span {
+    display: inline-block;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  .case-study-footer .next-hero-title span em {
+    font-family: 'Mona-Sans', sans-serif;
+    font-weight: 200;
+    font-style: normal;
+  }
+
+  .case-study-footer .next-hero-subtitle span {
+    display: inline-block;
+    transition: transform 0.3s, opacity 0.3s;
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+    letter-spacing: 0.2rem;
+    color: #999;
+  }
+
+  /* ---- Reduced motion: everything GSAP-driven renders settled ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .lead-in .hero-title div span,
+    .lead-in .hero-key-points li div {
+      animation: none;
+      opacity: 0.99;
+      transform: none;
+    }
+
+    .hero-image {
+      clip-path: none;
+      transform: none;
+    }
+
+    .hero-content {
+      transform: none;
+      color: #fff;
+    }
+
+    .hero-wrapper {
+      margin-bottom: 0;
+    }
+
+    .case-study-footer {
+      opacity: 1;
+    }
+  }
+}

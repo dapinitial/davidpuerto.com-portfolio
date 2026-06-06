@@ -1,23 +1,27 @@
 @layer page {
+  /* Mirrors the original login.module.css: the form is unconstrained —
+     inputs set the width, the headline rides free on one line. */
   .login-form {
     display: grid;
-    gap: var(--spacing);
-    width: min(80vw, 360px);
+    gap: 1rem;
+    justify-items: center;
     text-align: center;
   }
 
   .login-form h2 {
-    margin: 0;
+    margin: 0 0 20px;
+    white-space: nowrap;
   }
 
   .login-form input {
+    min-width: 320px;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: 'Poppins', var(--font-family-default, sans-serif);
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid #333;
     border-radius: 6px;
     color: var(--color-text);
-    font-family: inherit;
-    font-size: 1rem;
-    padding: 0.65em 0.85em;
     text-align: center;
     transition: border-color 0.187s ease-in-out;
   }
@@ -27,12 +31,8 @@
     outline: none;
   }
 
-  .login-form .glass-button {
-    justify-self: center;
-  }
-
   .form-status {
-    color: var(--color-red, #e0666e);
+    color: pink;
     min-height: 1.5em;
     margin: 0;
   }

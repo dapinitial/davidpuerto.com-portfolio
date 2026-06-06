@@ -1,0 +1,68 @@
+/* <zoom-gallery> — flattened from zoomGallery.module.css. */
+
+zoom-gallery {
+  display: block;
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  max-width: 1000%;
+  pointer-events: none;
+}
+
+zoom-gallery .zoom-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 0 70px;
+  width: 100%;
+  list-style: none;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+zoom-gallery .zoom-wrapper li {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  max-width: 50%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+zoom-gallery .zoom-center {
+  z-index: 1;
+}
+
+zoom-gallery .zoom-img-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgb(102, 102, 102);
+}
+
+zoom-gallery .zoom-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  position: relative;
+  z-index: 100;
+}
+
+zoom-gallery .zoom-thumb {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+/* prefers-reduced-motion fallback: plain three-up row */
+zoom-gallery.static .zoom-thumb {
+  display: none;
+}
+
+zoom-gallery.static .zoom-img-wrapper img {
+  height: auto;
+}

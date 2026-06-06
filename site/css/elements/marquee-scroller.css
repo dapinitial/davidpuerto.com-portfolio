@@ -1,0 +1,38 @@
+/* <marquee-scroller> — flattened from marqueeScroller.module.css. */
+
+marquee-scroller {
+  display: block;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  margin-left: calc(50% - 50vw) !important;
+  margin-right: calc(50% - 50vw) !important;
+  max-width: 1000% !important;
+  width: 100vw !important;
+}
+
+marquee-scroller h2 {
+  font-size: calc(1rem + 4.15vw);
+  line-height: calc(1rem + 4.5vw);
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+  color: #000;
+  text-transform: uppercase;
+  position: relative;
+  margin: 0;
+}
+
+.light-section marquee-scroller h2,
+.light-content marquee-scroller h2 {
+  color: #000;
+}
+
+.dark-section marquee-scroller h2,
+.dark-content marquee-scroller h2 {
+  color: #fff;
+}
+
+marquee-scroller h2 span {
+  padding-right: 2vw;
+}
