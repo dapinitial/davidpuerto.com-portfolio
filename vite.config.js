@@ -3,10 +3,40 @@ import { defineConfig } from 'vite';
 
 const page = (p) => resolve(import.meta.dirname, 'site', p);
 
+// Dev-only auth gate: mirror production's /case-studies gate by asking the
+// real auth server (npm run dev:server, :3001) to validate the cookie.
+// If the auth server isn't running, fail OPEN with a console warning so
+// frontend-only work doesn't require it.
+const devAuthGate = () => ({
+  name: 'dev-auth-gate',
+  configureServer(server) {
+    server.middlewares.use(async (req, res, next) => {
+      if (!req.url?.startsWith('/case-studies')) return next();
+      try {
+        const check = await fetch('http://localhost:3001/api/check-auth', {
+          headers: { cookie: req.headers.cookie ?? '' },
+        });
+        const { isAuthenticated } = await check.json();
+        if (isAuthenticated) return next();
+        res.writeHead(302, {
+          Location: `/login/?redirectTo=${encodeURIComponent(req.url)}`,
+        });
+        res.end();
+      } catch {
+        console.warn(
+          '[dev-auth-gate] auth server (:3001) unreachable — serving /case-studies UNGATED',
+        );
+        next();
+      }
+    });
+  },
+});
+
 export default defineConfig({
   root: 'site',
   appType: 'mpa',
   publicDir: 'public',
+  plugins: [devAuthGate()],
   build: {
     outDir: '../dist',
     emptyOutDir: true,
