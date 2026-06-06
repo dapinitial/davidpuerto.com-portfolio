@@ -1,0 +1,53 @@
+/* <scroll-progress> — flattened from scrollToTopButton.module.css */
+
+scroll-progress .progress-wrap {
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  backface-visibility: hidden;
+  background: rgba(0, 0, 0, 0.8);
+  border: 0;
+  border-radius: 50px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  padding: 0;
+  position: fixed;
+  right: 10px;
+  bottom: 9px;
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(100px);
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  z-index: 99;
+  will-change: transform;
+}
+
+scroll-progress .progress-wrap.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* The up-arrow glyph (the old component used a rotated down-arrow svg) */
+scroll-progress .progress-wrap::after {
+  content: url('/images/svg/down-arrow.svg');
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  transform: scale(0.7) rotate(-180deg);
+  transition: 0.2s linear transform;
+  z-index: 1;
+}
+
+scroll-progress .progress-wrap:hover::after {
+  transform: scale(0.65) rotate(-180deg);
+}
+
+scroll-progress .progress-circle path {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}

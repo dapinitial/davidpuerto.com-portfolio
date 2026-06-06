@@ -1,6 +1,6 @@
 /* davidpuerto.com — design system entry
    Layer order is the cascade contract: later layers win. */
-@layer base, rhythm, layout, components, page;
+@layer base, rhythm, layout, components, interior, page;
 
 @import './fonts.css';
 @import './base.css';

@@ -1,0 +1,118 @@
+/* Interior pages type system — ported from the old renderer/css/reset.css.
+   The interior pages (about, approach, contact, resume, login, case studies)
+   were designed against THIS system, not the homepage's Fraunces rhythm:
+   Poppins body, Mona-Sans 900 headings with thin Mona-Sans 200 <em>s,
+   and globally centered text (sections opt into left).
+   Linked per-page AFTER main.css; the `interior` layer beats components,
+   loses to page. */
+
+@layer interior {
+  body {
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Mona-Sans', sans-serif;
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 20px;
+  }
+
+  /* The signature contrast: thin elegant <em> inside heavy headings */
+  em,
+  .secondary-font-title {
+    font-family: 'Mona-Sans', sans-serif;
+    font-weight: 200;
+    font-style: normal;
+  }
+
+  h1 {
+    font-size: calc(1rem + 4.15vw);
+    line-height: calc(1rem + 4.5vw);
+  }
+
+  h2 {
+    font-size: calc(1rem + 3vw);
+    line-height: calc(1rem + 3.5vw);
+  }
+
+  h3 {
+    font-size: calc(1rem + 2vw);
+    line-height: calc(1rem + 2.5vw);
+  }
+
+  h4 {
+    font-size: calc(1rem + 1vw);
+    line-height: calc(1rem + 1.6vw);
+  }
+
+  h5 {
+    font-size: calc(1rem + 0.6vw);
+    line-height: calc(1rem + 1.5vw);
+  }
+
+  h6 {
+    font-size: 18px;
+    line-height: 36px;
+  }
+
+  p {
+    font-size: 18px;
+    line-height: 32px;
+    font-weight: 300;
+    margin: 0 0 20px;
+    color: #ccc;
+  }
+
+  /* Old spacer trick: <hr /><hr /> pairs create vertical rhythm */
+  hr {
+    border: 0;
+    height: 28px;
+    width: 100%;
+    float: none;
+    margin: 0;
+    display: inline-block;
+  }
+
+  .container {
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  blockquote {
+    color: #fff;
+    line-height: 1.6;
+    font-size: 1.5rem;
+    font-weight: 500;
+    padding-left: 3.5rem;
+    margin: 0 0 1.5625rem;
+    position: relative;
+  }
+
+  blockquote::before {
+    content: '\275D';
+    position: absolute;
+    left: 0;
+    top: 5px;
+    line-height: 1;
+    font-size: 3rem;
+    font-weight: 500;
+  }
+
+  blockquote em,
+  blockquote i,
+  blockquote cite {
+    font-style: normal;
+  }
+}

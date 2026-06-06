@@ -1,7 +1,13 @@
 // Shared chrome — loaded on every page.
 import './elements/site-header.js';
 import './elements/site-preloader.js';
+import './elements/scroll-progress.js';
 import { InfinityLoader } from './elements/infinity-loader.js';
+
+// Inject the scroll-progress ring on every page (old clientLayout chrome)
+if (!document.querySelector('scroll-progress')) {
+  document.body.append(document.createElement('scroll-progress'));
+}
 
 // Page-transition loader: cover internal navigations with the infinity loader
 // (the old SPA's transition feel). Browsers don't repaint between click and
