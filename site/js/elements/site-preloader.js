@@ -15,6 +15,7 @@ class SitePreloader extends HTMLElement {
     // limit it to once per browser session instead.
     const skip = this.hasAttribute('once') && sessionStorage.getItem(SESSION_KEY);
     if (reduced || skip) {
+      document.documentElement.classList.remove('is-covered');
       this.remove();
       return;
     }
@@ -60,6 +61,9 @@ class SitePreloader extends HTMLElement {
   }
 
   #exit(bar, text, pct, wrap) {
+    // Lift the pre-paint cover — the preloader itself still covers, and its
+    // fade is what reveals the page.
+    document.documentElement.classList.remove('is-covered');
     // The CSS entrance animation fills forwards, and animations beat inline
     // styles — clear it or the fade tween below is silently ignored and the
     // overlay pops off instead of fading.

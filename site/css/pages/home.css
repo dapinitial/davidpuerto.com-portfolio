@@ -355,6 +355,16 @@
     z-index: 100;
   }
 
+  /* Pre-paint cover: opaque from the literal first frame (pure CSS, no JS
+     timing). site-preloader lifts it when its exit fade starts. */
+  html.is-covered::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9998; /* just under the preloader's 9999 */
+  }
+
   /* ---------- Enhanced mode (added by js/home.js before GSAP init) ----------
      Sections become transparent 100svh scroll-track; content is a fixed,
      GSAP-driven stack. autoAlpha reveals only the active section. */

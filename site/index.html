@@ -12,15 +12,20 @@
     content="UX/UI prototyping for Microsoft, Meta, Nordstrom, SonoSite, and Zillow.">
   <meta property="og:image" content="/preview.png">
   <script>
-    // Pre-paint enhancement gate: hides the fixed-stack sections before first
-    // paint so plain-flow content never flashes ("buttons all over the place").
-    // Failsafe: if home.js never boots (network/error), unhide after 3s so a
-    // broken script can't strand a blank page. home.js clears the timer.
+    // Pre-paint gate, three jobs, all before first paint:
+    // 1. scroll restoration off — a hard refresh mid-page would otherwise
+    //    paint a frame of wherever you left off (e.g. Zillow) pre-preloader
+    // 2. .is-enhanced hides the fixed-stack sections (no plain-flow flash)
+    // 3. .is-covered paints an opaque cover until the preloader takes over
+    // Failsafe: if home.js never boots, unhide after 3s.
     (function () {
+      try { history.scrollRestoration = 'manual'; scrollTo(0, 0); } catch (e) {}
       if (matchMedia('(prefers-reduced-motion: no-preference)').matches) {
         var c = document.documentElement.classList;
-        c.add('is-enhanced');
-        window.__enhanceFailsafe = setTimeout(function () { c.remove('is-enhanced'); }, 3000);
+        c.add('is-enhanced', 'is-covered');
+        window.__enhanceFailsafe = setTimeout(function () {
+          c.remove('is-enhanced', 'is-covered');
+        }, 3000);
       }
     })();
   </script>

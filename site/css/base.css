@@ -116,6 +116,17 @@
     height: auto;
   }
 
+  /* Arrival cover: when a page is reached via an internal transition, an
+     inline head snippet adds .is-arriving pre-paint so nothing flashes
+     before the infinity loader takes over (js/main.js lifts it). */
+  html.is-arriving::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: var(--color-background, #0e0e0e);
+    z-index: 99998; /* just under infinity-loader's 99999 */
+  }
+
   /* Resize lid: while the window is actively resizing, pause every
      transition/animation so the GPU isn't re-rasterizing per frame.
      js/main.js toggles the class (150ms settle). */

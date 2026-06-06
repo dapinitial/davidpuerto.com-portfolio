@@ -17,9 +17,38 @@ document.addEventListener('click', (e) => {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; // instant nav
 
   e.preventDefault();
+  // Tell the destination page it's part of a transition, so its inline head
+  // snippet covers it pre-paint (no flash before the loader appears there).
+  try {
+    sessionStorage.setItem('dp-arriving', '1');
+  } catch {
+    /* private mode etc. — transition still works, just without the cover */
+  }
   InfinityLoader.show();
   setTimeout(() => location.assign(link.href), TRANSITION_HOLD);
 });
+
+// Arrival orchestration: if this page was reached via an internal transition,
+// the inline snippet already covered it. Ride the infinity loader until the
+// page is fully loaded, then bounce out and lift the cover.
+try {
+  if (sessionStorage.getItem('dp-arriving')) {
+    sessionStorage.removeItem('dp-arriving');
+    // The homepage has its own full preloader — don't stack loaders.
+    if (document.documentElement.classList.contains('is-arriving')) {
+      const el = InfinityLoader.show();
+      const done = () => {
+        document.documentElement.classList.remove('is-arriving');
+        clearTimeout(window.__arriveFailsafe);
+        el.hide();
+      };
+      if (document.readyState === 'complete') done();
+      else window.addEventListener('load', done, { once: true });
+    }
+  }
+} catch {
+  /* sessionStorage unavailable — nothing to orchestrate */
+}
 
 // A bfcache restore (iOS swipe-back) revives the page WITH the loader still
 // in the DOM — clear any strays.
