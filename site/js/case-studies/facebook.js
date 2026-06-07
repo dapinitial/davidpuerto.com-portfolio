@@ -11,7 +11,7 @@ import '../elements/reveal-gallery.js';
 import '../elements/moving-gallery.js';
 import '../elements/zoom-gallery.js';
 import '../elements/slowed-pin.js';
-import { gsap } from '../lib/gsap.js';
+import { gsap, ScrollTrigger } from '../lib/gsap.js';
 import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(SplitText);
@@ -105,26 +105,10 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     );
   }
 
-  // Initial scribble — pin the copy column alongside the tall whiteboard
-  // photo (usePinnedScroll, templateOffset 360).
-  const scribbleCopy = document.querySelector('.initial-scribble .scribble-copy');
-  const scribblePinned = document.querySelector('.initial-scribble .pinned-column');
-  if (scribbleCopy && scribblePinned) {
-    // Function-based + invalidateOnRefresh: the whiteboard photo lazy-loads,
-    // so heights measured at init are garbage (a baked negative `end` made
-    // the pin flap — the "glitchy blinky" scribble). Re-measured on refresh.
-    gsap.timeline({
-      scrollTrigger: {
-        trigger: scribbleCopy,
-        start: () => `top top+=${scribblePinned.offsetHeight}`,
-        end: () => `+=${Math.max(0, scribblePinned.offsetHeight - 360)}`,
-        pin: scribbleCopy,
-        pinSpacing: false,
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
-  }
+  // Initial scribble: the "image holds while text scrolls" effect is pure
+  // CSS sticky (see facebook.css .initial-scribble) — GSAP pinning inside
+  // this flex/overflow context kept reflowing (snap), overlapping the copy,
+  // and clipping the photo. Sticky reserves layout and can't do any of that.
 
   // "The End" footer reveal (caseStudyFooter useEffect).
   const footer = document.querySelector('.case-study-footer');

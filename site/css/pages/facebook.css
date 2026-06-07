@@ -311,3 +311,49 @@
     }
   }
 }
+
+/* Dry-erase Graffiti: copy scrolls, whiteboard photo sticks — pure CSS.
+   Unlayered so it out-cascades the stacking .row/.column defaults. */
+.initial-scribble .row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2vw;
+  /* columns must STRETCH (default) — sticky needs its parent taller than
+     itself to have travel room */
+  min-height: 108vh;
+}
+
+.initial-scribble .scribble-copy {
+  flex: 1 1 40%;
+}
+
+.initial-scribble .pinned-column {
+  flex: 1 1 55%;
+}
+
+.initial-scribble .pinned-column figure {
+  position: sticky;
+  top: calc(48px + 4vh); /* clear the fixed header */
+  margin: 0;
+}
+
+.initial-scribble .pinned-column img {
+  max-width: calc(100% - 2vw);
+  display: block;
+}
+
+@media (max-width: 800px) {
+  .initial-scribble .row {
+    flex-wrap: wrap;
+    min-height: 0;
+  }
+
+  .initial-scribble .scribble-copy,
+  .initial-scribble .pinned-column {
+    flex: 1 1 100%;
+  }
+
+  .initial-scribble .pinned-column figure {
+    position: static;
+  }
+}
