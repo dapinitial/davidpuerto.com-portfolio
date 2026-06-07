@@ -65,7 +65,9 @@ const rateLimit = (max, windowMs) => (req, res, next) => {
 
 /* ---------- app ---------- */
 const app = express();
-app.set('trust proxy', 1); // App Platform load balancer
+// App Platform fronts apps with MULTIPLE proxy hops — trusting only one made
+// req.ip a rotating edge IP and the rate limiter never accumulated.
+app.set('trust proxy', true);
 app.use(express.json({ limit: '10kb' }));
 
 // Security headers (CSP allows the case studies' CodePen/YouTube/Dropbox embeds)
@@ -117,14 +119,55 @@ app.post('/api/logout', (req, res) => {
 
 app.get('/api/check-auth', (req, res) => res.json({ isAuthenticated: authed(req) }));
 
-/* ---------- contact (Nodemailer + Gmail app password) ---------- */
+/* ---------- contact ----------
+   Production (App Platform): outbound SMTP is BLOCKED by DO, so Gmail/
+   Nodemailer can never connect there — use Resend's HTTPS API instead
+   (set RESEND_API_KEY). Local dev: Nodemailer + Gmail app password works.
+   Timeouts everywhere — a hung send must 502, never 504. */
+const { RESEND_API_KEY, CONTACT_FROM = 'onboarding@resend.dev' } = process.env;
+
 const mailer =
-  GMAIL_USER && GMAIL_APP_PASSWORD
+  !RESEND_API_KEY && GMAIL_USER && GMAIL_APP_PASSWORD
     ? nodemailer.createTransport({
         service: 'gmail',
         auth: { user: GMAIL_USER, pass: GMAIL_APP_PASSWORD },
+        connectionTimeout: 8000,
+        greetingTimeout: 8000,
+        socketTimeout: 10000,
       })
     : null;
+
+async function sendContactEmail({ name, from, message }) {
+  const subject = `[davidpuerto.com] ${name || 'Contact form'}`.slice(0, 120);
+  const text = `From: ${name} <${from}>\n\n${message}`;
+
+  if (RESEND_API_KEY) {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: CONTACT_FROM,
+        to: [CONTACT_TO],
+        reply_to: from || undefined,
+        subject,
+        text,
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!res.ok) throw new Error(`resend ${res.status}: ${await res.text()}`);
+    return;
+  }
+  if (mailer) {
+    await mailer.sendMail({ from: GMAIL_USER, to: CONTACT_TO, replyTo: from || undefined, subject, text });
+    return;
+  }
+  const err = new Error('no email provider configured');
+  err.unconfigured = true;
+  throw err;
+}
 
 app.post('/api/contact', rateLimit(3, 60 * 60_000), async (req, res) => {
   const { name = '', from = '', message = '', company } = req.body ?? {};
@@ -132,17 +175,13 @@ app.post('/api/contact', rateLimit(3, 60 * 60_000), async (req, res) => {
   if (!message.trim() || message.length > 5000 || name.length > 200 || from.length > 200) {
     return res.status(400).json({ error: 'Invalid submission' });
   }
-  if (!mailer) return res.status(503).json({ error: 'Contact temporarily unavailable' });
   try {
-    await mailer.sendMail({
-      from: GMAIL_USER,
-      to: CONTACT_TO,
-      replyTo: from || undefined,
-      subject: `[davidpuerto.com] ${name || 'Contact form'}`.slice(0, 120),
-      text: `From: ${name} <${from}>\n\n${message}`,
-    });
+    await sendContactEmail({ name, from, message });
     res.json({ success: true });
   } catch (err) {
+    if (err.unconfigured) {
+      return res.status(503).json({ error: 'Contact temporarily unavailable' });
+    }
     console.error('contact send failed:', err.message);
     res.status(502).json({ error: 'Send failed' });
   }
