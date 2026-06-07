@@ -167,6 +167,19 @@
     }
 
 
+    /* Per-section optical nudges (Chrome tuning) */
+    html:not(.is-safari) #facebook .text img,
+    html:not(.is-safari) #nordstrom .text img {
+      margin-top: 280px;
+    }
+
+    /* Safari: uniform tuning (David's Safari DevTools pass) — its float/shape
+       geometry wants the image pulled further toward center, slightly higher */
+    html.is-safari .text img {
+      margin-left: -106.88%;
+      margin-top: 200px;
+    }
+
     .text img + * {
       margin-top: calc(var(--spacing) * 3);
     }
