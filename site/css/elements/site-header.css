@@ -34,6 +34,7 @@ site-header .logo {
   display: flex;
   gap: 8px;
   position: relative;
+  text-decoration: none; /* the "/ Case Studies" crumb inherits otherwise */
   z-index: 1002;
 }
 
