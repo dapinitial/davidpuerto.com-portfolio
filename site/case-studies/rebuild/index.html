@@ -74,11 +74,29 @@
         </ol>
 
         <h2>What Got Deleted</h2>
-        <p>Six thousand six hundred lines of React, the SSR renderer, the smooth-scroll library, the Docker pipeline,
-          a paid GSAP registry token, and the iframe. The repo's git history was rebuilt from scratch after GitHub's
-          push protection caught something important: the old history had carried a committed <code>.env</code> —
-          live credentials — for two years. The new repo begins with a single clean commit and a scrubbed lineage.
-          Sometimes the most valuable line of the rebuild is the one that refuses to push.</p>
+        <p>Six thousand six hundred lines of React, the SSR renderer, the smooth-scroll library, the Docker
+          pipeline, a paid GSAP registry token, and the iframe. This site had always lived in a private repo;
+          going public for the first time meant streamlining everything — the history restarted as a single clean
+          commit, the codebase slimmed to exactly what ships, and the whole thing became something worth reading:
+          a return to the elegance and simplicity of HTML and CSS, on display.</p>
+
+        <h2>Going Public Without Breaking NDAs</h2>
+        <p>One genuinely interesting problem: the gated client case studies can't sit readable in a public repo —
+          an auth wall on the website means nothing if the source is browsable on GitHub. The solution keeps the
+          repo open <em>and</em> the obligations intact:</p>
+        <ol>
+          <li>The five client studies — pages, their built asset chunks, every screenshot — are encrypted locally
+            with <strong>AES-256-GCM</strong> into a <code>content-locked/</code> directory. <em>That ciphertext</em>
+            is what gets committed. Clone the repo and you get working everything, plus 229 files of noise.</li>
+          <li>The decryption key lives only in the deployment platform's secret store (and on my machine).</li>
+          <li>At request time, the server checks the visitor's signed auth cookie, decrypts the page from the locked
+            store, and serves it — with an in-memory cache so the crypto runs once, not per request.</li>
+          <li>Cloud builds never see plaintext at all: the build config includes the gated pages only when their
+            files exist, so the same repo builds completely on a machine that holds the content and a CI runner
+            that doesn't.</li>
+        </ol>
+        <p>Password-holders see case studies. Everyone else sees the architecture that protects them — which is
+          arguably the better portfolio piece.</p>
 
         <h2>The Gotchas (kept honest)</h2>
         <p>Every rebuild has a folklore section. These are real, and each one cost an iteration:</p>

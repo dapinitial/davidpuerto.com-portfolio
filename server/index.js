@@ -1,7 +1,8 @@
 // davidpuerto.com server — static dist/ + gated case studies + tiny API.
 // Auth is a stateless HMAC-signed cookie: no session store, survives
 // restarts/deploys, nothing to leak.
-import { createHmac, createSign, timingSafeEqual } from 'node:crypto';
+import { createDecipheriv, createHmac, createSign, timingSafeEqual } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import express from 'express';
 import bcrypt from 'bcryptjs';
@@ -336,6 +337,75 @@ app.use(
     },
   }),
 );
+
+/* ---------- locked content: NDA case studies travel as ciphertext --------
+   The public repo carries AES-256-GCM blobs (content-locked/, built by
+   `npm run lock`); this layer decrypts them at request time for
+   authenticated visitors. Runs AFTER static (locked store only serves
+   misses) and BEFORE the 404. */
+const CONTENT_KEY = process.env.CONTENT_KEY
+  ? Buffer.from(process.env.CONTENT_KEY, 'base64')
+  : null;
+const lockedDir = path.resolve(import.meta.dirname, '../content-locked');
+const lockedCache = new Map(); // relPath -> decrypted Buffer
+
+const TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.webp': 'image/webp',
+  '.mov': 'video/quicktime',
+  '.mp4': 'video/mp4',
+  '.woff2': 'font/woff2',
+};
+
+function serveLocked(relPath, res, cacheControl) {
+  if (!CONTENT_KEY) return false;
+  let buf = lockedCache.get(relPath);
+  if (!buf) {
+    let enc;
+    try {
+      enc = readFileSync(path.join(lockedDir, `${relPath}.enc`));
+    } catch {
+      return false; // not in the locked store
+    }
+    const decipher = createDecipheriv('aes-256-gcm', CONTENT_KEY, enc.subarray(0, 12));
+    decipher.setAuthTag(enc.subarray(12, 28));
+    buf = Buffer.concat([decipher.update(enc.subarray(28)), decipher.final()]);
+    lockedCache.set(relPath, buf);
+  }
+  res
+    .type(TYPES[path.extname(relPath).toLowerCase()] ?? 'application/octet-stream')
+    .set('Cache-Control', cacheControl)
+    .send(buf);
+  return true;
+}
+
+const GATED_STUDY = /^\/case-studies\/(microsoft|facebook|nordstrom|sonosite|zillow)\/?$/;
+
+app.use((req, res, next) => {
+  // Gated pages (auth was enforced upstream, but re-check — defense in depth)
+  const m = req.path.match(GATED_STUDY);
+  if (m && authed(req)) {
+    if (!CONTENT_KEY) return res.status(503).send('Content channel not configured');
+    if (serveLocked(`case-studies/${m[1]}/index.html`, res, 'no-cache')) return;
+  }
+  // Gated images (the /images/case-studies gate already 403'd unauthed)
+  if (req.path.startsWith('/images/case-studies/') && authed(req)) {
+    if (serveLocked(decodeURIComponent(req.path.slice(1)), res, 'private, max-age=3600')) return;
+  }
+  // Page-specific asset chunks absent from this build (hashed: safe to cache)
+  if (req.path.startsWith('/assets/')) {
+    if (serveLocked(decodeURIComponent(req.path.slice(1)), res, 'public, max-age=31536000, immutable'))
+      return;
+  }
+  next();
+});
 
 /* ---------- error capture: every path renders something intentional ---- */
 // 404 — JSON for API consumers, the branded page for humans
