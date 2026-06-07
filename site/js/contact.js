@@ -1,6 +1,7 @@
 // Contact page: elements + form submission to /api/contact.
 import './elements/rain-fall.js';
 import './elements/neon-text.js';
+import { track } from './lib/analytics.js';
 
 const form = document.querySelector('.contact-form');
 const status = form.querySelector('.form-status');
@@ -23,6 +24,7 @@ form.addEventListener('submit', async (e) => {
     if (res.ok) {
       form.reset();
       status.textContent = 'Sent — talk soon. ✌️';
+      track('contact_submit');
     } else if (res.status === 429) {
       status.textContent = 'Easy there — try again in a bit.';
     } else {

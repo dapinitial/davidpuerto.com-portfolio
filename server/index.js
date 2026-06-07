@@ -261,47 +261,96 @@ app.get('/api/admin/stats', async (req, res) => {
     const mets = (...names) => names.map((name) => ({ name }));
     const byMetric = (name) => [{ metric: { metricName: name }, desc: true }];
 
-    // One HTTP call: batchRunReports takes up to 5 reports — exactly what we need.
-    const gaRes = await fetch(
-      `https://analyticsdata.googleapis.com/v1beta/properties/${GA_PROPERTY_ID}:batchRunReports`,
-      {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          requests: [
-            {
-              dateRanges,
-              dimensions: dims('date'),
-              metrics: mets('activeUsers', 'screenPageViews'),
-              orderBys: [{ dimension: { dimensionName: 'date' } }],
-              // TOTAL row gives deduplicated users — summing daily activeUsers overcounts.
-              metricAggregations: ['TOTAL'],
-            },
-            { dateRanges, dimensions: dims('sessionSource'), metrics: mets('sessions'), orderBys: byMetric('sessions'), limit: '10' },
-            { dateRanges, dimensions: dims('pagePath'), metrics: mets('screenPageViews'), orderBys: byMetric('screenPageViews'), limit: '10' },
-            { dateRanges, dimensions: dims('country'), metrics: mets('activeUsers'), orderBys: byMetric('activeUsers'), limit: '10' },
-            { dateRanges, dimensions: dims('deviceCategory'), metrics: mets('activeUsers'), orderBys: byMetric('activeUsers') },
-          ],
-        }),
-        signal: AbortSignal.timeout(10_000),
-      },
-    );
-    if (!gaRes.ok) throw new Error(`ga ${gaRes.status}: ${await gaRes.text()}`);
+    // batchRunReports takes 5 reports per call — three calls in parallel
+    // cover all 15 panels and still count as one cache fill per 10 minutes.
+    const gaBatch = (requests) =>
+      fetch(
+        `https://analyticsdata.googleapis.com/v1beta/properties/${GA_PROPERTY_ID}:batchRunReports`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ requests }),
+          signal: AbortSignal.timeout(10_000),
+        },
+      ).then(async (r) => {
+        if (!r.ok) throw new Error(`ga ${r.status}: ${await r.text()}`);
+        return (await r.json()).reports ?? [];
+      });
 
-    const { reports = [] } = await gaRes.json();
-    const [daily, sources, pages, countries, devices] = reports;
+    const top = (name, metric = 'activeUsers') => ({
+      dateRanges,
+      dimensions: dims(name),
+      metrics: mets(metric),
+      orderBys: byMetric(metric),
+      limit: '10',
+    });
+
+    const [batch1, batch2, batch3] = await Promise.all([
+      gaBatch([
+        {
+          dateRanges,
+          dimensions: dims('date'),
+          metrics: mets('activeUsers', 'screenPageViews', 'engagementRate', 'averageSessionDuration'),
+          orderBys: [{ dimension: { dimensionName: 'date' } }],
+          // TOTAL row gives deduplicated users — summing daily activeUsers overcounts.
+          metricAggregations: ['TOTAL'],
+        },
+        top('sessionSource', 'sessions'),
+        top('pagePath', 'screenPageViews'),
+        top('country'),
+        { dateRanges, dimensions: dims('deviceCategory'), metrics: mets('activeUsers'), orderBys: byMetric('activeUsers') },
+      ]),
+      gaBatch([
+        top('city'),
+        top('browser'),
+        top('operatingSystem'),
+        top('sessionDefaultChannelGroup', 'sessions'),
+        top('landingPage', 'sessions'),
+      ]),
+      gaBatch([
+        top('pageReferrer'),
+        { dateRanges, dimensions: dims('newVsReturning'), metrics: mets('activeUsers') },
+        {
+          dateRanges,
+          dimensions: dims('hour'),
+          metrics: mets('activeUsers'),
+          orderBys: [{ dimension: { dimensionName: 'hour' } }],
+        },
+        top('screenResolution'),
+        {
+          // Only the events worth a panel — page_view/session_start noise stays out.
+          dateRanges,
+          dimensions: dims('eventName'),
+          metrics: mets('eventCount'),
+          orderBys: byMetric('eventCount'),
+          dimensionFilter: {
+            filter: {
+              fieldName: 'eventName',
+              inListFilter: { values: ['case_study_unlock', 'contact_submit', 'file_download'] },
+            },
+          },
+        },
+      ]),
+    ]);
+
+    const [daily, sources, pages, countries, devices] = batch1;
+    const [cities, browsers, os, channels, landings] = batch2;
+    const [referrers, visitorTypes, hours, screens, events] = batch3;
     const num = (v) => Number(v ?? 0);
     const list = (report) =>
       (report?.rows ?? []).map((r) => ({
         label: r.dimensionValues[0].value,
         value: num(r.metricValues[0].value),
       }));
+    const totalRow = (i) => num(daily?.totals?.[0]?.metricValues?.[i]?.value);
 
     const data = {
       range,
       totals: {
-        users: num(daily?.totals?.[0]?.metricValues?.[0]?.value),
-        pageviews: num(daily?.totals?.[0]?.metricValues?.[1]?.value),
+        users: totalRow(0),
+        pageviews: totalRow(1),
+        engagementRate: totalRow(2), // 0..1 — client renders as %
+        avgSessionDuration: totalRow(3), // seconds
       },
       timeline: (daily?.rows ?? []).map((r) => ({
         date: r.dimensionValues[0].value.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3'),
@@ -312,6 +361,17 @@ app.get('/api/admin/stats', async (req, res) => {
       pages: list(pages),
       countries: list(countries),
       devices: list(devices),
+      cities: list(cities).filter((r) => r.label !== '(not set)'),
+      browsers: list(browsers),
+      os: list(os),
+      channels: list(channels),
+      landings: list(landings),
+      // '' is a direct visit — already told by the channels panel.
+      referrers: list(referrers).filter((r) => r.label !== ''),
+      visitorTypes: list(visitorTypes).filter((r) => r.label !== '(not set)'),
+      hours: list(hours),
+      screens: list(screens),
+      events: list(events),
     };
 
     statsCache.set(range, { data, exp: Date.now() + 10 * 60_000 });
@@ -319,6 +379,57 @@ app.get('/api/admin/stats', async (req, res) => {
   } catch (err) {
     console.error('analytics fetch failed:', err.message);
     res.status(502).json({ error: 'Analytics fetch failed' });
+  }
+});
+
+/* ---------- analytics: who's on the site right now ----------
+   The Realtime API has its own (generous) quota and ~seconds of latency.
+   30s cache: the dashboard can poll without ever bothering Google much. */
+let realtimeCache = null; // { data, exp }
+
+app.get('/api/admin/realtime', async (req, res) => {
+  if (!authed(req)) return res.status(401).json({ error: 'Unauthorized' });
+  if (!gaConfigured) return res.status(503).json({ error: 'Analytics not configured' });
+  if (realtimeCache && Date.now() < realtimeCache.exp) return res.json(realtimeCache.data);
+
+  try {
+    const token = await getGaToken();
+    const rt = (body) =>
+      fetch(
+        `https://analyticsdata.googleapis.com/v1beta/properties/${GA_PROPERTY_ID}:runRealtimeReport`,
+        {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ metrics: [{ name: 'activeUsers' }], limit: '5', ...body }),
+          signal: AbortSignal.timeout(10_000),
+        },
+      ).then(async (r) => {
+        if (!r.ok) throw new Error(`ga realtime ${r.status}: ${await r.text()}`);
+        return r.json();
+      });
+
+    // Three tiny reports: a true deduplicated total, plus two breakdowns.
+    const [total, byPage, byCity] = await Promise.all([
+      rt({}),
+      rt({ dimensions: [{ name: 'unifiedScreenName' }] }),
+      rt({ dimensions: [{ name: 'city' }] }),
+    ]);
+    const rows = (r) =>
+      (r.rows ?? []).map((row) => ({
+        label: row.dimensionValues[0].value,
+        value: Number(row.metricValues[0].value),
+      }));
+
+    const data = {
+      activeUsers: Number(total.rows?.[0]?.metricValues?.[0]?.value ?? 0),
+      pages: rows(byPage),
+      cities: rows(byCity).filter((r) => r.label !== '(not set)'),
+    };
+    realtimeCache = { data, exp: Date.now() + 30_000 };
+    res.json(data);
+  } catch (err) {
+    console.error('realtime fetch failed:', err.message);
+    res.status(502).json({ error: 'Realtime fetch failed' });
   }
 });
 
