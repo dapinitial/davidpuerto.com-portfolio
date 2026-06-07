@@ -158,7 +158,7 @@
       float: inline-start;
       height: var(--height);
       margin-left: -36.88%; /* (1 - 587/930) * -100% — pre-computed (Safari) */
-      margin-top: 220px;
+      margin-top: 260px;
       opacity: 0.5;
       position: relative;
       inset: auto;
