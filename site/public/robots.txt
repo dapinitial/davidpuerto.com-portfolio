@@ -1,4 +1,5 @@
 User-agent: *
+Allow: /case-studies/rebuild/
 Disallow: /admin/
 Disallow: /login
 Disallow: /private/

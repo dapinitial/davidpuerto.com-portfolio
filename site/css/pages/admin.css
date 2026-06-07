@@ -48,6 +48,87 @@
     margin: 40px 0;
   }
 
+  /* ---------- live now ---------- */
+  .live-now {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: #ccc;
+    margin: 0 0 28px;
+  }
+
+  .live-now strong {
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .live-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #00a3bb;
+    align-self: center;
+    animation: live-pulse 2s ease-in-out infinite;
+  }
+
+  .live-now.is-quiet .live-dot {
+    background: #444;
+    animation: none;
+  }
+
+  .live-detail {
+    color: #888;
+  }
+
+  @keyframes live-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  /* ---------- visits by hour ---------- */
+  .hour-chart {
+    margin: 0 0 48px;
+  }
+
+  .hour-chart figcaption {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.8125rem;
+    color: #888;
+    margin: 0 0 12px;
+  }
+
+  .hour-bars {
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
+    align-items: end;
+    gap: 4px;
+    height: 72px;
+  }
+
+  .hour-col {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    align-items: end;
+    height: 100%;
+    min-width: 0;
+  }
+
+  .hour-bar {
+    background: #00a3bb;
+    border-radius: 2px 2px 0 0;
+    opacity: 0.8;
+  }
+
+  .hour-col span {
+    font-size: 0.6875rem;
+    color: #888;
+    text-align: left;
+    height: 16px;
+    line-height: 16px;
+  }
+
   /* ---------- headline numbers ---------- */
   .headline-numbers {
     display: flex;

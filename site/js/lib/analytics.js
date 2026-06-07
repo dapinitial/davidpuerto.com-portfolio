@@ -16,3 +16,9 @@ if (id && navigator.doNotTrack !== '1') {
   window.gtag('js', new Date());
   window.gtag('config', id);
 }
+
+// Fire a custom event — safe no-op when collection is off (no id / DNT).
+// Beacon transport so events survive an immediate navigation (login redirect).
+export function track(name, params = {}) {
+  window.gtag?.('event', name, { transport_type: 'beacon', ...params });
+}

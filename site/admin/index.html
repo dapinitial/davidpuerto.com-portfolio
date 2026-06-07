@@ -25,6 +25,13 @@
       <div class="container">
         <h2>Analytics <em>at a glance</em></h2>
 
+        <p class="live-now" hidden>
+          <span class="live-dot" aria-hidden="true"></span>
+          <strong data-live="count">0</strong>
+          <span data-live="label">on the site right now</span>
+          <span class="live-detail" data-live="detail"></span>
+        </p>
+
         <div class="range-switcher" role="group" aria-label="Date range">
           <button type="button" data-range="7">7 days</button>
           <button type="button" data-range="28" aria-pressed="true">28 days</button>
@@ -43,9 +50,22 @@
               <span class="stat-number" data-stat="pageviews">0</span>
               <span class="stat-label">pageviews</span>
             </div>
+            <div class="stat">
+              <span class="stat-number" data-stat="engagement">0%</span>
+              <span class="stat-label">engaged</span>
+            </div>
+            <div class="stat">
+              <span class="stat-number" data-stat="duration">0:00</span>
+              <span class="stat-label">avg visit</span>
+            </div>
           </div>
 
           <figure class="timeline-chart" aria-label="Daily visitors"></figure>
+
+          <figure class="hour-chart" aria-label="Visits by hour of day">
+            <figcaption>Visits by hour</figcaption>
+            <div class="hour-bars"></div>
+          </figure>
 
           <div class="dash-grid">
             <section class="dash-list" data-list="sources">
@@ -62,6 +82,42 @@
             </section>
             <section class="dash-list" data-list="devices">
               <h6>Devices</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="channels">
+              <h6>Channels</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="referrers">
+              <h6>Referrers</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="landings">
+              <h6>Landing Pages</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="cities">
+              <h6>Cities</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="browsers">
+              <h6>Browsers</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="os">
+              <h6>Operating Systems</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="screens">
+              <h6>Screen Sizes</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="visitorTypes">
+              <h6>New vs Returning</h6>
+              <ul></ul>
+            </section>
+            <section class="dash-list" data-list="events">
+              <h6>Events</h6>
               <ul></ul>
             </section>
           </div>

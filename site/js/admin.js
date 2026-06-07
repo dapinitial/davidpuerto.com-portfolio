@@ -78,16 +78,92 @@ function renderList(name, rows) {
   });
 }
 
+/* ---------- hour-of-day strip: 24 thin vertical bars ---------- */
+function renderHours(rows) {
+  const wrap = document.querySelector('.hour-bars');
+  wrap.textContent = '';
+  const byHour = new Array(24).fill(0);
+  rows.forEach((r) => {
+    byHour[Number(r.label)] = r.value;
+  });
+  const max = Math.max(1, ...byHour);
+  const hourLabel = (h) => `${h % 12 || 12}${h < 12 ? 'a' : 'p'}`;
+  byHour.forEach((v, h) => {
+    const col = document.createElement('div');
+    col.className = 'hour-col';
+    col.title = `${hourLabel(h)} — ${fmt.format(v)}`;
+    const bar = document.createElement('div');
+    bar.className = 'hour-bar';
+    bar.style.height = `${Math.max(2, (v / max) * 100).toFixed(1)}%`;
+    const label = document.createElement('span');
+    label.textContent = h % 6 === 0 ? hourLabel(h) : '';
+    col.append(bar, label);
+    wrap.append(col);
+  });
+}
+
+// Raw GA values → labels a human wants to read.
+const PRETTY = {
+  case_study_unlock: 'Case-study unlocks',
+  contact_submit: 'Contact messages',
+  file_download: 'Resume downloads',
+  new: 'New visitors',
+  returning: 'Returning visitors',
+};
+const pretty = (rows) => rows.map((r) => ({ ...r, label: PRETTY[r.label] ?? r.label }));
+
 function render(data) {
   document.querySelector('[data-stat="users"]').textContent = fmt.format(data.totals.users);
   document.querySelector('[data-stat="pageviews"]').textContent = fmt.format(data.totals.pageviews);
+  document.querySelector('[data-stat="engagement"]').textContent =
+    `${Math.round(data.totals.engagementRate * 100)}%`;
+  const secs = Math.round(data.totals.avgSessionDuration);
+  document.querySelector('[data-stat="duration"]').textContent =
+    `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
   chartEl.innerHTML = data.timeline.length
     ? chartSVG(data.timeline)
     : '<p class="chart-empty">No traffic yet.</p>';
+  renderHours(data.hours);
   renderList('sources', data.sources);
   renderList('pages', data.pages);
   renderList('countries', data.countries);
   renderList('devices', data.devices);
+  renderList('channels', data.channels);
+  renderList('referrers', data.referrers.map((r) => ({
+    ...r,
+    label: r.label.replace(/^https?:\/\//, '').replace(/\/$/, ''),
+  })));
+  renderList('landings', data.landings);
+  renderList('cities', data.cities);
+  renderList('browsers', data.browsers);
+  renderList('os', data.os);
+  renderList('screens', data.screens);
+  renderList('visitorTypes', pretty(data.visitorTypes));
+  renderList('events', pretty(data.events));
+}
+
+/* ---------- live now: realtime widget, polls gently ---------- */
+const liveEl = document.querySelector('.live-now');
+
+async function loadRealtime() {
+  try {
+    const res = await fetch('/api/admin/realtime');
+    if (!res.ok) return; // configured/auth problems already surface via stats
+    const data = await res.json();
+    liveEl.querySelector('[data-live="count"]').textContent = fmt.format(data.activeUsers);
+    liveEl.querySelector('[data-live="label"]').textContent =
+      data.activeUsers === 1 ? 'person on the site right now' : 'people on the site right now';
+    const bits = [];
+    if (data.pages[0]) bits.push(`reading “${data.pages[0].label}”`);
+    if (data.cities[0]) bits.push(`from ${data.cities[0].label}`);
+    liveEl.querySelector('[data-live="detail"]').textContent = bits.length
+      ? ` — ${bits.join(', ')}`
+      : '';
+    liveEl.hidden = false;
+    liveEl.classList.toggle('is-quiet', data.activeUsers === 0);
+  } catch {
+    /* realtime is garnish — never block the dashboard over it */
+  }
 }
 
 /* ---------- load + range switching ---------- */
@@ -123,3 +199,5 @@ switcher.addEventListener('click', (e) => {
 });
 
 load(28);
+loadRealtime();
+setInterval(loadRealtime, 60_000);
