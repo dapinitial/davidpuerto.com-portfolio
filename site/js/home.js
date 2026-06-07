@@ -10,6 +10,12 @@
 import { gsap, ScrollTrigger } from './lib/gsap.js';
 
 const root = document.documentElement;
+
+// Safari renders blur bleed and shape-outside alpha tracing differently —
+// a couple of treatments fork on this (Chrome keeps the full effect).
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+root.classList.toggle('is-safari', isSafari);
+
 const sections = gsap.utils.toArray('.section');
 const indicator = document.querySelector('.indicator');
 const dots = gsap.utils.toArray('.indicator li');
@@ -60,13 +66,13 @@ mm.add(
 
     sections.forEach((section, i) => {
       const content = section.querySelector('.content');
-      // Blur ONLY the hero elements — never .content itself. A filter on the
-      // ancestor rasterizes the whole subtree (glass button included) into one
-      // layer that gets bitmap-scaled -> smudgy edges. Scale/alpha are fine on
-      // the ancestor; blur is what kills crispness.
-      // Blur ONLY the headline — a blurred IMG spreads pixels beyond its box
-      // and Safari renders that bleed as a ghost glow around the image.
-      const blurEls = desktop ? section.querySelectorAll('h2') : [];
+      // Blur the hero elements — never .content itself (an ancestor filter
+      // rasterizes the whole subtree, glass button included -> smudge).
+      // Safari only: skip the IMG — its blur bleed renders as a ghost glow
+      // there; Chrome keeps the full image+headline melt.
+      const blurEls = desktop
+        ? section.querySelectorAll(isSafari ? 'h2' : 'h2, .text img')
+        : [];
 
       // IN: section top travels viewport bottom -> viewport top.
       // Ends at identity exactly where snap rests.

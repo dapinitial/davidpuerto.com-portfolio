@@ -161,10 +161,14 @@
       position: relative;
       inset: auto;
       shape-outside: var(--image);
-      /* Explicit threshold: Safari traces these palette-PNG alphas
-         differently than Chrome — this snaps it to a cleaner contour */
-      shape-image-threshold: 0.2;
       shape-margin: var(--spacing);
+    }
+
+    /* Safari only (class set by home.js): explicit threshold snaps its
+       palette-PNG alpha tracing to a cleaner wrap contour. Chrome's
+       default tracing is already the look we want. */
+    html.is-safari .text img {
+      shape-image-threshold: 0.2;
     }
 
     .text img + * {
