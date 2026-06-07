@@ -142,9 +142,9 @@
     }
 
     .text {
-      /* Literal math only — Safari's calc() can't divide by var().
-         Size dial: the vw factor (was 52.28vw ≈ the pen's 33vw base). */
-      --height: min(96svh, 64vw);
+      /* David's visual tuning (DevTools): 900px tall, 220px down.
+         Literal values only — Safari's calc() can't divide by var(). */
+      --height: 900px;
       --offset: calc(var(--height) / 3);
 
       flex: 1;
@@ -157,8 +157,8 @@
     .text img {
       float: inline-start;
       height: var(--height);
-      margin-left: -45%; /* centering dial: more negative = closer to page center */
-      margin-top: 0;
+      margin-left: -36.88%; /* (1 - 587/930) * -100% — pre-computed (Safari) */
+      margin-top: 220px;
       opacity: 0.5;
       position: relative;
       inset: auto;
