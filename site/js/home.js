@@ -170,18 +170,15 @@ mm.add(
         0,
       );
 
-    // --- Zillow finale: KEXP-style burst on the last dot -----------------
-    // Expanding ring + confetti particles flying out from the dot's center.
-    // Pure WAAPI, self-cleaning, GPU-only (transform/opacity).
+    // --- Zillow finale: the dot takes the shot ---------------------------
+    // Arriving at Zillow: the traveling dot becomes a 🏀, drops through a
+    // mini hoop (net swoosh included), the confetti burst is the crowd, and
+    // the ball settles back in as the Zillow-blue dot.
     const lastDot = dots[dots.length - 1];
     const BURST_COLORS = [...SECTION_COLORS, '#ffffff', '#fb836d'];
     let lastBurst = 0;
 
     const burst = () => {
-      const now = Date.now();
-      if (now - lastBurst < 1000) return; // cooldown — no spam on snap jitter
-      lastBurst = now;
-
       const ring = document.createElement('span');
       ring.className = 'burst-particle';
       ring.style.cssText = 'width:12px;height:12px;border:2px solid #1277e1;';
@@ -219,11 +216,23 @@ mm.add(
       });
     };
 
+    const slam = () => {
+      const now = Date.now();
+      if (now - lastBurst < 2500) return; // cooldown — no spam on snap jitter
+      lastBurst = now;
+
+      indicator.classList.add('dunking'); // dot -> 🏀, spins into its ring
+      setTimeout(() => {
+        burst(); // swish
+        setTimeout(() => indicator.classList.remove('dunking'), 350); // -> blue dot
+      }, 650);
+    };
+
     ScrollTrigger.create({
       trigger: sections[sections.length - 1],
       start: 'top 60%',
-      onEnter: burst,
-      onEnterBack: burst,
+      onEnter: slam,
+      onEnterBack: slam,
     });
 
     // Indicator clicks: native anchors + CSS scroll-behavior: smooth — no JS needed.

@@ -1,0 +1,157 @@
+/* <hoop-dunk> — mini basketball hoop CSS art (backboard, rim, swooshing
+   net) with a 🏀 that drops through. Designed at 600px, scaled to indicator
+   size. One-shot animations; the element fades itself out after the dunk. */
+
+hoop-dunk {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  width: 132px;
+  height: 110px;
+  margin-left: -65px;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+hoop-dunk.fade {
+  opacity: 0;
+}
+
+hoop-dunk .art {
+  position: relative;
+  width: 600px;
+  height: 500px;
+  transform: scale(0.22);
+  transform-origin: top left;
+}
+
+/* Main backboard */
+hoop-dunk .backboard {
+  position: absolute;
+  left: 190px;
+  top: 40px;
+  width: 200px;
+  height: 150px;
+  background: white;
+  border: 10px solid black;
+}
+
+/* Centre black markings on backboard */
+hoop-dunk .backboard::after {
+  content: '';
+  position: absolute;
+  left: 40px;
+  top: 31px;
+  width: 100px;
+  height: 75px;
+  border: 10px solid black;
+}
+
+/* The ball — the emoji IS the basketball (free seams at any size) */
+hoop-dunk .basketball {
+  position: absolute;
+  left: 250px;
+  top: -100px;
+  width: 100px;
+  height: 100px;
+  font-size: 92px;
+  line-height: 100px;
+  text-align: center;
+  animation: hoop-ball-drop 0.9s cubic-bezier(0.5, 0, 1, 0.4) forwards;
+}
+
+@keyframes hoop-ball-drop {
+  0% {
+    top: -100px;
+    transform: rotate(0deg);
+  }
+  100% {
+    top: 400px;
+    transform: rotate(340deg);
+  }
+}
+
+/* Net stripes at 45deg; widens as the ball falls through */
+hoop-dunk .net {
+  position: absolute;
+  left: 235px;
+  top: 200px;
+  width: 130px;
+  height: 150px;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    white 15px,
+    white 30px
+  );
+  clip-path: polygon(20% 100%, 80% 100%, 100% 0, 0 0);
+  animation: hoop-net-swoosh 0.9s ease-in-out forwards;
+}
+
+/* Net stripes in opposite angle */
+hoop-dunk .net::before {
+  content: '';
+  position: absolute;
+  width: 130px;
+  height: 150px;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 20px,
+    white 15px,
+    white 30px
+  );
+}
+
+@keyframes hoop-net-swoosh {
+  0% {
+    clip-path: polygon(20% 100%, 80% 100%, 100% 0, 0 0);
+  }
+  55% {
+    clip-path: polygon(20% 100%, 80% 100%, 100% 0, 0 0);
+  }
+  80% {
+    clip-path: polygon(5% 100%, 95% 100%, 100% 0, 0 0);
+  }
+  81% {
+    clip-path: polygon(20% 100%, 80% 100%, 100% 0, 0 0);
+  }
+  100% {
+    clip-path: polygon(20% 100%, 80% 100%, 100% 0, 0 0);
+  }
+}
+
+/* Red rim front at top of net */
+hoop-dunk .rim-front {
+  position: absolute;
+  left: 225px;
+  top: 175px;
+  width: 130px;
+  height: 20px;
+  border: 10px solid red;
+  border-top: none;
+  border-radius: 50%;
+}
+
+/* Back of circular rim */
+hoop-dunk .rim-back {
+  position: absolute;
+  left: 230px;
+  top: 175px;
+  width: 140px;
+  height: 20px;
+  border-top: 3px solid red;
+  border-radius: 50%;
+}
+
+/* Bracket holding rim to the backboard */
+hoop-dunk .rim-back::before {
+  content: '';
+  position: absolute;
+  left: 45px;
+  top: -19px;
+  width: 50px;
+  height: 20px;
+  background: red;
+}

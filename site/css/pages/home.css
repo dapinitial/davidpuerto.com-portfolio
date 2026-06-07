@@ -261,8 +261,31 @@
     --color-indicator: var(--color-primary);
   }
 
+  /* Zillow arrival: the traveling dot IS the 🏀 — it spins into its own
+     ring, the burst fires, then it settles back as the blue dot */
+  .indicator.dunking::before {
+    content: '🏀';
+    background: transparent;
+    box-shadow: none;
+    font-size: calc(var(--indicator-size) * 1.25);
+    line-height: 1;
+    display: grid;
+    place-content: center;
+    animation: dot-dunk 0.65s ease-in;
+  }
+
+  @keyframes dot-dunk {
+    0% {
+      transform: translateY(calc(var(--indicator-y, 0px) - 18px)) rotate(0deg) scale(0.6);
+    }
+    100% {
+      transform: translateY(var(--indicator-y, 0px)) rotate(320deg) scale(1);
+    }
+  }
+
   /* The traveling dot — GSAP drives --indicator-y and --color-indicator */
   .indicator::before {
+    transition: opacity 0.3s ease;
     content: '';
     border-radius: 50%;
     color: var(--color-indicator, var(--color-text));
