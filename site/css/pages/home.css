@@ -161,6 +161,9 @@
       position: relative;
       inset: auto;
       shape-outside: var(--image);
+      /* Explicit threshold: Safari traces these palette-PNG alphas
+         differently than Chrome — this snaps it to a cleaner contour */
+      shape-image-threshold: 0.2;
       shape-margin: var(--spacing);
     }
 

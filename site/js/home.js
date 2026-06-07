@@ -49,7 +49,7 @@ mm.add(
     // Crossing the desktop boundary mid-scroll can strand a half-blurred
     // frame from the outgoing context — strip filters when blur isn't ours.
     if (!desktop) {
-      gsap.set(document.querySelectorAll('.section h2, .section .text img'), {
+      gsap.set(document.querySelectorAll('.section h2'), {
         clearProps: 'filter',
       });
     }
@@ -64,7 +64,9 @@ mm.add(
       // ancestor rasterizes the whole subtree (glass button included) into one
       // layer that gets bitmap-scaled -> smudgy edges. Scale/alpha are fine on
       // the ancestor; blur is what kills crispness.
-      const blurEls = desktop ? section.querySelectorAll('h2, .text img') : [];
+      // Blur ONLY the headline — a blurred IMG spreads pixels beyond its box
+      // and Safari renders that bleed as a ghost glow around the image.
+      const blurEls = desktop ? section.querySelectorAll('h2') : [];
 
       // IN: section top travels viewport bottom -> viewport top.
       // Ends at identity exactly where snap rests.
