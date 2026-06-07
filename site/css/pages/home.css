@@ -142,7 +142,7 @@
     }
 
     .text {
-      --height: min(100svh, 33vw * var(--intrinsic-height) / var(--intrinsic-width));
+      --height: 900px;
       --offset: calc(var(--height) / 3);
 
       flex: 1;
@@ -156,7 +156,7 @@
       float: inline-start;
       height: var(--height);
       margin-left: calc((1 - var(--intrinsic-width) / var(--intrinsic-height)) * -100%);
-      margin-top: 0;
+      margin-top: 220px;
       opacity: 0.5;
       position: relative;
       inset: auto;
