@@ -1,7 +1,7 @@
 // davidpuerto.com server — static dist/ + gated case studies + tiny API.
 // Auth is a stateless HMAC-signed cookie: no session store, survives
 // restarts/deploys, nothing to leak.
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHmac, createSign, timingSafeEqual } from 'node:crypto';
 import path from 'node:path';
 import express from 'express';
 import bcrypt from 'bcryptjs';
@@ -75,13 +75,13 @@ app.use((req, res, next) => {
   res.set({
     'Content-Security-Policy': [
       "default-src 'self'",
-      "script-src 'self' https://cpwebassets.codepen.io",
+      "script-src 'self' https://cpwebassets.codepen.io https://www.googletagmanager.com",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self'",
       "frame-src 'self' https://codepen.io https://www.youtube.com https://www.youtube-nocookie.com",
-      "img-src 'self' data:",
+      "img-src 'self' data: https://www.google-analytics.com",
       "media-src 'self' https://www.dropbox.com https://*.dropboxusercontent.com",
-      "connect-src 'self'",
+      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
     ].join('; '),
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
@@ -92,12 +92,28 @@ app.use((req, res, next) => {
 
 /* ---------- auth gate BEFORE static ---------- */
 app.use('/case-studies', (req, res, next) => {
+  // The rebuild study is public — the "how this site was built" story.
+  if (req.path.startsWith('/rebuild')) return next();
   if (authed(req)) return next();
   res.redirect(`/login/?redirectTo=${encodeURIComponent(`/case-studies${req.url}`)}`);
 });
 
+// Case-study IMAGES are NDA content too — no cookie, no pixels.
+// (403, not a redirect: these are <img> fetches, not navigations.)
+app.use('/images/case-studies', (req, res, next) => {
+  if (authed(req)) return next();
+  res.status(403).json({ error: 'Forbidden' });
+});
+
+app.use('/admin', (req, res, next) => {
+  if (authed(req)) return next();
+  res.redirect(`/login/?redirectTo=${encodeURIComponent(`/admin${req.url}`)}`);
+});
+
 const safeRedirect = (to) =>
-  typeof to === 'string' && to.startsWith('/case-studies') ? to : '/case-studies/microsoft/';
+  typeof to === 'string' && (to.startsWith('/case-studies') || to.startsWith('/admin'))
+    ? to
+    : '/case-studies/microsoft/';
 
 app.post('/api/login', rateLimit(5, 15 * 60_000), async (req, res) => {
   const ok = await bcrypt.compare(String(req.body?.password ?? ''), PASSWORD_HASH);
@@ -184,6 +200,124 @@ app.post('/api/contact', rateLimit(3, 60 * 60_000), async (req, res) => {
     }
     console.error('contact send failed:', err.message);
     res.status(502).json({ error: 'Send failed' });
+  }
+});
+
+/* ---------- analytics: GA4 Data API proxy for /admin ----------
+   ZERO dependencies on purpose: the Google service-account OAuth flow is a
+   signed JWT swapped for a bearer token — node:crypto + fetch cover it.
+   All three vars optional; without them the endpoint answers 503 and the
+   rest of the site doesn't care. */
+const { GA_PROPERTY_ID, GA_CLIENT_EMAIL, GA_PRIVATE_KEY } = process.env;
+// App Platform env vars store literal \n in PEM keys — normalize.
+const gaPrivateKey = GA_PRIVATE_KEY?.replace(/\\n/g, '\n');
+const gaConfigured = Boolean(GA_PROPERTY_ID && GA_CLIENT_EMAIL && gaPrivateKey);
+
+const b64url = (obj) => Buffer.from(JSON.stringify(obj)).toString('base64url');
+
+let gaToken = null; // { token, exp } — refreshed ~5 min before expiry
+async function getGaToken() {
+  if (gaToken && Date.now() < gaToken.exp) return gaToken.token;
+  const now = Math.floor(Date.now() / 1000);
+  const unsigned = `${b64url({ alg: 'RS256', typ: 'JWT' })}.${b64url({
+    iss: GA_CLIENT_EMAIL,
+    scope: 'https://www.googleapis.com/auth/analytics.readonly',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now,
+  })}`;
+  const signature = createSign('RSA-SHA256').update(unsigned).sign(gaPrivateKey, 'base64url');
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: `${unsigned}.${signature}`,
+    }),
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (!res.ok) throw new Error(`google token ${res.status}: ${await res.text()}`);
+  const { access_token: token, expires_in: ttl } = await res.json();
+  gaToken = { token, exp: Date.now() + (ttl - 300) * 1000 };
+  return token;
+}
+
+// 10-minute cache per range — a personal dashboard must not burn GA quota.
+const statsCache = new Map(); // range -> { data, exp }
+
+app.get('/api/admin/stats', async (req, res) => {
+  if (!authed(req)) return res.status(401).json({ error: 'Unauthorized' });
+  if (!gaConfigured) return res.status(503).json({ error: 'Analytics not configured' });
+
+  const range = ['7', '28', '90'].includes(req.query.range) ? Number(req.query.range) : 28;
+  const cached = statsCache.get(range);
+  if (cached && Date.now() < cached.exp) return res.json(cached.data);
+
+  try {
+    const token = await getGaToken();
+    const dateRanges = [{ startDate: `${range}daysAgo`, endDate: 'today' }];
+    const dims = (name) => [{ name }];
+    const mets = (...names) => names.map((name) => ({ name }));
+    const byMetric = (name) => [{ metric: { metricName: name }, desc: true }];
+
+    // One HTTP call: batchRunReports takes up to 5 reports — exactly what we need.
+    const gaRes = await fetch(
+      `https://analyticsdata.googleapis.com/v1beta/properties/${GA_PROPERTY_ID}:batchRunReports`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requests: [
+            {
+              dateRanges,
+              dimensions: dims('date'),
+              metrics: mets('activeUsers', 'screenPageViews'),
+              orderBys: [{ dimension: { dimensionName: 'date' } }],
+              // TOTAL row gives deduplicated users — summing daily activeUsers overcounts.
+              metricAggregations: ['TOTAL'],
+            },
+            { dateRanges, dimensions: dims('sessionSource'), metrics: mets('sessions'), orderBys: byMetric('sessions'), limit: '10' },
+            { dateRanges, dimensions: dims('pagePath'), metrics: mets('screenPageViews'), orderBys: byMetric('screenPageViews'), limit: '10' },
+            { dateRanges, dimensions: dims('country'), metrics: mets('activeUsers'), orderBys: byMetric('activeUsers'), limit: '10' },
+            { dateRanges, dimensions: dims('deviceCategory'), metrics: mets('activeUsers'), orderBys: byMetric('activeUsers') },
+          ],
+        }),
+        signal: AbortSignal.timeout(10_000),
+      },
+    );
+    if (!gaRes.ok) throw new Error(`ga ${gaRes.status}: ${await gaRes.text()}`);
+
+    const { reports = [] } = await gaRes.json();
+    const [daily, sources, pages, countries, devices] = reports;
+    const num = (v) => Number(v ?? 0);
+    const list = (report) =>
+      (report?.rows ?? []).map((r) => ({
+        label: r.dimensionValues[0].value,
+        value: num(r.metricValues[0].value),
+      }));
+
+    const data = {
+      range,
+      totals: {
+        users: num(daily?.totals?.[0]?.metricValues?.[0]?.value),
+        pageviews: num(daily?.totals?.[0]?.metricValues?.[1]?.value),
+      },
+      timeline: (daily?.rows ?? []).map((r) => ({
+        date: r.dimensionValues[0].value.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3'),
+        users: num(r.metricValues[0].value),
+        views: num(r.metricValues[1].value),
+      })),
+      sources: list(sources),
+      pages: list(pages),
+      countries: list(countries),
+      devices: list(devices),
+    };
+
+    statsCache.set(range, { data, exp: Date.now() + 10 * 60_000 });
+    res.json(data);
+  } catch (err) {
+    console.error('analytics fetch failed:', err.message);
+    res.status(502).json({ error: 'Analytics fetch failed' });
   }
 });
 

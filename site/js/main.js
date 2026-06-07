@@ -1,4 +1,5 @@
 // Shared chrome — loaded on every page.
+import './lib/analytics.js';
 import './elements/site-header.js';
 import './elements/site-preloader.js';
 import './elements/scroll-progress.js';

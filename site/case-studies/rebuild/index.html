@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Rebuild — How This Site Was Built | David Puerto</title>
+  <meta name="description"
+    content="Case study: rebuilding davidpuerto.com from a broken React/Vike app into a vanilla Web-Components site with GSAP — pair-built with Claude. Every gotcha included.">
+  <meta name="ga-id" content="">
+  <script src="/boot/arriving.js"></script>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/interior.css">
+  <link rel="stylesheet" href="/css/elements/site-header.css">
+  <link rel="stylesheet" href="/css/elements/scroll-progress.css">
+  <link rel="stylesheet" href="/css/elements/infinity-loader.css">
+  <link rel="stylesheet" href="/css/elements/rain-fall.css">
+  <link rel="stylesheet" href="/css/elements/neon-text.css">
+  <link rel="stylesheet" href="/css/elements/scroll-down.css">
+  <link rel="stylesheet" href="/css/elements/tts-button.css">
+  <link rel="stylesheet" href="/css/elements/case-study-nav.css">
+  <link rel="stylesheet" href="/css/pages/case-study.css">
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/case-study.js"></script>
+</head>
+
+<body>
+  <site-header></site-header>
+  <main>
+    <section id="rebuild" class="cs-hero full-screen dark-section">
+      <rain-fall fullpage></rain-fall>
+      <neon-text goodbye="how this site was built — with Claude" hello="THE REBUILD"></neon-text>
+      <div class="scroll-down"><p>Scroll down</p></div>
+    </section>
+
+    <section class="cs-body">
+      <div class="row bodycopy-details">
+        <div class="column"><tts-button target="#article"></tts-button></div>
+        <div class="column reading-duration">
+          <p>~4 minutes to read case study</p>
+          <p>Shipped June 2026 · <a href="https://github.com/dapinitial/davidpuerto.com-portfolio" target="_blank" rel="noopener">source on GitHub</a></p>
+        </div>
+      </div>
+
+      <article id="article" class="bodycopy">
+        <h1>Case Study: <em>Rebuilding this site</em> from a broken Safari tab to a Web-Components portfolio</h1>
+
+        <h2>The Break</h2>
+        <p>One day this site simply stopped working on iPhones. The diagnosis was embarrassing and instructive: the
+          homepage was literally a CodePen <i class="accent">iframe</i> — a demo of CSS scroll-driven animations
+          (<code>animation-timeline</code>, <code>view-timeline</code>) that only Chrome had ever shipped. Safari
+          got a half-applied fallback referencing a polyfill that never loaded. The pen's own README admitted it:
+          <em>"Currently only works on Chrome desktop."</em></p>
+
+        <p>Around that iframe sat two years of accumulated React: a Vike SSR app with 56 components — some duplicated
+          wholesale (<code>superCursor/</code> AND <code>superCursor__/</code>, neither ever imported), a smooth-scroll
+          library that was installed but never wired, and a 649-line case-study page. It was built fast in the early
+          AI-assisted era, moving too quickly to look back. The deploy process was hand-built Docker images pushed to a
+          registry, then SSH into a droplet to run a script.</p>
+
+        <h2>The Decision: No Framework</h2>
+        <p>The rebuild bet was that a portfolio doesn't need a framework — it needs to be <em>fast, reliable
+            everywhere, and made of pieces anyone can steal</em>. The stack became:</p>
+        <ol>
+          <li><strong>Vanilla HTML pages</strong> built as a Vite multi-page app — every page is real HTML at its URL,
+            which makes SEO trivial instead of an SSR engineering project.</li>
+          <li><strong>Web Components in light DOM</strong> — every interactive piece is one JS file plus one CSS file.
+            No shadow DOM fighting the cascade, no build-time magic. Copy two files into any project and it works.</li>
+          <li><strong>GSAP for scroll-driven visuals</strong> (it went 100% free, plugins included) riding on
+            <strong>native CSS scroll-snap</strong> — the browser owns the scroll feel, JavaScript only paints.
+            The Chrome-only effect now runs identically in every browser, including the iPhone that started this.</li>
+          <li><strong>A ~170-line Express server</strong> — stateless HMAC-signed cookies for the gated case studies,
+            a hand-rolled rate limiter, and a contact endpoint. That is the entire backend.</li>
+        </ol>
+
+        <h2>What Got Deleted</h2>
+        <p>Six thousand six hundred lines of React, the SSR renderer, the smooth-scroll library, the Docker pipeline,
+          a paid GSAP registry token, and the iframe. The repo's git history was rebuilt from scratch after GitHub's
+          push protection caught something important: the old history had carried a committed <code>.env</code> —
+          live credentials — for two years. The new repo begins with a single clean commit and a scrubbed lineage.
+          Sometimes the most valuable line of the rebuild is the one that refuses to push.</p>
+
+        <h2>The Gotchas (kept honest)</h2>
+        <p>Every rebuild has a folklore section. These are real, and each one cost an iteration:</p>
+        <ol>
+          <li><strong>The font that wasn't the font.</strong> The menu's typeface was "Mona-Sans" via a CDN whose
+            stylesheet declares several width cuts at the same weight — and in a <code>@font-face</code> cascade, the
+            last one wins. The old site had been silently rendering <em>Mona Sans Black Wide</em> the whole time.
+            Self-hosting the "same font" looked wrong until the exact wide cuts were matched.</li>
+          <li><strong>Safari's calc() cannot divide by a CSS variable.</strong>
+            <code>calc(33vw * var(--h) / var(--w))</code> silently invalidates; the homepage images fell back to
+            intrinsic size and crushed the text wrap. Chrome was fine, which made it look like a layout bug instead of
+            a parser one. Fix: pre-compute the ratios to literals.</li>
+          <li><strong>The old app was content-box.</strong> Its reset never set <code>box-sizing: border-box</code>
+            globally, so every "32px" header was actually 48px. Porting dimensions verbatim shrank the chrome.</li>
+          <li><strong>DigitalOcean App Platform blocks outbound SMTP.</strong> Entirely. The Nodemailer/Gmail contact
+            form hung into 504s in production while working perfectly locally. Email moved to an HTTPS API (Resend)
+            — DKIM-signed from this domain.</li>
+          <li><strong>Blur is a haunted property.</strong> A blurred element's pixels spread beyond its box (Safari
+            shows the bleed as a ghost glow); a <code>will-change</code> hint caches the soft mid-animation raster;
+            and a scroll-snap landing at scale 0.999 leaves the whole layer permanently bitmap-fuzzy. The melt effect
+            now blurs only what sells it, hints nothing, and snaps its scale to exactly 1.0.</li>
+          <li><strong>GSAP pinning inside flex wants blood.</strong> The pin-spacer reflows flex siblings — the old
+            site fought it with <code>!important</code> hacks. The "photo holds while text scrolls" effect is now
+            four lines of <code>position: sticky</code>.</li>
+        </ol>
+
+        <h2>The Numbers</h2>
+        <ol>
+          <li>React/Vike code deleted: <strong>~6,600 lines</strong> — replaced by zero framework code</li>
+          <li>Reusable elements shipped: <strong>20+</strong> (galleries, loaders, neon signs, rain, a basketball)</li>
+          <li>Homepage JavaScript: <strong>~50KB gzipped</strong>, GSAP included</li>
+          <li>Hosting: <strong>$5/month</strong>, deployed by <code>git push</code></li>
+          <li>Browsers that get the full experience: <strong>all of them</strong></li>
+        </ol>
+
+        <h2>The Process: Pair-Built with Claude</h2>
+        <p>This rebuild was a sustained collaboration with Claude (Opus 4.8) in Claude Code. The shape of the work:
+          Claude explored the old codebase and proposed the architecture; the migration ran as planned milestones with
+          real commits; sub-agents ported entire case-study pages in parallel; and every visual call — the snap feel,
+          the glow intensity, a 220px-versus-260px image offset — was a human judgment fed back from a real browser
+          and a real phone. The division of labor was honest: AI hands moved fast through six thousand lines; human
+          eyes caught every place where fast wasn't right. The same collaboration wrote the words you're reading.</p>
+
+        <h2>Outcome</h2>
+        <p>The site that broke on an iPhone is now verified on one. The portfolio is its own proof-of-work: view
+          source, read the <a href="https://github.com/dapinitial/davidpuerto.com-portfolio" target="_blank"
+            rel="noopener">repository</a>, take whatever's useful — it's MIT. Everyone wanted to see how I did it.
+          Here it is.</p>
+
+        <blockquote>
+          <h5 class="subheading">"If a picture is worth a thousand words —<br /> a prototype is worth a thousand
+            meetings."</h5>
+        </blockquote>
+      </article>
+    </section>
+  </main>
+</body>
+
+</html>

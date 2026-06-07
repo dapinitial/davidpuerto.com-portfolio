@@ -55,6 +55,35 @@ DigitalOcean App Platform, push-to-deploy from `main`. Build: `npm run build`,
 run: `node server/index.js`. No Docker, no registry, no SSH — that was the
 old way, and decommissioning it was half the point.
 
+## Analytics
+
+GA4 collection plus a gated `/admin` dashboard — zero new npm dependencies
+(the Google service-account OAuth flow is hand-rolled with `node:crypto`).
+
+Setup:
+
+1. Create a GA4 property and grab its **measurement id** (`G-XXXX`). That id is
+   NOT an env var — paste it into the `<meta name="ga-id" content="">` tag in
+   each page head under `site/` (empty content = collection stays off).
+2. In Google Cloud, enable the **Google Analytics Data API** and create a
+   **service account** (no roles needed) + a JSON key.
+3. In GA4 → Admin → Property access management, add the service account email
+   as **Viewer**.
+4. Set the server env vars (App Platform stores the key's newlines as literal
+   `\n` — the server normalizes them):
+
+```
+GA_PROPERTY_ID=       # numeric GA4 property id
+GA_CLIENT_EMAIL=      # service account email
+GA_PRIVATE_KEY=       # service account PEM private key
+```
+
+`/admin` is gated behind the same login as the case studies (same password,
+same cookie). `/api/admin/stats?range=7|28|90` proxies the GA4 Data API with a
+10-minute in-memory cache; until the env vars exist it answers
+`503 {"error":"Analytics not configured"}`. Visitors with Do Not Track enabled
+are never tracked.
+
 ## License
 
 [MIT](LICENSE) — take whatever's useful.

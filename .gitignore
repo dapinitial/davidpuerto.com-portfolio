@@ -1,3 +1,12 @@
+# NDA-gated case-study content — kept OUT of the repo (deployed via the
+# private-content channel; see README). The public "rebuild" study stays.
+site/case-studies/microsoft/
+site/case-studies/facebook/
+site/case-studies/nordstrom/
+site/case-studies/sonosite/
+site/case-studies/zillow/
+site/public/images/case-studies/
+
 # Secrets — never commit credentials in any form
 .env
 .env.*
