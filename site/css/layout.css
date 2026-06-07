@@ -56,16 +56,21 @@
     width: 100%;
   }
 
+  /* Faithful to the old layout.css: flex-basis 100% + wrap means columns
+     STACK by default — sections opt into side-by-side with flex overrides
+     (e.g. .bodycopy-details .column { flex: 0 1 auto }). The old pages'
+     pin/scroll choreography depends on this stacking. */
   .row {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
-    gap: var(--spacing, 1.5rem);
+    width: 100%;
   }
 
   .column {
     display: flex;
     flex-direction: column;
+    flex-basis: 100%;
     flex: 1;
-    min-width: 0;
   }
 }

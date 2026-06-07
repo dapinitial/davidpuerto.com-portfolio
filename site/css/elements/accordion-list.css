@@ -76,6 +76,27 @@ accordion-list dd.show {
   opacity: 1;
 }
 
+/* Persona bullet lists inside the panels (matches the old
+   .breakdownOfRole list treatment: Poppins, muted, readable leading) */
+accordion-list dd ul {
+  list-style: disc;
+  margin: 0 0 0 1em;
+  padding: 8px 0 16px;
+  text-align: left;
+}
+
+accordion-list dd li {
+  color: #777;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 10px;
+}
+
+accordion-list dd li:last-of-type {
+  margin-bottom: 0;
+}
+
 accordion-list .icon-wrap {
   width: 30px;
   height: 30px;
