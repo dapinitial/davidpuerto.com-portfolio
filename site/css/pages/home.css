@@ -142,10 +142,9 @@
     }
 
     .text {
-      /* Pre-computed from 33vw * (930/587): Safari's calc() can't divide
-         by a var() — the formula invalidated there, height fell back to
-         auto, and the image rendered enormous (the "poo" wrap). */
-      --height: min(100svh, 52.28vw);
+      /* Literal math only — Safari's calc() can't divide by var().
+         Size dial: the vw factor (was 52.28vw ≈ the pen's 33vw base). */
+      --height: min(96svh, 64vw);
       --offset: calc(var(--height) / 3);
 
       flex: 1;
@@ -158,7 +157,7 @@
     .text img {
       float: inline-start;
       height: var(--height);
-      margin-left: -36.88%; /* (1 - 587/930) * -100%, pre-computed for Safari */
+      margin-left: -45%; /* centering dial: more negative = closer to page center */
       margin-top: 0;
       opacity: 0.5;
       position: relative;
