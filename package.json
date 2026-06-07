@@ -8,7 +8,8 @@
     "dev:server": "PORT=3001 node --env-file=.env server/index.js",
     "build": "vite build",
     "start": "node server/index.js",
-    "preview": "npm run build && NODE_ENV=production PORT=3001 node --env-file=.env server/index.js"
+    "preview": "npm run build && NODE_ENV=production PORT=3001 node --env-file=.env server/index.js",
+    "lock": "npm run build && node --env-file=.env scripts/lock-content.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
