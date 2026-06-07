@@ -53,6 +53,7 @@ export default defineConfig({
         resume: page('resume/index.html'),
         login: page('login/index.html'),
         notfound: page('404.html'),
+        servererror: page('500.html'),
         csMicrosoft: page('case-studies/microsoft/index.html'),
         csFacebook: page('case-studies/facebook/index.html'),
         csNordstrom: page('case-studies/nordstrom/index.html'),

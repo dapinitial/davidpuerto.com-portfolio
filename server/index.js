@@ -203,6 +203,22 @@ app.use(
   }),
 );
 
-app.use((req, res) => res.status(404).sendFile(path.join(dist, '404.html')));
+/* ---------- error capture: every path renders something intentional ---- */
+// 404 — JSON for API consumers, the branded page for humans
+app.use((req, res) => {
+  if (req.path.startsWith('/api/')) return res.status(404).json({ error: 'Not found' });
+  res.status(404).sendFile(path.join(dist, '404.html'));
+});
+
+// 4xx/5xx — malformed JSON bodies, unexpected throws, anything else
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const status = err.type === 'entity.parse.failed' ? 400 : (err.status ?? 500);
+  if (status >= 500) console.error('server error:', err.stack ?? err.message);
+  if (req.path.startsWith('/api/')) {
+    return res.status(status).json({ error: status >= 500 ? 'Server error' : 'Bad request' });
+  }
+  res.status(status).sendFile(path.join(dist, '500.html'));
+});
 
 app.listen(PORT, () => console.log(`davidpuerto.com listening on :${PORT} (${NODE_ENV ?? 'dev'})`));
