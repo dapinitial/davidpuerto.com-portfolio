@@ -1,7 +1,10 @@
 // <infinity-loader> — the infinity-path SVG loader (stroke-dash loop with
-// bounce-out exit). In the MPA rebuild it covers page TRANSITIONS: the site
-// header injects it when an internal link is clicked, and arriving pages can
-// also declare it with the `auto` attribute to cover heavy asset loads.
+// hop-away exit). In the MPA rebuild it covers page DEPARTURES: main.js
+// injects it when an internal link is clicked. Arrivals are covered by the
+// html.is-arriving CSS cover instead (same SVG as a data-URI background —
+// see css/elements/infinity-loader.css), so the spinner is animating from
+// the destination page's first paint with no JS-boot gap. Pages can also
+// declare `<infinity-loader auto>` to cover heavy asset loads.
 //
 //   InfinityLoader.show()      — inject + show now (used on nav clicks)
 //   <infinity-loader auto>     — shows until window 'load' (+ min 500ms)
@@ -46,7 +49,7 @@ class InfinityLoader extends HTMLElement {
     const wait = Math.max(0, minShow - (performance.now() - this.#shownAt));
     setTimeout(() => {
       this.classList.add('exit');
-      setTimeout(() => this.remove(), 550); // bounce (300) + fade tail
+      setTimeout(() => this.remove(), 650); // hop (500) + cover fade tail (600)
     }, wait);
   }
 

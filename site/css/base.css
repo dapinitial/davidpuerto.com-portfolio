@@ -117,8 +117,9 @@
   }
 
   /* Arrival cover: when a page is reached via an internal transition, an
-     inline head snippet adds .is-arriving pre-paint so nothing flashes
-     before the infinity loader takes over (js/main.js lifts it). */
+     inline head snippet adds .is-arriving pre-paint so nothing flashes.
+     The matching spinner + hop-out exit live in
+     css/elements/infinity-loader.css (js/main.js lifts it at load). */
   html.is-arriving::before {
     content: '';
     position: fixed;

@@ -9,7 +9,12 @@
     ) {
       document.documentElement.classList.add('is-arriving');
       window.__arriveFailsafe = setTimeout(function () {
-        document.documentElement.classList.remove('is-arriving');
+        // Same graceful exit main.js runs at load — hop out, then drop.
+        var html = document.documentElement;
+        html.classList.add('is-departing');
+        setTimeout(function () {
+          html.classList.remove('is-arriving', 'is-departing');
+        }, 650);
       }, 3000);
     }
   } catch (e) {}
