@@ -38,18 +38,21 @@ document.addEventListener('click', (e) => {
 });
 
 // Arrival orchestration: if this page was reached via an internal transition,
-// the inline snippet already covered it. Ride the infinity loader until the
-// page is fully loaded, then bounce out and lift the cover.
+// the boot snippet already covered it — backdrop AND spinner (the spinner is
+// a data-URI in css/elements/infinity-loader.css, animating since first
+// paint). Ride that cover until the page is fully loaded, then add
+// .is-departing: the spinner hops away and the cover fades as the page shows.
 try {
   if (sessionStorage.getItem('dp-arriving')) {
     sessionStorage.removeItem('dp-arriving');
+    const html = document.documentElement;
     // The homepage has its own full preloader — don't stack loaders.
-    if (document.documentElement.classList.contains('is-arriving')) {
-      const el = InfinityLoader.show();
+    if (html.classList.contains('is-arriving')) {
       const done = () => {
-        document.documentElement.classList.remove('is-arriving');
         clearTimeout(window.__arriveFailsafe);
-        el.hide();
+        html.classList.add('is-departing');
+        // hop (500ms) + cover fade tail (ends 600ms) — then drop the cover
+        setTimeout(() => html.classList.remove('is-arriving', 'is-departing'), 650);
       };
       if (document.readyState === 'complete') done();
       else window.addEventListener('load', done, { once: true });
@@ -62,7 +65,10 @@ try {
 // A bfcache restore (iOS swipe-back) revives the page WITH the loader still
 // in the DOM — clear any strays.
 window.addEventListener('pageshow', (e) => {
-  if (e.persisted) document.querySelectorAll('infinity-loader').forEach((el) => el.remove());
+  if (e.persisted) {
+    document.querySelectorAll('infinity-loader').forEach((el) => el.remove());
+    document.documentElement.classList.remove('is-arriving', 'is-departing');
+  }
 });
 
 // Resize lid: pause all CSS transitions/animations while the window is
