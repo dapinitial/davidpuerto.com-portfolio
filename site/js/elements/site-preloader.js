@@ -32,10 +32,7 @@ class SitePreloader extends HTMLElement {
             <span class="loading-text">LOADING</span>
           </div>
         </div>
-        <div class="percentage-intro">
-          <h5>deep breath</h5>
-          Deepest breaths... content is loading.
-        </div>
+        <div class="percentage-intro">Breathe deeply, content is loading.</div>
       </div>`;
 
     const bar = this.querySelector('.loadbar');

@@ -45,10 +45,6 @@ site-preloader .percentage-intro {
   text-align: center;
 }
 
-site-preloader .percentage-intro h5 {
-  margin: 0 0 4px;
-}
-
 site-preloader .loadbar {
   /* Original value — effectively invisible on black, and that's intentional:
      the visible progress is the gradient sweeping through the letters. */
