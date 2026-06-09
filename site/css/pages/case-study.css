@@ -31,9 +31,14 @@
 
 
   /* Skewed-top body section */
+  /* A single centered content column. Was place-content:center, which
+     shrink-wrapped children to content width and centered fragilely; this
+     gives every child a real, consistent width. Breakouts still escape to
+     100vw via .break-out's left:calc(50% - 50vw). */
   .cs-body {
     display: grid;
-    place-content: center;
+    justify-content: center;
+    grid-template-columns: min(1100px, 92vw);
     background: #111;
     width: 100%;
     position: relative;
@@ -68,6 +73,8 @@
   /* Reading details pill (tts + duration) */
   .bodycopy-details {
     margin-top: 40px;
+    max-width: 900px;
+    margin-inline: auto;
     padding: 16px 32px;
     background: #181715;
     border-radius: 48px;
@@ -99,9 +106,12 @@
   /* Long-form article */
   .bodycopy {
     font-family: 'Poppins', var(--font-family-default, sans-serif);
-    margin: 20px 0 60px 0;
-    max-width: calc(100vw - 80px);
-    width: clamp(32ch, 960px, 64ch);
+    /* Was width: clamp(32ch, 960px, 64ch) — the 64ch max won and pinned the
+       column to ~600px. Center a comfortable ~900px reading column instead;
+       breakouts/cards inside still escape wider via .break-out / .results-table. */
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto 60px;
     padding-top: 60px;
   }
 
@@ -112,8 +122,11 @@
     color: #949494;
     font-kerning: auto;
     letter-spacing: 0.15px;
-    font-size: clamp(1.2rem, 1.2vw, 1.1875rem);
-    line-height: clamp(24px, 4vw, 2vw);
+    /* Was font-size: clamp(1.2rem,1.2vw,1.1875rem) (min>max, nonsensical) and
+       line-height: clamp(24px,4vw,2vw) (max<min, effectively pinned to 24px).
+       Replace with a readable, slightly larger setting. */
+    font-size: 1.15rem;
+    line-height: 1.75;
   }
 
   .bodycopy p {
@@ -145,8 +158,9 @@
   .bodycopy h3,
   .bodycopy h4 {
     color: #00a3bb;
-    font-size: 14px;
-    font-weight: 400;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     margin-bottom: 24px;
     speak: none;
     text-transform: uppercase;
@@ -154,11 +168,12 @@
 
   .bodycopy h1 {
     color: #eee;
-    font-size: 40px;
-    margin-bottom: 3.5rem;
-    font-weight: 100;
-    line-height: 1.4;
-    margin-right: 40px;
+    /* Was font-size:40px; font-weight:100 (too thin to anchor the page) with a
+       stray margin-right. Stronger, fluid display heading. */
+    font-size: clamp(2rem, 1.4rem + 2vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0 0 2rem;
   }
 
   .bodycopy h1 em {
@@ -222,7 +237,7 @@
     display: grid;
     place-self: center;
     border: 1px solid #404040;
-    max-width: 800px;
+    max-width: min(1000px, 92vw);
     height: auto;
   }
 
