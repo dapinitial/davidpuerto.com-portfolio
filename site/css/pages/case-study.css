@@ -199,16 +199,21 @@
     z-index: 10;
   }
 
+  /* Full-bleed that works in BOTH containing contexts: as a direct child of
+     the place-content:center grid (.cs-body) AND nested inside the centered
+     .bodycopy block. `left: calc(50% - 50vw)` pins the left edge to the
+     viewport in either case — the old `margin: 0 calc(50% - 54vw)` was tuned
+     for one context and overflowed/skewed in the other. Matches the proven
+     .full-screen-graph below. */
   .break-out {
-    margin: 0 calc(50% - 54vw);
     position: relative;
+    left: calc(50% - 50vw);
     width: 100vw;
   }
 
   .card.break-out {
     border-radius: 0;
-    margin: 0 calc(50% - 54vw) 50px;
-    width: 100vw;
+    margin-bottom: 50px;
   }
 
   .card.break-out img {
@@ -225,7 +230,11 @@
   .results-table {
     font-size: 24px;
     border: 1px solid #404040;
-    max-width: fit-content;
+    /* Was fit-content, which shrank embeds/headings into narrow boxes with
+       ugly wrapping. Fill a generous, centered width instead; per-card rows
+       can still override via an inline max-width. */
+    width: 100%;
+    max-width: min(1100px, 92vw);
     margin: 0 auto 60px;
     padding: 24px;
     position: relative;
@@ -388,7 +397,7 @@
   /* Gradient-filled headline (ported from old typography.css .slicedText) */
   .slicedText {
     color: #fff;
-    font-size: 2.7ch;
+    font-size: clamp(1.6rem, 2.4vw, 2.4rem);
     font-weight: 900;
     line-height: normal;
     position: relative;
