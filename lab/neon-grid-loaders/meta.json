@@ -1,0 +1,27 @@
+{
+  "name": "neon-grid-loaders",
+  "title": "Neon Grid Loaders",
+  "description": "Four pure-CSS neon grid loaders: 5×5 matrices of dots that glow in sequenced, staggered patterns. Zero JS, zero images — just two keyframes and per-cell animation delays. Remade from a 2015 Pug+SCSS pen, compiled to clean vanilla HTML+CSS.",
+  "tagline": "Four pure-CSS neon loaders — 5×5 dot matrices pulsing on staggered delays.",
+  "tags": [
+    "loader",
+    "css-only",
+    "animation",
+    "neon"
+  ],
+  "source": {
+    "repo": "codepen.io/dapinitial/pen/NrLmoB (pulled + compiled)",
+    "jsPath": null,
+    "cssPath": "lab/neon-grid-loaders/neon-grid-loaders.css",
+    "inlinedAssets": []
+  },
+  "registration": "pure HTML + CSS, no JS — drop the .container markup and the stylesheet",
+  "codepen": {
+    "launcher": "neon-grid-loaders.codepen.html",
+    "showcaseLauncher": null,
+    "urls": [
+      "https://codepen.io/dapinitial/pen/gbmbPZZ"
+    ]
+  },
+  "bundledAt": null
+}

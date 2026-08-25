@@ -1,0 +1,26 @@
+{
+  "name": "neon-grid-loaders",
+  "title": "Neon Grid Loaders",
+  "tagline": "Four pure-CSS neon loaders — 5×5 dot matrices pulsing on staggered delays.",
+  "description": "Four pure-CSS neon grid loaders: 5×5 matrices of dots that glow in sequenced, staggered patterns. Zero JS, zero images — just two keyframes and per-cell animation delays. Remade from a 2015 Pug+SCSS pen, compiled to clean vanilla HTML+CSS.",
+  "tags": [
+    "loader",
+    "css-only",
+    "animation",
+    "neon"
+  ],
+  "repo": "codepen.io/dapinitial/pen/NrLmoB (pulled + compiled)",
+  "root": "/Users/dpuerto/Sites/davidpuerto.com-portfolio",
+  "cssPath": "lab/neon-grid-loaders/neon-grid-loaders.css",
+  "assets": [],
+  "demoHTML": "<div class=\"container\">\n  <div class=\"grid-big\"><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div><div class=\"cell-1\"></div></div>\n  <div class=\"grid-big\"><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div><div class=\"cell-2\"></div></div>\n  <div class=\"grid-big\"><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div><div class=\"cell-3\"></div></div>\n  <div class=\"grid-big\"><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div><div class=\"cell-4\"></div></div>\n</div>",
+  "bg": "#1D1F20",
+  "jsModule": false,
+  "registration": "pure HTML + CSS, no JS — drop the .container markup and the stylesheet",
+  "editors": "110",
+  "codepenUrls": [
+    "https://codepen.io/dapinitial/pen/gbmbPZZ"
+  ],
+  "origin": "https://codepen.io/dapinitial/pen/NrLmoB",
+  "outDir": "lab/neon-grid-loaders"
+}

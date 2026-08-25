@@ -1,0 +1,24 @@
+{
+  "name": "neon-text",
+  "title": "Neon Text — humming sign header",
+  "description": "A reactive light-DOM web component that renders a two-tier neon sign: a small blinking `dim` line and a large humming `bright` line, with random letters shorting out on an interval. Zero dependencies, self-hosted NeonTubes face (inlined).",
+  "tagline": "Reactive two-tier neon sign — random tubes short out; themeable tube color.",
+  "tags": ["neon", "web-component", "css-animation", "custom-element", "vanilla-js"],
+  "repo": "davidpuerto.com-portfolio",
+  "root": "/Users/dpuerto/Sites/davidpuerto.com-portfolio",
+  "jsPath": "site/js/elements/neon-text.js",
+  "cssPath": "site/css/elements/neon-text.css",
+  "assets": [
+    { "url": "/fonts/neontubes.woff2", "file": "site/public/fonts/neontubes.woff2", "mime": "font/woff2" }
+  ],
+  "demoHTML": "<neon-text dim=\"est. 1985\" bright=\"OPEN ALL NITE\"></neon-text>",
+  "showcaseHtml": "lab/neon-text/neon-text.artifact.html",
+  "showcaseTitle": "Neon Bench — <neon-text> showcase",
+  "parent": "qErEOYd",
+  "codepenUrls": ["https://codepen.io/dapinitial/pen/qErEOYd"],
+  "bg": "#0e0e0e",
+  "jsModule": false,
+  "registration": "self-registers via customElements.define('neon-text') — just drop the tag; no bootstrap needed",
+  "editors": "111",
+  "outDir": "lab/neon-text"
+}
