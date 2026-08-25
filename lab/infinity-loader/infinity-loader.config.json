@@ -1,0 +1,25 @@
+{
+  "name": "infinity-loader",
+  "title": "Infinity Loader",
+  "tagline": "Continuous ∞ stroke-dash spinner that persists across navigations, then hops away.",
+  "description": "An SVG infinity-path loader: a single stroke-dash loop that runs continuously, with a springy \"hop-away\" exit animation. Reduced-motion aware. Zero deps, SVG inline.",
+  "tags": [
+    "loader",
+    "web-component",
+    "svg"
+  ],
+  "repo": "davidpuerto.com-portfolio",
+  "root": "/Users/dpuerto/Sites/davidpuerto.com-portfolio",
+  "jsPath": "site/js/elements/infinity-loader.js",
+  "cssPath": "site/css/elements/infinity-loader.css",
+  "assets": [],
+  "demoHTML": "<infinity-loader></infinity-loader>",
+  "bg": "#0e0e0e",
+  "jsModule": false,
+  "registration": "exports InfinityLoader AND self-registers — drop <infinity-loader> (optional `auto`); JS also exposes InfinityLoader.show()",
+  "editors": "111",
+  "outDir": "lab/infinity-loader",
+  "codepenUrls": [
+    "https://codepen.io/dapinitial/pen/YPZPqwR"
+  ]
+}

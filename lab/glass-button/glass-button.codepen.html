@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open "Glass Button" in CodePen</title>
+<style>
+  html,body{margin:0;height:100%}
+  body{display:grid;place-items:center;background:#0e0e0e;color:#fff0f4;
+       font:16px/1.5 system-ui,sans-serif;text-align:center;padding:2rem}
+  .card{max-width:32rem}
+  button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:.6rem;
+         padding:.9rem 1.6rem;background:#fff0f4;color:#0e0e0e}
+  button:hover{opacity:.9}
+  small{display:block;margin-top:1rem;opacity:.6}
+  code{background:#1c1c1c;padding:.1em .4em;border-radius:.3em}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Glass Button</h1>
+  <p>Opens a new, prefilled CodePen with this component fully inlined.</p>
+  <button id="go">Open in CodePen ↗</button>
+  <small>Then hit <b>Save</b> in CodePen (log in first).</small>
+</div>
+<script>
+  const DEFINE_URL = 'https://codepen.io/pen/define';
+  const data = {"title":"Glass Button","description":"A liquid-glass pill button/CTA: layered translucent gradients, a conic gradient outline ring, and an angular sheen that sweeps on hover. Pure CSS, GPU-friendly, degrades without backdrop-filter. One element: \u003ca class=\"glass-button\">\u003cspan>Label\u003c/span>\u003c/a>.","tags":["control","css-only","glass","button"],"html":"\u003ca class=\"glass-button\" href=\"#\" onclick=\"return false\">\u003cspan>Read Case Study\u003c/span>\u003c/a>","css":"/* .glass-button — liquid-glass pill CTA (dark-theme adaptation of the\n   classic glass button). Single element, no wrappers:\n\n     \u003ca class=\"glass-button\" href=\"...\">\u003cspan>Read Case Study\u003c/span>\u003c/a>\n\n   Pure CSS, GPU-friendly (transform/opacity/background-position transitions).\n   Degrades gracefully without backdrop-filter. */\n\n.glass-button {\n  --border-width: clamp(1px, 0.0625em, 4px);\n  --anim-time: 400ms;\n  --anim-ease: cubic-bezier(0.25, 1, 0.5, 1);\n\n  all: unset;\n  cursor: pointer;\n  position: relative;\n  display: inline-block;\n  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);\n  border-radius: 999vw;\n  background: linear-gradient(\n    -75deg,\n    rgba(255, 255, 255, 0.04),\n    rgba(255, 255, 255, 0.14),\n    rgba(255, 255, 255, 0.04)\n  );\n  box-shadow:\n    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.25),\n    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.25),\n    0 0.25em 0.4em -0.125em rgba(0, 0, 0, 0.5),\n    0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.12);\n  backdrop-filter: blur(clamp(1px, 0.125em, 4px));\n  -webkit-backdrop-filter: blur(clamp(1px, 0.125em, 4px));\n  transition: transform var(--anim-time) var(--anim-ease),\n    box-shadow var(--anim-time) var(--anim-ease);\n}\n\n.glass-button:hover {\n  transform: scale(0.975);\n  box-shadow:\n    inset 0 0.125em 0.125em rgba(0, 0, 0, 0.25),\n    inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.35),\n    0 0.15em 0.3em -0.1em rgba(0, 0, 0, 0.6),\n    0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.25);\n}\n\n.glass-button:active {\n  transform: scale(0.95);\n}\n\n/* Label */\n.glass-button span {\n  position: relative;\n  display: block;\n  user-select: none;\n  -webkit-user-select: none;\n  font-weight: 500;\n  font-size: 1rem;\n  letter-spacing: -0.02em;\n  color: rgba(255, 255, 255, 0.92);\n  text-shadow: 0 0.12em 0.12em rgba(0, 0, 0, 0.35);\n  padding-inline: 1.5em;\n  padding-block: 0.75em;\n  transition: text-shadow var(--anim-time) var(--anim-ease);\n}\n\n.glass-button:hover span {\n  text-shadow: 0 0.025em 0.025em rgba(0, 0, 0, 0.2);\n}\n\n/* Shine sweep across the face — band parks fully off-canvas at rest\n   (stops pushed past the visible window) so no glint smears the edge. */\n.glass-button span::after {\n  content: '';\n  display: block;\n  position: absolute;\n  z-index: 1;\n  width: calc(100% - var(--border-width));\n  height: calc(100% - var(--border-width));\n  top: calc(0% + var(--border-width) / 2);\n  left: calc(0% + var(--border-width) / 2);\n  box-sizing: border-box;\n  border-radius: 999vw;\n  overflow: clip;\n  background: linear-gradient(\n    -45deg,\n    rgba(255, 255, 255, 0) 0%,\n    rgba(255, 255, 255, 0.25) 55% 60%,\n    rgba(255, 255, 255, 0) 68%\n  );\n  mix-blend-mode: screen;\n  pointer-events: none;\n  background-size: 200% 200%;\n  background-position: 0% 50%;\n  background-repeat: no-repeat;\n  transition: background-position calc(var(--anim-time) * 1.25) var(--anim-ease);\n}\n\n.glass-button:hover span::after {\n  background-position: 25% 50%;\n}\n\n.glass-button:active span::after {\n  background-position: 50% 15%;\n}\n\n/* Gradient outline ring */\n.glass-button::after {\n  content: '';\n  position: absolute;\n  z-index: 1;\n  inset: 0;\n  border-radius: 999vw;\n  width: calc(100% + var(--border-width));\n  height: calc(100% + var(--border-width));\n  top: calc(0% - var(--border-width) / 2);\n  left: calc(0% - var(--border-width) / 2);\n  padding: var(--border-width);\n  box-sizing: border-box;\n  background: conic-gradient(\n      from -75deg at 50% 50%,\n      rgba(255, 255, 255, 0.5),\n      rgba(255, 255, 255, 0) 5% 40%,\n      rgba(255, 255, 255, 0.5) 50%,\n      rgba(255, 255, 255, 0) 60% 95%,\n      rgba(255, 255, 255, 0.5)\n    ),\n    linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.3));\n  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);\n  mask-composite: exclude;\n  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);\n  -webkit-mask-composite: xor;\n  pointer-events: none;\n  box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.35);\n}\n\n.glass-button:focus-visible {\n  outline: 2px solid rgba(255, 255, 255, 0.7);\n  outline-offset: 3px;\n}\n","js":"","editors":"110"};
+  document.getElementById('go').addEventListener('click', () => {
+    const form = document.createElement('form');
+    form.action = DEFINE_URL; form.method = 'POST'; form.target = '_blank';
+    const input = document.createElement('input');
+    input.type = 'hidden'; input.name = 'data';
+    input.value = JSON.stringify(data);
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "rain-fall",
+  "title": "Rain Fall",
+  "description": "A light-DOM web component that rains: falling drips with splash rings, spawned on rAF up to `max-drips`. Respects reduced-motion. Zero deps, no images.",
+  "tagline": "Ambient falling drips with splash rings — atmosphere for a dark hero.",
+  "tags": [
+    "ambient",
+    "effect",
+    "web-component",
+    "vanilla-js"
+  ],
+  "source": {
+    "repo": "davidpuerto.com-portfolio",
+    "jsPath": "site/js/elements/rain-fall.js",
+    "cssPath": "site/css/elements/rain-fall.css",
+    "inlinedAssets": []
+  },
+  "registration": "self-registers via customElements.define('rain-fall') — drop the tag; add `fullpage` and `max-drips`",
+  "codepen": {
+    "launcher": "rain-fall.codepen.html",
+    "showcaseLauncher": null,
+    "urls": [
+      "https://codepen.io/dapinitial/pen/emvmZJW"
+    ]
+  },
+  "bundledAt": null
+}

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open "Infinity Loader" in CodePen</title>
+<style>
+  html,body{margin:0;height:100%}
+  body{display:grid;place-items:center;background:#0e0e0e;color:#fff0f4;
+       font:16px/1.5 system-ui,sans-serif;text-align:center;padding:2rem}
+  .card{max-width:32rem}
+  button{font:inherit;font-weight:600;cursor:pointer;border:0;border-radius:.6rem;
+         padding:.9rem 1.6rem;background:#fff0f4;color:#0e0e0e}
+  button:hover{opacity:.9}
+  small{display:block;margin-top:1rem;opacity:.6}
+  code{background:#1c1c1c;padding:.1em .4em;border-radius:.3em}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Infinity Loader</h1>
+  <p>Opens a new, prefilled CodePen with this component fully inlined.</p>
+  <button id="go">Open in CodePen ↗</button>
+  <small>Then hit <b>Save</b> in CodePen (log in first).</small>
+</div>
+<script>
+  const DEFINE_URL = 'https://codepen.io/pen/define';
+  const data = {"title":"Infinity Loader","description":"An SVG infinity-path loader: a single stroke-dash loop that runs continuously, with a springy \"hop-away\" exit animation. Reduced-motion aware. Zero deps, SVG inline.","tags":["loader","web-component","svg"],"html":"\u003cinfinity-loader>\u003c/infinity-loader>","css":"/* \u003cinfinity-loader> — flattened from preloaderInfinite.module.css */\n\ninfinity-loader {\n  position: fixed;\n  inset: 0;\n  background-color: #0e0e0e;\n  display: grid;\n  place-content: center;\n  z-index: 99999;\n  pointer-events: none;\n  animation: infinity-fade-in 0.2s ease;\n}\n\ninfinity-loader.exit {\n  animation: infinity-fade-out 0.4s ease 0.2s forwards;\n}\n\ninfinity-loader.exit svg {\n  animation: infinity-hop-away 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;\n}\n\n/* Arrival cover spinner: html.is-arriving::before (base.css) paints the\n   backdrop pre-paint; this ::after carries the same infinity SVG as a\n   data-URI background, so the spinner animates from the page's very first\n   frame — no JS, no gap, no second loader to phase-jump against.\n   js/main.js adds .is-departing at load to run the hop-out. */\nhtml.is-arriving::after {\n  content: '';\n  position: fixed;\n  top: calc(50% - 30px);\n  left: calc(50% - 30px);\n  width: 60px;\n  height: 60px;\n  z-index: 99999; /* over the ::before backdrop (99998) */\n  pointer-events: none;\n  background: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='0;256.589' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E\")\n    center / 100% 100% no-repeat;\n}\n\nhtml.is-arriving.is-departing::before {\n  animation: infinity-fade-out 0.4s ease 0.2s forwards;\n}\n\nhtml.is-arriving.is-departing::after {\n  animation: infinity-hop-away 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;\n}\n\n/* The exit: a quick squat, then the loop leaps up and away while the cover\n   fades out underneath — the page fades in as the spinner hops off. */\n@keyframes infinity-hop-away {\n  0% {\n    transform: translateY(0) scale(1);\n    opacity: 1;\n  }\n  24% {\n    /* Anticipatory squash — loads the spring before the leap. */\n    transform: translateY(14px) scale(1.14, 0.8);\n    opacity: 1;\n  }\n  100% {\n    /* The back-out curve carries this past the top for a playful overshoot. */\n    transform: translateY(-140px) scale(0.7);\n    opacity: 0;\n  }\n}\n\n@keyframes infinity-fade-in {\n  from {\n    opacity: 0;\n  }\n}\n\n@keyframes infinity-fade-out {\n  to {\n    opacity: 0;\n  }\n}\n","js":"// \u003cinfinity-loader> — the infinity-path SVG loader (stroke-dash loop with\n// hop-away exit). In the MPA rebuild it covers page DEPARTURES: main.js\n// injects it when an internal link is clicked. Arrivals are covered by the\n// html.is-arriving CSS cover instead (same SVG as a data-URI background —\n// see css/elements/infinity-loader.css), so the spinner is animating from\n// the destination page's first paint with no JS-boot gap. Pages can also\n// declare `\u003cinfinity-loader auto>` to cover heavy asset loads.\n//\n//   InfinityLoader.show()      — inject + show now (used on nav clicks)\n//   \u003cinfinity-loader auto>     — shows until window 'load' (+ min 500ms)\n//\n// Pair with css/elements/infinity-loader.css.\n\nconst SVG = `\n  \u003csvg width=\"60\" height=\"60\" viewBox=\"0 0 100 100\" aria-hidden=\"true\">\n    \u003cpath fill=\"none\"\n      d=\"M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z\"\n      stroke=\"#fff\" stroke-width=\"3\"\n      stroke-dasharray=\"205.271142578125 51.317785644531256\">\n      \u003canimate attributeName=\"stroke-dashoffset\" calcMode=\"linear\"\n        values=\"0;256.58892822265625\" keyTimes=\"0;1\" dur=\"1.0\"\n        begin=\"0\" repeatCount=\"indefinite\" />\n    \u003c/path>\n  \u003c/svg>`;\n\nclass InfinityLoader extends HTMLElement {\n  #shownAt = 0;\n\n  connectedCallback() {\n    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {\n      this.remove();\n      return;\n    }\n    this.innerHTML = SVG;\n    this.setAttribute('role', 'status');\n    this.setAttribute('aria-label', 'Loading');\n    this.#shownAt = performance.now();\n\n    if (this.hasAttribute('auto')) {\n      if (document.readyState === 'complete') this.hide();\n      else window.addEventListener('load', () => this.hide(), { once: true });\n    }\n    // Without `auto`, the element rides until navigation replaces the page\n    // (transition use) or someone calls hide().\n  }\n\n  hide() {\n    const minShow = 500;\n    const wait = Math.max(0, minShow - (performance.now() - this.#shownAt));\n    setTimeout(() => {\n      this.classList.add('exit');\n      setTimeout(() => this.remove(), 650); // hop (500) + cover fade tail (600)\n    }, wait);\n  }\n\n  static show() {\n    const el = document.createElement('infinity-loader');\n    document.body.append(el);\n    return el;\n  }\n}\n\ncustomElements.define('infinity-loader', InfinityLoader);\n\nexport { InfinityLoader };\n","editors":"111"};
+  document.getElementById('go').addEventListener('click', () => {
+    const form = document.createElement('form');
+    form.action = DEFINE_URL; form.method = 'POST'; form.target = '_blank';
+    const input = document.createElement('input');
+    input.type = 'hidden'; input.name = 'data';
+    input.value = JSON.stringify(data);
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  });
+</script>
+</body>
+</html>

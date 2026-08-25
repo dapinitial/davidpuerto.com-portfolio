@@ -1,0 +1,34 @@
+{
+  "name": "neon-text",
+  "title": "Neon Text — humming sign header",
+  "description": "A reactive light-DOM web component that renders a two-tier neon sign: a small blinking `dim` line and a large humming `bright` line, with random letters shorting out on an interval. Zero dependencies, self-hosted NeonTubes face (inlined).",
+  "tagline": "Reactive two-tier neon sign — random tubes short out; themeable tube color.",
+  "tags": [
+    "neon",
+    "web-component",
+    "css-animation",
+    "custom-element",
+    "vanilla-js"
+  ],
+  "source": {
+    "repo": "davidpuerto.com-portfolio",
+    "jsPath": "site/js/elements/neon-text.js",
+    "cssPath": "site/css/elements/neon-text.css",
+    "inlinedAssets": [
+      "/fonts/neontubes.woff2"
+    ]
+  },
+  "registration": "self-registers via customElements.define('neon-text') — just drop the tag; no bootstrap needed",
+  "codepen": {
+    "launcher": "neon-text.codepen.html",
+    "showcaseLauncher": "neon-text.showcase.codepen.html",
+    "urls": [
+      "https://codepen.io/dapinitial/pen/qErEOYd"
+    ]
+  },
+  "bundledAt": null,
+  "artifact": {
+    "file": "neon-text.artifact.html",
+    "url": "https://claude.ai/code/artifact/c2d2027d-519c-48a7-baf1-c38c964fab7a"
+  }
+}

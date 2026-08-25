@@ -1,0 +1,27 @@
+{
+  "name": "glass-button",
+  "title": "Glass Button",
+  "tagline": "Liquid-glass pill CTA — pure CSS, animated sheen sweep, graceful fallback.",
+  "description": "A liquid-glass pill button/CTA: layered translucent gradients, a conic gradient outline ring, and an angular sheen that sweeps on hover. Pure CSS, GPU-friendly, degrades without backdrop-filter. One element: <a class=\"glass-button\"><span>Label</span></a>.",
+  "tags": [
+    "control",
+    "css-only",
+    "glass",
+    "button"
+  ],
+  "repo": "davidpuerto.com-portfolio",
+  "root": "/Users/dpuerto/Sites/davidpuerto.com-portfolio",
+  "cssPath": "site/css/elements/glass-button.css",
+  "assets": [],
+  "demoHTML": "<a class=\"glass-button\" href=\"#\" onclick=\"return false\"><span>Read Case Study</span></a>",
+  "showcaseHtml": "lab/glass-button/glass-button.artifact.html",
+  "showcaseTitle": "Glass Button — bench",
+  "bg": "#12101a",
+  "jsModule": false,
+  "registration": "pure CSS, no JS — one element: <a class=\"glass-button\"><span>Label</span></a>",
+  "editors": "110",
+  "outDir": "lab/glass-button",
+  "codepenUrls": [
+    "https://codepen.io/dapinitial/pen/OPpPNye"
+  ]
+}

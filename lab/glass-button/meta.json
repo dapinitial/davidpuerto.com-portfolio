@@ -1,0 +1,31 @@
+{
+  "name": "glass-button",
+  "title": "Glass Button",
+  "description": "A liquid-glass pill button/CTA: layered translucent gradients, a conic gradient outline ring, and an angular sheen that sweeps on hover. Pure CSS, GPU-friendly, degrades without backdrop-filter. One element: <a class=\"glass-button\"><span>Label</span></a>.",
+  "tagline": "Liquid-glass pill CTA — pure CSS, animated sheen sweep, graceful fallback.",
+  "tags": [
+    "control",
+    "css-only",
+    "glass",
+    "button"
+  ],
+  "source": {
+    "repo": "davidpuerto.com-portfolio",
+    "jsPath": null,
+    "cssPath": "site/css/elements/glass-button.css",
+    "inlinedAssets": []
+  },
+  "registration": "pure CSS, no JS — one element: <a class=\"glass-button\"><span>Label</span></a>",
+  "codepen": {
+    "launcher": "glass-button.codepen.html",
+    "showcaseLauncher": "glass-button.showcase.codepen.html",
+    "urls": [
+      "https://codepen.io/dapinitial/pen/OPpPNye"
+    ]
+  },
+  "bundledAt": null,
+  "artifact": {
+    "file": "glass-button.artifact.html",
+    "url": "https://claude.ai/code/artifact/862c94fb-1aa3-4ad5-b0be-4046e5bd0b82"
+  }
+}
