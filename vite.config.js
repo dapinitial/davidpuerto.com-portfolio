@@ -66,7 +66,7 @@ export default defineConfig({
         // dev machines, absent in CI/App Platform clones. Include only what
         // exists so cloud builds don't fail on missing inputs.
         ...Object.fromEntries(
-          ['microsoft', 'facebook', 'nordstrom', 'sonosite', 'zillow']
+          ['apple', 'microsoft', 'facebook', 'nordstrom', 'sonosite', 'zillow']
             .filter((s) =>
               existsSync(resolve(import.meta.dirname, 'site', `case-studies/${s}/index.html`)),
             )

@@ -13,7 +13,7 @@ const root = path.resolve(import.meta.dirname, '..');
 const dist = path.join(root, 'dist');
 const out = path.join(root, 'content-locked');
 
-const STUDIES = ['microsoft', 'facebook', 'nordstrom', 'sonosite', 'zillow'];
+const STUDIES = ['apple', 'microsoft', 'facebook', 'nordstrom', 'sonosite', 'zillow'];
 
 const keyB64 = process.env.CONTENT_KEY;
 if (!keyB64) {
