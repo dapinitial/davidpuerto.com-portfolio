@@ -497,7 +497,7 @@ function serveLocked(relPath, res, cacheControl) {
   return true;
 }
 
-const GATED_STUDY = /^\/case-studies\/(microsoft|facebook|nordstrom|sonosite|zillow)\/?$/;
+const GATED_STUDY = /^\/case-studies\/(apple|microsoft|facebook|nordstrom|sonosite|zillow)\/?$/;
 
 app.use((req, res, next) => {
   // Gated pages (auth was enforced upstream, but re-check — defense in depth)

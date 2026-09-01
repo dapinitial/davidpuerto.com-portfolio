@@ -15,6 +15,7 @@ const MAIN_LINKS = [
 ];
 
 const CASE_STUDIES = [
+  ['Apple', '/case-studies/apple/'],
   ['Microsoft', '/case-studies/microsoft/'],
   ['Facebook', '/case-studies/facebook/'],
   ['Nordstrom', '/case-studies/nordstrom/'],
