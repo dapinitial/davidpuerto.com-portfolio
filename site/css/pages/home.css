@@ -4,6 +4,12 @@
 
 @layer page {
   /* ---------- Per-section theme ---------- */
+  #apple {
+    --color-highlight: var(--color-apple);
+    --color-selector: var(--color-yellow);
+    --image: url('/images/apple.svg');
+  }
+
   #microsoft {
     --color-highlight: var(--color-primary);
     --color-selector: var(--color-secondary);
@@ -214,7 +220,7 @@
 
   /* ---------- Dot indicator nav ---------- */
   .indicator-nav {
-    --indicator-number: 5;
+    --indicator-number: 6;
     --indicator-top: 50svh;
     --indicator-right: var(--spacing);
 
@@ -258,7 +264,7 @@
     list-style: none;
 
     /* Section 1's accent from the first paint (GSAP scrubs it from here) */
-    --color-indicator: var(--color-primary);
+    --color-indicator: var(--color-apple);
   }
 
   /* Zillow arrival: the traveling dot IS the 🏀 — it spins into its own
@@ -365,11 +371,12 @@
     background: radial-gradient(90% 60% at 50% 100%, var(--glow-from), var(--glow-to) 72%);
   }
 
-  .glow i:nth-child(1) { --glow-from: rgba(251, 131, 109, 0.22); --glow-to: rgba(251, 131, 109, 0); }
-  .glow i:nth-child(2) { --glow-from: rgba(237, 180, 23, 0.22); --glow-to: rgba(237, 180, 23, 0); }
-  .glow i:nth-child(3) { --glow-from: rgba(171, 101, 192, 0.22); --glow-to: rgba(171, 101, 192, 0); }
-  .glow i:nth-child(4) { --glow-from: rgba(0, 163, 187, 0.22); --glow-to: rgba(0, 163, 187, 0); }
-  .glow i:nth-child(5) { --glow-from: rgba(18, 119, 225, 0.22); --glow-to: rgba(18, 119, 225, 0); }
+  .glow i:nth-child(1) { --glow-from: rgba(52, 201, 139, 0.22); --glow-to: rgba(52, 201, 139, 0); }
+  .glow i:nth-child(2) { --glow-from: rgba(251, 131, 109, 0.22); --glow-to: rgba(251, 131, 109, 0); }
+  .glow i:nth-child(3) { --glow-from: rgba(237, 180, 23, 0.22); --glow-to: rgba(237, 180, 23, 0); }
+  .glow i:nth-child(4) { --glow-from: rgba(171, 101, 192, 0.22); --glow-to: rgba(171, 101, 192, 0); }
+  .glow i:nth-child(5) { --glow-from: rgba(0, 163, 187, 0.22); --glow-to: rgba(0, 163, 187, 0); }
+  .glow i:nth-child(6) { --glow-from: rgba(18, 119, 225, 0.22); --glow-to: rgba(18, 119, 225, 0); }
 
   /* Glow is pure decoration — drop it entirely during live resizes */
   html.is-resizing .glow {
