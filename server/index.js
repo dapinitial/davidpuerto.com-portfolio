@@ -73,21 +73,31 @@ app.use(express.json({ limit: '10kb' }));
 
 // Security headers (CSP allows the case studies' CodePen/YouTube/Dropbox embeds)
 app.use((req, res, next) => {
+  // /cursorlab runs on-device MediaPipe (WASM + workers) — needs a scoped relaxation.
+  // Everything stays 'self': no CDN, no remote code. Rest of the site keeps the tight policy.
+  const isCursorLab = req.path.startsWith('/cursorlab');
+  const scriptSrc = isCursorLab
+    ? "script-src 'self' 'wasm-unsafe-eval' blob:"
+    : "script-src 'self' https://cpwebassets.codepen.io https://www.googletagmanager.com";
+  const csp = [
+    "default-src 'self'",
+    scriptSrc,
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self'",
+    "frame-src 'self' https://codepen.io https://www.youtube.com https://www.youtube-nocookie.com",
+    "img-src 'self' data: https://www.google-analytics.com",
+    "media-src 'self' blob: https://www.dropbox.com https://*.dropboxusercontent.com",
+    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
+  ];
+  if (isCursorLab) csp.push("worker-src 'self' blob:");
   res.set({
-    'Content-Security-Policy': [
-      "default-src 'self'",
-      "script-src 'self' https://cpwebassets.codepen.io https://www.googletagmanager.com",
-      "style-src 'self' 'unsafe-inline'",
-      "font-src 'self'",
-      "frame-src 'self' https://codepen.io https://www.youtube.com https://www.youtube-nocookie.com",
-      "img-src 'self' data: https://www.google-analytics.com",
-      "media-src 'self' https://www.dropbox.com https://*.dropboxusercontent.com",
-      "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
-    ].join('; '),
+    'Content-Security-Policy': csp.join('; '),
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
   });
+  // Camera is on-device for the a11y cursor; allow it only for this route.
+  if (isCursorLab) res.set('Permissions-Policy', 'camera=(self), microphone=(self)');
   next();
 });
 
@@ -497,7 +507,7 @@ function serveLocked(relPath, res, cacheControl) {
   return true;
 }
 
-const GATED_STUDY = /^\/case-studies\/(microsoft|facebook|nordstrom|sonosite|zillow)\/?$/;
+const GATED_STUDY = /^\/case-studies\/(apple|microsoft|facebook|nordstrom|sonosite|zillow)\/?$/;
 
 app.use((req, res, next) => {
   // Gated pages (auth was enforced upstream, but re-check — defense in depth)

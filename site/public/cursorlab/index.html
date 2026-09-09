@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cursor Lab — global HUD cursor</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+<style>
+  :root{ --ground:#0b0806; --raised:#16110b; --fg:#f2e9dd; --dim:rgba(242,233,221,.6);
+    --accent:#e6a15c; --line:rgba(230,161,92,.18);
+    --serif:"Iowan Old Style",Georgia,serif; --mono:ui-monospace,Menlo,monospace; --sans:system-ui,sans-serif; }
+  *{box-sizing:border-box} body{margin:0;background:var(--ground);color:var(--fg);font-family:var(--sans);line-height:1.6}
+  .wrap{width:min(92vw,960px);margin-inline:auto;padding:6rem 0}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,6vw,4rem);line-height:1;margin:.6rem 0 1rem;letter-spacing:-.02em}
+  .sub{max-width:52ch;color:var(--dim)}
+  h2{font-family:var(--serif);font-weight:400;font-size:1.5rem;margin:3.5rem 0 1rem}
+  /* project tiles → bloom targets */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem}
+  .tile{display:block;background:var(--raised);border:1px solid var(--line);border-radius:12px;
+    padding:1.1rem;color:var(--fg);text-decoration:none;transition:border-color .2s,transform .2s}
+  .tile:hover,.tile:focus-visible{border-color:var(--accent);transform:translateY(-3px);outline:none}
+  .tile .k{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .tile .t{font-family:var(--serif);font-size:1.15rem;margin-top:.3rem}
+  /* state trigger buttons */
+  .row{display:flex;flex-wrap:wrap;gap:.6rem}
+  .btn{font:600 .8rem/1 var(--mono);letter-spacing:.06em;background:var(--raised);color:var(--fg);
+    border:1px solid var(--line);border-radius:8px;padding:.7rem 1rem}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .note{font-family:var(--mono);font-size:.72rem;color:var(--dim);margin-top:.8rem}
+  .tall{height:120vh;display:flex;align-items:center;justify-content:center;color:var(--dim);
+    border:1px dashed var(--line);border-radius:12px;margin-top:1rem;font-family:var(--mono);font-size:.8rem}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="eyebrow">Novel Navigation · Global Cursor</p>
+    <h1>One cursor. Every input. A HUD that blooms.</h1>
+    <p class="sub">Move it with a pointer or the arrow keys (gaze + voice next). The ring around it shows
+      scroll, loading, downloads and errors; hover a project and it blooms open with a preview.
+      <a href="portrait-hero.html">↗ the portrait hero</a></p>
+
+    <h2>Projects — hover / focus to bloom</h2>
+    <div class="grid">
+      <a class="tile" href="#panogram" data-cursor="Open panogram" data-cursor-desc="Spatial-native 360° social platform. Real WebGL viewer + 3D globe." data-cursor-img="cursor-media/01.png">
+        <div class="k">Spatial · WebGL</div><div class="t">panogram</div></a>
+      <a class="tile" href="#studio" data-cursor="Open Spacelab Studio" data-cursor-desc="AI composes campaign-grade email + interactive pages." data-cursor-img="cursor-media/02.png">
+        <div class="k">AI · Systems</div><div class="t">Spacelab Studio</div></a>
+      <a class="tile" href="#shipmate" data-cursor="Open shipmate" data-cursor-desc="Agentic deploy assistant with a plan→execute authority gate." data-cursor-img="cursor-media/03.png">
+        <div class="k">Agentic · Voice</div><div class="t">shipmate</div></a>
+      <a class="tile" href="#iviz" data-cursor="Open iViz" data-cursor-desc="Radial thumb-gesture UI for a handheld ultrasound (2013)." data-cursor-img="cursor-media/04.png">
+        <div class="k">Gesture · Clinical</div><div class="t">SonoSite iViz</div></a>
+    </div>
+
+    <h2>HUD states — trigger the radial cursor</h2>
+    <div class="row">
+      <button class="btn" onclick="SLCursor.setState('loading')">loading</button>
+      <button class="btn" onclick="dl()">download %</button>
+      <button class="btn" onclick="SLCursor.setState('error')">error</button>
+      <button class="btn" onclick="SLCursor.setState('dwell',0.66)">dwell (gaze-select)</button>
+      <button class="btn" onclick="SLCursor.setState('idle')">reset</button>
+    </div>
+    <p class="note">The outer ring below fills as you scroll — "how much is left" made radial.</p>
+
+    <h2>Multimodal drive — Phase 2</h2>
+    <div class="row">
+      <button class="btn" id="handBtn" aria-pressed="false">✋ Hand drive</button>
+      <button class="btn" id="gazeBtn" aria-pressed="false">👁 Gaze drive</button>
+      <button class="btn" id="voiceBtn" aria-pressed="false">🎙 Voice nav</button>
+      <button class="btn" id="eyeTestBtn">🔬 Eye test</button>
+      <button class="btn" onclick="SLCursor.nav('prev')">◀ prev</button>
+      <button class="btn" onclick="SLCursor.nav('next')">next ▶</button>
+    </div>
+    <p class="note">Click 👁 Gaze → a quick <b>wizard</b> calibrates your eyes (open, then close). Then move the cursor with
+      your head/eyes and <b>blink both eyes</b> to select — deliberate, never auto. Say "down/up/next/previous/open" to scroll &amp; nav.
+      A self-view with a face-guide shows you're in frame. Camera &amp; mic are on-device — nothing is recorded.</p>
+
+    <h2>Form — for "select input" + submit</h2>
+    <form id="demoForm" class="row" style="flex-direction:column;align-items:flex-start;gap:.7rem;max-width:420px"
+      onsubmit="event.preventDefault(); logAct('FORM SUBMITTED: '+(this.q.value||'(empty)'));">
+      <input name="q" type="text" placeholder="Say “input”, then type / dictate…" style="width:100%;padding:.7rem .9rem;background:var(--raised);color:var(--fg);border:1px solid var(--line);border-radius:8px;font:400 .95rem var(--sans)"/>
+      <select name="cat" style="padding:.6rem .8rem;background:var(--raised);color:var(--fg);border:1px solid var(--line);border-radius:8px">
+        <option>Panel demo</option><option>Studio</option><option>ShotgunDetour</option>
+      </select>
+      <button class="btn" type="submit" data-cursor="Submit the form">Submit ▸</button>
+    </form>
+
+    <div class="tall">scroll through me — watch the outer ring fill</div>
+  </div>
+
+  <!-- VISIBLE CLICK LOG: proves a click actually reached the DOM (vs. just the HUD saying "selected") -->
+  <div id="actLog" style="position:fixed;left:16px;top:16px;z-index:2147483647;font:600 12px/1.5 ui-monospace,Menlo,monospace;background:rgba(11,8,6,.92);color:#8fe08f;padding:9px 12px;border:1px solid rgba(143,224,143,.4);border-radius:10px;max-width:260px;pointer-events:none">last action: —</div>
+
+  <script src="gsap.min.js"></script>
+  <script>
+    // Same-origin MediaPipe + models (CSP: default-src 'self') — no CDN, no remote code.
+    window.MMC_CONFIG = {
+      mediapipeBase: '/cursorlab/mediapipe',
+      faceModel: '/cursorlab/mediapipe/models/face_landmarker.task',
+      handModel: '/cursorlab/mediapipe/models/hand_landmarker.task',
+      cameraSource: 'in-page'
+    };
+  </script>
+  <script src="mmc-core.js?v=14"></script>
+  <script>
+    // VISIBLE CLICK LOG — any real click that reaches the DOM lands here (blink, voice, hand, pointer all funnel through .click())
+    const actLog=document.getElementById('actLog'); let actN=0;
+    function logAct(t){ actN++; actLog.textContent='last action #'+actN+': '+t; actLog.style.color='#ffd479';
+      setTimeout(()=>actLog.style.color='#8fe08f',250); }
+    document.addEventListener('click', e=>{ const el=e.target.closest('a,button,[data-cursor],input,select'); if(!el) return;
+      logAct((el.tagName)+' “'+(el.textContent||el.value||el.name||el.getAttribute('data-cursor')||'').trim().slice(0,28)+'”');
+      if(el.classList.contains('tile')){ el.style.outline='3px solid var(--accent)'; setTimeout(()=>el.style.outline='',600); } }, true);
+
+    // demo: animate a download %
+    function dl(){ let p=0; SLCursor.setState('download',0);
+      const id=setInterval(()=>{ p+=0.08; SLCursor.setState('download',Math.min(1,p)); if(p>=1){ clearInterval(id); setTimeout(()=>SLCursor.setState('idle'),700);} },120); }
+
+    // Phase 2: gaze + voice toggles (camera/mic need a user gesture; on-device)
+    const hd=document.getElementById('handBtn'); let hdOn=false;
+    hd.onclick=async()=>{ try{
+        if(hdOn){ SLCursor.stopHand(); hdOn=false; hd.textContent='✋ Hand drive'; hd.setAttribute('aria-pressed','false'); }
+        else { hd.textContent='Hand…'; await SLCursor.startHand(); hdOn=true; hd.textContent='✋ Hand ON'; hd.setAttribute('aria-pressed','true'); }
+      }catch(e){ console.error('hand error:', e); hd.textContent='Hand: '+((e&&e.name)||e); } };
+    const gz=document.getElementById('gazeBtn'); let gzOn=false;
+    gz.onclick=async()=>{ try{
+        if(gzOn){ SLCursor.stopGaze(); gzOn=false; gz.textContent='Gaze drive'; gz.setAttribute('aria-pressed','false'); }
+        else { gz.textContent='Gaze…'; await SLCursor.startGaze(); gzOn=true; gz.textContent='Gaze ON'; gz.setAttribute('aria-pressed','true'); }
+      }catch(e){ console.error('gaze error:', e); gz.textContent='Gaze: '+((e&&e.name)||e); } };
+    const vc=document.getElementById('voiceBtn'); let vcOn=false;
+    vc.onclick=()=>{ try{
+        if(vcOn){ SLCursor.stopVoice(); vcOn=false; vc.textContent='Voice nav'; vc.setAttribute('aria-pressed','false'); }
+        else { SLCursor.startVoice(); vcOn=true; vc.textContent='Voice ON'; vc.setAttribute('aria-pressed','true'); }
+      }catch(e){ vc.textContent='Voice n/a'; } };
+
+    // LIVE EYE READOUT — calibrate wink/blink thresholds to YOUR face (through glasses)
+    const eyeBox=document.createElement('div');   // NB: never name a global 'dbg' — collides with MediaPipe's emscripten debug fn
+    eyeBox.style.cssText='position:fixed;top:10px;right:10px;z-index:2147483647;font:13px/1.6 ui-monospace,Menlo,monospace;background:rgba(11,8,6,.92);color:#e6a15c;padding:10px 12px;border:1px solid rgba(230,161,92,.4);border-radius:10px;white-space:pre;pointer-events:none';
+    eyeBox.textContent='eye readout — turn Gaze on'; document.body.appendChild(eyeBox);
+    setInterval(()=>{ const d=SLCursor.gazeDebug; if(!d){ return; }
+      const bar=v=>'█'.repeat(Math.round(Math.min(1,v/0.35)*12)).padEnd(12,'·');
+      eyeBox.textContent =
+        'earL '+d.earL.toFixed(3)+' '+bar(d.earL)+(d.bthL!=null?('  blink<'+d.bthL):'')+'\n'+
+        'earR '+d.earR.toFixed(3)+' '+bar(d.earR)+(d.bthR!=null?('  blink<'+d.bthR):'')+'\n'+
+        'state: '+d.state+'\n'+
+        'SLCursor.calibrate() to redo';
+    }, 90);
+
+    // CHOREOGRAPHED LOGGED EYE TEST — guides you through each gesture, records EAR ranges, prints a report to paste
+    document.getElementById('eyeTestBtn').onclick=async()=>{
+      if(!SLCursor.gazeDebug){ eyeBox.textContent='Turn 👁 Gaze on first + wait for “calibrated”, then run.'; return; }
+      const phases=[['① LOOK CENTER (eyes open)',2500],['② WINK LEFT only',2500],['③ WINK RIGHT only',2500],['④ CLOSE BOTH',2000],['⑤ HOLD one eye + tilt head down',3000]];
+      const rep=[];
+      for(const [label,ms] of phases){
+        const s={lm:9,lM:0,rm:9,rM:0,st:{}}, t0=performance.now();
+        await new Promise(r=>{ const id=setInterval(()=>{ const d=SLCursor.gazeDebug;
+          eyeBox.textContent='▶ '+label+'\n… '+Math.ceil((ms-(performance.now()-t0))/1000)+'s';
+          if(d){ s.lm=Math.min(s.lm,d.earL); s.lM=Math.max(s.lM,d.earL); s.rm=Math.min(s.rm,d.earR); s.rM=Math.max(s.rM,d.earR); s.st[d.state]=(s.st[d.state]||0)+1; }
+          if(performance.now()-t0>ms){ clearInterval(id); r(); } },80); });
+        rep.push(label+'\n   earL '+s.lm.toFixed(3)+'–'+s.lM.toFixed(3)+'  earR '+s.rm.toFixed(3)+'–'+s.rM.toFixed(3)+'  states['+Object.keys(s.st).join(',')+']');
+      }
+      const th=SLCursor.gazeDebug;
+      rep.push('thresholds: L c<'+(th.thL?th.thL.c:'?')+' o>'+(th.thL?th.thL.o:'?')+'  |  R c<'+(th.thR?th.thR.c:'?')+' o>'+(th.thR?th.thR.o:'?'));
+      const out=rep.join('\n');
+      console.log('[MMC EYE TEST]\n'+out);
+      eyeBox.textContent='DONE ✅ — paste this to Claude:\n\n'+out;
+    };
+  </script>
+</body>
+</html>
