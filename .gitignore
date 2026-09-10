@@ -1,5 +1,6 @@
 # NDA-gated case-study content — kept OUT of the repo (deployed via the
 # private-content channel; see README). The public "rebuild" study stays.
+site/case-studies/apple/
 site/case-studies/microsoft/
 site/case-studies/facebook/
 site/case-studies/nordstrom/
