@@ -253,3 +253,42 @@ site-header .menu li .submenu-toggle:focus-visible::after {
 body.menu-open {
   overflow: hidden;
 }
+
+/* ---------- Ink flip over light sections ----------
+   site-header.js toggles body.light-content when a .light-section sits under
+   the header (sampled at the logo's centre). The "surprise and delight":
+   white chrome turns black as you cross into a white container. The open
+   menu overlay is dark, so body.menu-open forces the white ink back. */
+site-header .logo svg,
+site-header .hamburger span,
+site-header .hamburger::before,
+site-header .logout,
+site-header .crumb {
+  transition: fill 0.25s ease, background-color 0.25s ease, color 0.25s ease,
+    filter 0.25s ease, box-shadow 0.25s ease, text-shadow 0.25s ease;
+}
+
+body.light-content:not(.menu-open) site-header .site-chrome {
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-content:not(.menu-open) site-header .logo svg {
+  fill: #000;
+  filter: none;
+}
+
+body.light-content:not(.menu-open) site-header .hamburger span {
+  background: #000;
+  box-shadow: none;
+}
+
+body.light-content:not(.menu-open) site-header .hamburger::before,
+body.light-content:not(.menu-open) site-header .logout,
+body.light-content:not(.menu-open) site-header .crumb {
+  color: #000;
+  text-shadow: none;
+}
+
+body.light-content:not(.menu-open) site-header .logout:hover {
+  color: #00a3bb;
+}
