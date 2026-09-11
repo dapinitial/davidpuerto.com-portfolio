@@ -110,10 +110,15 @@
   picture,
   object,
   video,
-  embed,
-  iframe {
+  embed {
     max-width: 100%;
     height: auto;
+  }
+
+  /* iframes have no intrinsic ratio: height:auto would collapse them to the
+     150px default and override their height="" attribute. Width-limit only. */
+  iframe {
+    max-width: 100%;
   }
 
   /* Arrival cover: when a page is reached via an internal transition, an

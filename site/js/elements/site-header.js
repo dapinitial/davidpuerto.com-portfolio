@@ -94,6 +94,35 @@ class SiteHeader extends HTMLElement {
       if (e.key === 'Escape' && this.classList.contains('open')) setOpen(false);
     });
 
+    // Ink flip: when a .light-section scrolls under the header, body gets
+    // .light-content so the logo/hamburger/logout turn black (CSS). Ported from
+    // the old clientLayout — sampled at the logo's vertical centre.
+    const SAMPLE_Y = 24;
+    let ticking = false;
+    const detect = () => {
+      ticking = false;
+      const sections = document.querySelectorAll('.light-section, .dark-section');
+      let light = false;
+      for (const sec of sections) {
+        const r = sec.getBoundingClientRect();
+        if (r.top <= SAMPLE_Y && r.bottom >= SAMPLE_Y) {
+          light = sec.classList.contains('light-section');
+          break;
+        }
+      }
+      document.body.classList.toggle('light-content', light);
+      document.body.classList.toggle('dark-content', !light);
+    };
+    const schedule = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(detect);
+    };
+    on(window, 'scroll', schedule);
+    on(window, 'resize', schedule);
+    on(window, 'load', schedule);
+    schedule();
+
     // Auth state (server lands in M2 — silently stays hidden until then)
     fetch('/api/check-auth')
       .then((r) => (r.ok ? r.json() : null))
@@ -114,7 +143,7 @@ class SiteHeader extends HTMLElement {
 
   disconnectedCallback() {
     this.#ac.abort();
-    document.body.classList.remove('menu-open');
+    document.body.classList.remove('menu-open', 'light-content', 'dark-content');
     this.replaceChildren();
   }
 }

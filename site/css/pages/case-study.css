@@ -209,9 +209,22 @@
   .card iframe {
     border: 1px solid #222;
     width: 100%;
-    min-height: 50vh;
     position: relative;
     z-index: 10;
+  }
+
+  /* CodePen demos (in cards or bare, as on /facebook): fill the viewport so the
+     pen is usable instead of cropped to a strip. height="" is the floor. */
+  iframe[src*="codepen.io"] {
+    width: 100%;
+    min-height: 90vh;
+  }
+
+  /* YouTube embeds keep 16:9 regardless of their width/height attrs */
+  .card iframe[src*="youtube"] {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 
   /* Full-bleed that works in BOTH containing contexts: as a direct child of
