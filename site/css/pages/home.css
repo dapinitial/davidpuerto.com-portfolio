@@ -273,8 +273,12 @@
     position: relative;
     list-style: none;
 
-    /* Section 1's accent from the first paint (GSAP scrubs it from here) */
-    --color-indicator: var(--color-primary);
+    /* Section 1's accent from the first paint (GSAP scrubs it from here).
+       Hex, not var(--color-primary): ScrollTrigger.refresh() reverts the
+       inline value and re-reads this, and GSAP can't parse oklch() — the
+       scrub then interpolated garbage (alpha -> 0) on the way back to
+       section 1 and the dot vanished mid-scroll. Same sRGB as the oklch. */
+    --color-indicator: #fb836d;
   }
 
   /* Zillow arrival: the traveling dot IS the 🏀 — it spins into its own
