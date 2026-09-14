@@ -141,12 +141,25 @@
       margin-block-end: 0;
     }
 
-    .text {
-      /* David's visual tuning (DevTools): 900px tall, 220px down.
-         Literal values only — Safari's calc() can't divide by var(). */
-      --height: 900px;
-      --offset: calc(var(--height) / 3);
+    /* The enhanced stage (.content is position: fixed; inset: 0) is a size
+       container, so the image + text math below is in cqh — relative to the
+       stage, whatever the window is. Without a container (no-JS / reduced
+       motion) cq units fall back to the small viewport, which is the same box. */
+    html.is-enhanced .content {
+      container-type: size;
+    }
 
+    .text {
+      /* David's visual tuning: 900px tall on a big screen, its top a third
+         above stage centre. Capped at the stage height so a short window
+         can't inflate this block past the viewport — with align-items:
+         center that used to push the paragraphs off the top of the screen. */
+      --height: min(900px, 100cqh);
+      --image-top: calc(50cqh - var(--height) / 3);
+      --image-nudge: 0px; /* per-browser optical tuning, below */
+      --text-nudge: 0px;
+
+      align-self: stretch; /* top-anchored; the float overflows and is clipped */
       flex: 1;
       font-weight: 200;
       padding-block-start: var(--spacing);
@@ -158,7 +171,9 @@
       float: inline-start;
       height: var(--height);
       margin-left: -36.88%; /* (1 - 587/930) * -100% — pre-computed (Safari) */
-      margin-top: 260px;
+      /* --image-top is measured from the stage top; subtract the stage and
+         block padding that already sit above the float. */
+      margin-top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge));
       opacity: 0.5;
       position: relative;
       inset: auto;
@@ -166,34 +181,35 @@
       shape-margin: var(--spacing);
     }
 
-
     /* Per-section optical nudges (Chrome tuning) */
-    html:not(.is-safari) #facebook .text img,
-    html:not(.is-safari) #nordstrom .text img {
-      margin-top: 280px;
+    html:not(.is-safari) #facebook .text,
+    html:not(.is-safari) #nordstrom .text {
+      --image-nudge: 20px;
     }
 
     /* Safari: uniform tuning (David's Safari DevTools pass) — its float/shape
        geometry wants the image pulled further toward center, slightly higher */
-    html.is-safari .text img {
-      margin-left: -106.88%;
-      margin-top: 200px;
+    html.is-safari .text {
+      --image-nudge: -60px;
     }
 
+    html.is-safari .text img {
+      margin-left: -106.88%;
+    }
+
+    /* Paragraphs start just above the image's top edge, never higher than
+       one --spacing below the block's top. */
     .text img + * {
-      margin-top: calc(var(--spacing) * 3);
+      margin-top: max(
+        var(--spacing),
+        calc(var(--image-top) - 3 * var(--spacing) + var(--text-nudge))
+      );
     }
   }
 
   @media (min-width: 64rem) and (min-height: 45rem) {
-    .text img + * {
-      margin-top: calc(var(--spacing) * 4);
-    }
-  }
-
-  @media (min-width: 90rem) and (min-height: 35rem) {
-    .text img + * {
-      margin-top: var(--offset);
+    .text {
+      --text-nudge: calc(var(--spacing) * 2);
     }
   }
 
