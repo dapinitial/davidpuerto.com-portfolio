@@ -150,11 +150,14 @@ mm.add(
     const travel = () =>
       dots.length > 1 ? dots[dots.length - 1].offsetTop - dots[0].offsetTop : 0;
 
-    // Dot starts on section 1's coral and scrubs through the palette —
-    // fromTo (not keyframes-from-current) so scroll position 0 is exact.
-    gsap.set(indicator, { '--color-indicator': SECTION_COLORS[0] });
-    gsap.timeline({
-      defaults: { ease: 'none' },
+    // Dot starts on section 1's coral and scrubs through the palette.
+    // Every leg is a fromTo with explicit hex endpoints: a keyframes .to()
+    // records its start from the computed value, and after a
+    // ScrollTrigger.refresh() (revert + re-init) that was the stylesheet's
+    // colour — which GSAP parsed as a plain string, so scrubbing back to
+    // section 1 tweened the alpha to 0 and the dot disappeared mid-scroll.
+    const dotTl = gsap.timeline({
+      defaults: { ease: 'none', immediateRender: false },
       scrollTrigger: {
         trigger: 'main',
         start: 'top top',
@@ -162,13 +165,22 @@ mm.add(
         scrub: true,
         invalidateOnRefresh: true,
       },
-    })
-      .fromTo(indicator, { '--indicator-y': '0px' }, { '--indicator-y': () => `${travel()}px`, duration: 1 }, 0)
-      .to(
+    });
+    dotTl.fromTo(
+      indicator,
+      { '--indicator-y': '0px' },
+      { '--indicator-y': () => `${travel()}px`, duration: 1 },
+      0,
+    );
+    const leg = 1 / (SECTION_COLORS.length - 1);
+    SECTION_COLORS.slice(1).forEach((color, i) => {
+      dotTl.fromTo(
         indicator,
-        { keyframes: SECTION_COLORS.slice(1).map((c) => ({ '--color-indicator': c })), duration: 1 },
-        0,
+        { '--color-indicator': SECTION_COLORS[i] },
+        { '--color-indicator': color, duration: leg },
+        i * leg,
       );
+    });
 
     // --- Zillow finale: the dot takes the shot ---------------------------
     // Arriving at Zillow: the traveling dot becomes a 🏀, drops through a
