@@ -10,6 +10,12 @@
     --image: url(/images/apple.png);
   }
 
+  /* Apple's third line stays on one line; the heading may run under the
+     faded image's left edge, which sits behind it. */
+  #apple h2 .nowrap {
+    white-space: nowrap;
+  }
+
   #microsoft {
     --color-highlight: var(--color-primary);
     --color-selector: var(--color-secondary);
