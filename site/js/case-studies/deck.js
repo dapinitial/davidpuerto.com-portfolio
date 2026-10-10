@@ -90,14 +90,22 @@ if (isDeck) {
       const walk = (node) => {
         [...node.childNodes].forEach((n) => {
           if (n.nodeType === 3) {
+            // letters become inline blocks, so each word is wrapped to keep
+            // the line breaking between words, never inside one
             const frag = document.createDocumentFragment();
-            for (const ch of n.textContent) {
-              if (ch === ' ' || ch === '\n') { frag.appendChild(document.createTextNode(' ')); continue; }
-              const sp = document.createElement('span');
-              sp.className = 'ltr';
-              sp.textContent = ch;
-              frag.appendChild(sp);
-            }
+            n.textContent.split(/(\s+)/).forEach((part) => {
+              if (!part) return;
+              if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+              const w = document.createElement('span');
+              w.className = 'wrd';
+              for (const ch of part) {
+                const sp = document.createElement('span');
+                sp.className = 'ltr';
+                sp.textContent = ch;
+                w.appendChild(sp);
+              }
+              frag.appendChild(w);
+            });
             n.replaceWith(frag);
           } else if (n.nodeType === 1 && n.tagName !== 'BR') walk(n);
         });

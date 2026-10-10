@@ -535,3 +535,158 @@
     white-space: nowrap;
   }
 }
+
+/* ---------- chapter opener as a slide: copy left, the glass piece right ---------- */
+@layer page {
+  html.deck .deck-beat.ms-chapter-open {
+    grid-template-columns: minmax(0, 640px) minmax(320px, 460px);
+    column-gap: clamp(32px, 4vw, 72px);
+    align-items: center;
+    justify-content: center;
+    justify-items: start;
+  }
+
+  html.deck .deck-beat.ms-chapter-open > * {
+    margin-inline: 0;
+    width: 100%;
+    max-width: none;
+  }
+
+  html.deck .deck-beat.ms-chapter-open > glass-piece {
+    height: min(68vh, 640px);
+    padding-bottom: 72px; /* room for the caption under the base */
+  }
+
+  html.deck .deck-beat.ms-chapter-open .ms-chapter-open-copy {
+    display: grid;
+    gap: 18px;
+  }
+
+  html.deck .deck-beat.ms-chapter-open h2 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(30px, 3.2vw, 50px) !important;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: #fff0f4;
+    margin: 0;
+    max-width: 22ch;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: manual;
+    text-wrap: balance;
+  }
+
+  html.deck .deck-beat.ms-chapter-open .ms-chapter-open-copy p {
+    margin: 0;
+    font-size: clamp(17px, 1.2vw, 22px);
+    font-weight: 300;
+    line-height: 1.55;
+    color: #c9c2c6;
+    max-width: 56ch;
+  }
+
+  html.deck .deck-beat.ms-chapter-open .ms-eyebrow {
+    color: var(--cs-accent, #fb836d);
+  }
+
+  @media (max-width: 1000px) {
+    html.deck .deck-beat.ms-chapter-open {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    html.deck .deck-beat.ms-chapter-open > glass-piece {
+      height: 40vh;
+    }
+  }
+}
+
+/* ---------- the hero slide keeps its own centring ---------- */
+@layer page {
+  html.deck .deck-beat.cs-hero {
+    display: grid !important;
+    place-content: center;
+    place-items: center;
+    padding: 0;
+  }
+
+  html.deck .deck-beat.cs-hero > * {
+    width: auto;
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  html.deck .deck-beat.cs-hero > rain-fall {
+    width: 100%;
+  }
+}
+
+/* ---------- chapter opener as a slide: copy left, the glass piece right ---------- */
+@layer page {
+  html.deck .deck-beat.ms-chapter-open {
+    grid-template-columns: minmax(0, 640px) minmax(320px, 460px);
+    column-gap: clamp(32px, 4vw, 72px);
+    align-items: center;
+    justify-content: center;
+    justify-items: start;
+  }
+
+  html.deck .deck-beat.ms-chapter-open > * {
+    margin-inline: 0;
+    width: 100%;
+    max-width: none;
+  }
+
+  html.deck .deck-beat.ms-chapter-open > glass-piece {
+    height: min(68vh, 640px);
+    padding-bottom: 0;
+  }
+
+  html.deck .deck-beat.ms-chapter-open .ms-chapter-open-copy {
+    display: grid;
+    gap: 18px;
+  }
+
+  html.deck .deck-beat.ms-chapter-open h2 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(30px, 3.2vw, 50px) !important;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: #fff0f4;
+    margin: 0;
+    max-width: 22ch;
+    text-wrap: balance;
+  }
+
+  html.deck .deck-beat.ms-chapter-open .ms-chapter-open-copy p {
+    margin: 0;
+    font-size: clamp(17px, 1.2vw, 22px);
+    font-weight: 300;
+    line-height: 1.55;
+    color: #c9c2c6;
+    max-width: 56ch;
+  }
+
+  html.deck .deck-beat.ms-chapter-open .ms-eyebrow {
+    color: var(--cs-accent, #fb836d);
+  }
+
+  @media (max-width: 1000px) {
+    html.deck .deck-beat.ms-chapter-open {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    html.deck .deck-beat.ms-chapter-open > glass-piece {
+      height: 40vh;
+    }
+  }
+
+  /* scrambled titles: letters are inline blocks, so words must be kept whole */
+  html.deck .deck-scramble .wrd {
+    display: inline-block;
+    white-space: nowrap;
+  }
+}
