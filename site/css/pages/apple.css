@@ -1,0 +1,81 @@
+/* Apple case study — the chapter frame in the Apple accent (black glass,
+   silver edge). The frame itself comes from pages/microsoft.css (.ms-*). */
+@layer page {
+  .ms-lead,
+  .ms-chapter {
+    --ms-accent: var(--color-silver, #d0d4dc);
+  }
+
+  /* Fourteen into one: the small panels converge on the surface */
+  .ap-figure {
+    margin: 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ap-figure svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ap-figure figcaption {
+    font-size: 13px;
+    color: #9a9499;
+  }
+
+  .ap-panel {
+    fill: #0e0e0e;
+    stroke: #4a4448;
+    stroke-width: 1;
+  }
+
+  .ap-panel line {
+    stroke: #3a3537;
+  }
+
+  .ap-surface {
+    fill: #151515;
+    stroke: var(--color-silver, #d0d4dc);
+    stroke-width: 2;
+  }
+
+  .ap-link {
+    stroke: #6e6870;
+    stroke-width: 1.5;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .ap-text {
+    fill: #c9c2c6;
+    font-family: var(--font-family-default, sans-serif);
+    font-size: 13px;
+  }
+
+  .ap-text.t {
+    fill: #fff0f4;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .ap-text.accent {
+    fill: var(--color-silver, #d0d4dc);
+  }
+
+  /* The ingestion and containment loop reuses the readings-figure styles */
+  .ms-figure .node.quarantine rect {
+    stroke: var(--color-primary, #fb836d);
+    stroke-width: 2;
+    fill: #151515;
+  }
+
+  .ms-figure .node.quarantine text.t {
+    fill: var(--color-primary, #fb836d);
+  }
+
+  .ms-figure .link.warn {
+    stroke: var(--color-primary, #fb836d);
+  }
+}

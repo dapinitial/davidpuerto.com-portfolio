@@ -23,7 +23,7 @@ const glows = gsap.utils.toArray('.glow i');
 
 // Exact sRGB values of the per-section --color-highlight oklch palette
 // (hex so GSAP interpolates cleanly) — same values as base.css fallbacks.
-const SECTION_COLORS = ['#fb836d', '#edb417', '#ab65c0', '#00a3bb', '#1277e1'];
+const SECTION_COLORS = ['#d0d4dc', '#fb836d', '#edb417', '#ab65c0', '#00a3bb', '#1277e1'];
 
 // iOS address-bar collapse fires height-only resizes; refreshing mid-scroll
 // would shift every trigger. Width changes (rotation) still refresh.
@@ -187,7 +187,7 @@ mm.add(
     // mini hoop (net swoosh included), the confetti burst is the crowd, and
     // the ball settles back in as the Zillow-blue dot.
     const lastDot = dots[dots.length - 1];
-    const BURST_COLORS = [...SECTION_COLORS, '#ffffff', '#fb836d'];
+    const BURST_COLORS = [...SECTION_COLORS.slice(1), '#ffffff', '#fb836d'];
     let lastBurst = 0;
 
     const burst = () => {
