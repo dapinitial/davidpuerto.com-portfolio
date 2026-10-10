@@ -464,13 +464,13 @@
    the colour you saw on the carousel is the colour you read under. The hero
    section's id names the study; :has() reads it from the body. */
 @layer page {
-  body { --cs-accent: var(--color-secondary, #00a3bb); }
-  body:has(#apple.cs-hero) { --cs-accent: var(--color-silver, #d0d4dc); }
-  body:has(#microsoft.cs-hero) { --cs-accent: var(--color-primary, #fb836d); }
-  body:has(#facebook.cs-hero), body:has(.hero-wrapper) { --cs-accent: var(--color-yellow, #edb417); }
-  body:has(#nordstrom.cs-hero) { --cs-accent: var(--color-purple, #ab65c0); }
-  body:has(#sonosite.cs-hero) { --cs-accent: var(--color-secondary, #00a3bb); }
-  body:has(#zillow.cs-hero) { --cs-accent: var(--color-zillow, #1277e1); }
+  body { --cs-accent: var(--color-secondary, #00a3bb); --cs-glow: 0 163 187; }
+  body:has(#apple.cs-hero) { --cs-accent: var(--color-silver, #d0d4dc); --cs-glow: 208 212 220; }
+  body:has(#microsoft.cs-hero) { --cs-accent: var(--color-primary, #fb836d); --cs-glow: 251 131 109; }
+  body:has(#facebook.cs-hero), body:has(.hero-wrapper) { --cs-accent: var(--color-yellow, #edb417); --cs-glow: 237 180 23; }
+  body:has(#nordstrom.cs-hero) { --cs-accent: var(--color-purple, #ab65c0); --cs-glow: 171 101 192; }
+  body:has(#sonosite.cs-hero) { --cs-accent: var(--color-secondary, #00a3bb); --cs-glow: 0 163 187; }
+  body:has(#zillow.cs-hero) { --cs-accent: var(--color-zillow, #1277e1); --cs-glow: 18 119 225; }
   body:has(#rebuild.cs-hero) { --cs-accent: var(--color-secondary, #00a3bb); }
 
   .ms-lead,
