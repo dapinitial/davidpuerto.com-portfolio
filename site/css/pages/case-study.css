@@ -3,7 +3,8 @@
 
 /* Unlayered on purpose: element CSS (scroll-down.css) is unlayered and would
    beat any @layer rule — this must out-cascade it to pin the indicator. */
-.cs-hero .scroll-down {
+.cs-hero .scroll-down,
+.page-hero .scroll-down {
   position: absolute;
   bottom: 40px;
   left: 50%;

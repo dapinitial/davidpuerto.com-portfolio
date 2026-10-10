@@ -73,6 +73,11 @@ if (isDeck) {
     });
     [...main.children].forEach((c) => c.classList.add('deck-hidden')); // a class: author display rules beat the hidden attribute
     main.appendChild(stage);
+    // one glow under every slide, fixed, so a slide that scrolls inside itself never drags it
+    const glow = document.createElement('div');
+    glow.className = 'deck-glow';
+    glow.setAttribute('aria-hidden', 'true');
+    main.appendChild(glow);
 
     // Presenter chrome
     const ui = document.createElement('div');
@@ -140,6 +145,9 @@ if (isDeck) {
           gsap.fromTo(l, { opacity: 0, [axis]: off }, { opacity: 1, [axis]: 0, duration: 1.5 + Math.random(), ease: 'power3.inOut', clearProps: 'transform' });
         });
       }
+      b.querySelectorAll('.ms-art img').forEach((img) => {
+        gsap.fromTo(img, { opacity: 0, scale: 1.08, filter: 'blur(18px)' }, { opacity: 0.78, scale: 1, filter: 'blur(0px)', duration: 1.6, ease: 'power2.out' });
+      });
       const kids = [...b.children].filter((k) => !k.matches('canvas, video'));
       if (kids.length) gsap.fromTo(kids, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.07, ease: 'power3.out', clearProps: 'transform' });
       b.querySelectorAll('[data-count]').forEach((el) => {
