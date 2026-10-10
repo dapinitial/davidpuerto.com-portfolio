@@ -151,3 +151,30 @@ if (expandAll) {
     ScrollTrigger.refresh();
   });
 }
+
+// --- The knight: load three.js only when the chapter opener is near ---------
+// A WebGL-less browser or a failed load leaves the opener as copy alone.
+const piece = document.querySelector('glass-piece');
+if (piece) {
+  const hasGL = (() => {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch {
+      return false;
+    }
+  })();
+  if (!hasGL) {
+    piece.setAttribute('data-error', '');
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        import('../elements/glass-piece.js').catch(() => piece.setAttribute('data-error', ''));
+      },
+      { rootMargin: '800px 0px' },
+    );
+    io.observe(piece);
+  }
+}
