@@ -20,7 +20,12 @@
 import { gsap, ScrollTrigger } from '../lib/gsap.js';
 
 const params = new URLSearchParams(location.search);
-export const isDeck = params.get('deck') === '1';
+// The deck is the default on a desktop (a fine pointer and room for the
+// spread); ?read=1 asks for the long read, ?deck=1 forces the deck anywhere.
+const STAGE = matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+export const isDeck =
+  params.get('deck') === '1' ||
+  (params.get('read') !== '1' && STAGE && !!document.querySelector('[data-beat]'));
 
 if (isDeck) {
   const root = document.documentElement;
@@ -68,7 +73,7 @@ if (isDeck) {
     ui.innerHTML = `
       <div class="deck-bar" aria-hidden="true"><span class="deck-fill"></span></div>
       <div class="deck-num" aria-hidden="true"></div>
-      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen</p>
+      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen · R read</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
     const fill = ui.querySelector('.deck-fill');
@@ -274,6 +279,7 @@ if (isDeck) {
       else if (k === 'n') notes.hidden = !notes.hidden;
       else if (k === 't') { if (toc.classList.contains('open')) closeToc(); else openToc(); }
       else if (k === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen?.(); }
+      else if (k === 'r') { location.href = `${location.pathname}?read=1`; }
       else if (e.key === 'Escape') closeToc();
     });
     toc.addEventListener('click', (e) => {
