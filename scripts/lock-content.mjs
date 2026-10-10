@@ -60,6 +60,29 @@ for (const s of STUDIES) {
   for (const [, ref] of html.matchAll(/["'(](\/assets\/[^"')]+)["')]/g)) assetRefs.add(ref);
   locked.push(lock(page, `case-studies/${s}/index.html`));
 }
+// Follow chunk-to-chunk references too (static imports, dynamic import(),
+// CSS url()): a chunk reached only through another chunk, like the three.js
+// renderer behind a dynamic import, is otherwise absent from the store and
+// hashed differently by the cloud build, so the page 404s on it.
+const queue = [...assetRefs];
+while (queue.length) {
+  const ref = queue.shift();
+  const abs = path.join(dist, ref.slice(1));
+  let text;
+  try {
+    text = /\.(js|css)$/.test(ref) ? readFileSync(abs, 'utf8') : null;
+  } catch {
+    continue;
+  }
+  if (!text) continue;
+  for (const [, name] of text.matchAll(/["'(](?:\.\/|\/assets\/)([\w.-]+\.(?:js|css|woff2?|png|jpe?g|webp|svg|glb))["')]/g)) {
+    const next = `/assets/${name}`;
+    if (!assetRefs.has(next)) {
+      assetRefs.add(next);
+      queue.push(next);
+    }
+  }
+}
 for (const ref of assetRefs) {
   const abs = path.join(dist, ref.slice(1));
   try {
