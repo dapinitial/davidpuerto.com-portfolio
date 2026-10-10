@@ -78,7 +78,7 @@ app.use((req, res, next) => {
   const isCursorLab = req.path.startsWith('/cursorlab');
   const scriptSrc = isCursorLab
     ? "script-src 'self' 'wasm-unsafe-eval' blob:"
-    : "script-src 'self' https://cpwebassets.codepen.io https://www.googletagmanager.com";
+    : "script-src 'self' 'wasm-unsafe-eval' https://cpwebassets.codepen.io https://www.googletagmanager.com"; // wasm: the meshopt decoder behind the case studies' glass model
   const csp = [
     "default-src 'self'",
     scriptSrc,
