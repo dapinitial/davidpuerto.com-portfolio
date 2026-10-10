@@ -1042,3 +1042,31 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* ---------- Opener: no generic header padding; caption clear of the foot ---------- */
+@layer page {
+  .ms-chapter > header {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ms-chapter > header.ms-chapter-open {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+    gap: 48px;
+  }
+
+  .ms-chapter > header h2 {
+    max-width: 22ch;
+  }
+
+  glass-piece {
+    padding-bottom: 72px;
+    max-height: 600px;
+  }
+
+  glass-piece canvas {
+    inset: 0 0 72px 0;
+  }
+}

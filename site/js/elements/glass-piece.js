@@ -166,7 +166,7 @@ class GlassPiece extends HTMLElement {
         const root = gltf.scene;
         const box = new THREE.Box3().setFromObject(root);
         const size = box.getSize(new THREE.Vector3()).length() || 1;
-        const s = 2.9 / size;
+        const s = 2.6 / size; // a little air above the ears and under the foot
         root.scale.setScalar(s);
         const center = box.getCenter(new THREE.Vector3()).multiplyScalar(s);
         root.traverse((c) => {
