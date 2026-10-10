@@ -971,3 +971,74 @@
     }
   }
 }
+
+/* ---------- Viewport-scaled frame type (Oct 10 2026) ---------- */
+@layer page {
+  .ms-eyebrow {
+    font-size: var(--cs-eyebrow, 12px);
+  }
+
+  .ms-matrix li span:last-child,
+  .ms-inventory span,
+  .ms-stats small,
+  .ms-caught p,
+  .ms-reel figcaption,
+  .ms-figure figcaption,
+  .ms-shot figcaption,
+  .ms-trio figcaption {
+    font-size: var(--cs-small, 14px);
+  }
+
+  .ms-matrix li span:last-child {
+    font-size: var(--cs-copy, 17px);
+    line-height: 1.4;
+  }
+
+  .ms-beat p,
+  .ms-chapter > header p,
+  .ms-chapter .ms-copy,
+  .ms-d-body p,
+  .ms-pin-beat p,
+  .ms-caught ul,
+  .ms-callback {
+    font-size: var(--cs-copy, 17px);
+  }
+
+  .ms-beat h2,
+  .ms-section-head h3,
+  .ms-pin-beat h3,
+  .ms-beat p.ms-taught {
+    font-size: var(--cs-h2, 30px);
+  }
+
+  .ms-chapter > header h2 {
+    font-size: var(--cs-display, 40px);
+    max-width: 18ch;
+  }
+
+  .ms-close {
+    font-size: var(--cs-h2, 30px);
+  }
+
+  .ms-d-line {
+    font-size: clamp(19px, 16px + 0.5vw, 26px);
+  }
+
+  .ms-stats b {
+    font-size: clamp(36px, 28px + 1.2vw, 56px);
+  }
+
+  .ms-beat-n {
+    font-size: clamp(40px, 32px + 1vw, 56px);
+  }
+
+  .ms-inventory b {
+    font-size: var(--cs-copy, 17px);
+  }
+
+  /* No knight (no WebGL, or the model failed): the opener is copy alone,
+     full width, instead of a heading squeezed beside an empty column. */
+  .ms-chapter > header.ms-chapter-open:has(glass-piece[data-error]) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

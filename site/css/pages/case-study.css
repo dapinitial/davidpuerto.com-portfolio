@@ -544,3 +544,49 @@
     color: #fff0f4;
   }
 }
+
+/* ---------- Desktop alignment + viewport-scaled type (Oct 10 2026) ----------
+   One left edge: the frame, the chapter and the long read all sit on the
+   cs-body column. The long read keeps its measure through max-width on
+   paragraphs, not by being a narrower, separately centered block. Type
+   steps up with the viewport so a 1700px screen is not reading 17px. */
+@layer page {
+  .cs-body {
+    --cs-copy: clamp(17px, 15px + 0.25vw, 20px);
+    --cs-small: clamp(13px, 12px + 0.1vw, 15px);
+    --cs-eyebrow: clamp(12px, 11px + 0.12vw, 14px);
+    --cs-h2: clamp(26px, 20px + 1vw, 38px);
+    --cs-display: clamp(34px, 24px + 1.5vw, 56px);
+  }
+
+  .bodycopy {
+    max-width: none;
+    margin: 0;
+    padding-top: 40px;
+  }
+
+  .bodycopy-details {
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  .bodycopy p,
+  .bodycopy ol,
+  .bodycopy ul {
+    font-size: var(--cs-copy);
+    max-width: 66ch;
+  }
+
+  .bodycopy h2,
+  .bodycopy h3,
+  .bodycopy h4 {
+    font-size: var(--cs-eyebrow);
+    margin: 64px 0 14px;
+  }
+
+  .bodycopy h1 {
+    font-size: var(--cs-display);
+    max-width: 20ch;
+    margin: 0 0 1.4rem;
+  }
+}
