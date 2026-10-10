@@ -125,6 +125,10 @@ site-header.open .hamburger span:nth-child(3) {
 
 /* ---------- Overlay nav ---------- */
 site-header .overlay {
+  /* Three main links or five studies have to fit any viewport: the item
+     height and the gap scale with the screen instead of a fixed 120px + 8vh. */
+  --nav-item: clamp(48px, 11svh, 120px);
+  --nav-gap: clamp(4px, 3svh, 48px);
   position: fixed;
   inset: 0;
   height: 100svh;
@@ -159,7 +163,7 @@ site-header .menu[hidden] {
 
 site-header .menu li {
   padding: 0;
-  margin-bottom: 8vh;
+  margin-bottom: var(--nav-gap);
   overflow: hidden;
 }
 
@@ -179,7 +183,7 @@ site-header .menu li .submenu-toggle {
   position: relative;
   display: block;
   width: 100vw;
-  height: 120px;
+  height: var(--nav-item);
   perspective: 1000px;
   transform-style: preserve-3d;
   text-align: center;
@@ -210,8 +214,8 @@ site-header .menu li .submenu-toggle::after {
   justify-content: center;
   font-family: 'Mona-Sans', var(--font-family-default, sans-serif);
   font-weight: 900;
-  font-size: calc(1rem + 4.5vw);
-  line-height: 120px;
+  font-size: min(calc(1rem + 4.5vw), calc(var(--nav-item) * 0.72));
+  line-height: var(--nav-item);
   white-space: nowrap;
   overflow: hidden;
   transition: transform 0.35s ease, opacity 0.35s ease;
@@ -221,7 +225,7 @@ site-header .menu li .submenu-toggle::after {
 site-header .menu li a::before,
 site-header .menu li .submenu-toggle::before {
   color: #ccc;
-  transform: rotateX(0deg) translateZ(55px);
+  transform: rotateX(0deg) translateZ(calc(var(--nav-item) / 2));
 }
 
 site-header .menu li a::after,
@@ -229,7 +233,7 @@ site-header .menu li .submenu-toggle::after {
   font-weight: 200;
   letter-spacing: 0.25vw;
   color: #00a3bb;
-  transform: rotateX(-90deg) translateZ(55px);
+  transform: rotateX(-90deg) translateZ(calc(var(--nav-item) / 2));
   opacity: 0;
 }
 
@@ -237,7 +241,7 @@ site-header .menu li a:hover::before,
 site-header .menu li a:focus-visible::before,
 site-header .menu li .submenu-toggle:hover::before,
 site-header .menu li .submenu-toggle:focus-visible::before {
-  transform: rotateX(90deg) translateZ(55px);
+  transform: rotateX(90deg) translateZ(calc(var(--nav-item) / 2));
   opacity: 0;
 }
 
@@ -245,7 +249,7 @@ site-header .menu li a:hover::after,
 site-header .menu li a:focus-visible::after,
 site-header .menu li .submenu-toggle:hover::after,
 site-header .menu li .submenu-toggle:focus-visible::after {
-  transform: rotateX(0deg) translateZ(55px);
+  transform: rotateX(0deg) translateZ(calc(var(--nav-item) / 2));
   opacity: 1;
 }
 

@@ -2,11 +2,19 @@
    slides; the story arc is the map. Pairs with js/case-studies/deck.js.
    Nothing here applies until html.deck is set. */
 @layer page {
-  html.deck,
-  html.deck body {
-    height: 100%;
-    overflow: hidden;
+  /* The homepage mechanics: the document snaps slot to slot, GSAP paints */
+  html.deck {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+
+  html.deck.is-resizing {
     scroll-snap-type: none;
+  }
+
+  html.deck main {
+    padding: 0;
+    margin: 0;
   }
 
   html.deck case-study-nav,
@@ -21,9 +29,15 @@
   }
 
   html.deck .deck-stage {
-    position: fixed;
-    inset: 0;
+    position: relative;
     z-index: 1;
+  }
+
+  /* the slot is what scrolls and snaps; the beat is painted over it */
+  html.deck .deck-slot {
+    height: 100svh;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   /* every beat is a full-screen slide; only the active one is visible */
@@ -31,15 +45,15 @@
     position: fixed;
     inset: 0;
     display: grid !important;
-    align-content: center;
+    align-content: safe center;
     justify-items: stretch;
     gap: 20px;
     box-sizing: border-box;
     padding: clamp(72px, 10vh, 120px) clamp(24px, 8vw, 160px) clamp(56px, 8vh, 96px);
     overflow: auto;
-    overscroll-behavior: contain;
     opacity: 0;
-    visibility: hidden;
+    visibility: hidden; /* GSAP autoAlpha takes over */
+    transform-origin: 50% 50%;
     background: var(--color-background, #0e0e0e);
     margin: 0 !important;
     max-width: none !important;
@@ -47,9 +61,17 @@
     border: 0 !important;
   }
 
-  html.deck .deck-beat.active {
+  /* reduced motion: the beats sit in flow, every one readable, no scrub */
+  html.deck.deck-still .deck-slot {
+    display: none;
+  }
+
+  html.deck.deck-still .deck-beat {
+    position: relative;
+    min-height: 100svh;
     opacity: 1;
     visibility: visible;
+    scroll-snap-align: start;
   }
 
   /* a slide's own width: the reading column, centred */
@@ -400,5 +422,116 @@
   html.deck .deck-scramble .ltr {
     display: inline-block;
     will-change: transform, opacity;
+  }
+}
+
+/* ---------- read slides: the inline code quote is a line, not a pull quote ---------- */
+@layer page {
+  html.deck .deck-beat.ms-read blockquote:not(.ms-callback) {
+    margin: 4px 0 28px;
+    padding: 0 0 0 20px;
+    border-left: 2px solid var(--cs-accent, #fb836d);
+  }
+
+  html.deck .deck-beat.ms-read blockquote:not(.ms-callback)::before {
+    display: none;
+  }
+
+  html.deck .deck-beat.ms-read blockquote .subheading {
+    margin: 0;
+    max-width: none;
+    text-align: left;
+    text-transform: none;
+    font-family: var(--font-family-monospace, monospace);
+    font-size: clamp(16px, 1.3vw, 22px);
+    font-weight: 400;
+    color: var(--cs-accent, #fb836d);
+  }
+
+  html.deck .deck-beat.ms-read blockquote .subheading code {
+    font: inherit;
+    color: inherit;
+  }
+}
+
+/* ---------- read slides as a spread: heading across, copy in columns ---------- */
+@layer page {
+  html.deck .deck-beat.ms-read .deck-copy {
+    column-gap: 56px;
+  }
+
+  /* paragraphs may break across columns; figures and quotes may not, and a
+     figure spans the spread so its labels stay legible */
+  html.deck .deck-beat.ms-read .deck-copy figure,
+  html.deck .deck-beat.ms-read .deck-copy blockquote {
+    break-inside: avoid;
+  }
+
+  html.deck .deck-beat.ms-read .deck-copy figure {
+    column-span: all;
+    margin: 24px 0 0;
+  }
+
+  /* the spread is one 1100px column; headings start at its left edge */
+  html.deck .deck-beat.ms-read {
+    grid-template-columns: minmax(0, 1100px);
+    justify-content: center;
+    justify-items: start;
+  }
+
+  html.deck .deck-beat.ms-read > * {
+    margin-inline: 0;
+    width: auto;
+    max-width: 100%;
+  }
+
+  html.deck .deck-beat.ms-read .deck-copy {
+    width: 100%;
+  }
+
+  html.deck .deck-beat.ms-read h1 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(34px, 3.6vw, 60px);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: #fff0f4;
+    margin: 0 0 12px;
+    max-width: 20ch;
+  }
+
+  html.deck .deck-beat.ms-read h1 em {
+    font-family: inherit;
+    font-style: italic;
+    font-weight: inherit;
+    color: var(--cs-accent, #fb836d);
+  }
+
+  @media (min-width: 1100px) and (min-height: 640px) {
+    html.deck .deck-beat.ms-read h2 {
+      max-width: 34ch;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy {
+      columns: 2;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy p {
+      max-width: none;
+      font-size: clamp(17px, 1.15vw, 21px);
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy > p:first-child {
+      font-size: clamp(19px, 1.35vw, 24px);
+      color: #fff0f4;
+      font-weight: 400;
+    }
+  }
+}
+
+@layer page {
+  html.deck .deck-beat.ms-read h2 code {
+    white-space: nowrap;
   }
 }

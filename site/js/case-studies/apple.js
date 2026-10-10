@@ -5,7 +5,8 @@ import { initChapterMotion } from './chapter-motion.js';
 
 initChapterMotion();
 
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+const DECK = document.documentElement.classList.contains('deck'); // deck.js draws the figure itself
+if (!DECK && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const fig = document.querySelector('.ap-figure');
   if (fig) {
     const panels = fig.querySelectorAll('.ap-panel');
