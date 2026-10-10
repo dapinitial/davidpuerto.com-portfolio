@@ -458,3 +458,88 @@
     }
   }
 }
+
+/* ---------- Per-study accent + tightened long-read typography (Oct 2026) ----------
+   Each study's headings carry the same accent its homepage section uses, so
+   the colour you saw on the carousel is the colour you read under. The hero
+   section's id names the study; :has() reads it from the body. */
+@layer page {
+  body { --cs-accent: var(--color-secondary, #00a3bb); }
+  body:has(#apple.cs-hero) { --cs-accent: var(--color-silver, #d0d4dc); }
+  body:has(#microsoft.cs-hero) { --cs-accent: var(--color-primary, #fb836d); }
+  body:has(#facebook.cs-hero), body:has(.hero-wrapper) { --cs-accent: var(--color-yellow, #edb417); }
+  body:has(#nordstrom.cs-hero) { --cs-accent: var(--color-purple, #ab65c0); }
+  body:has(#sonosite.cs-hero) { --cs-accent: var(--color-secondary, #00a3bb); }
+  body:has(#zillow.cs-hero) { --cs-accent: var(--color-zillow, #1277e1); }
+  body:has(#rebuild.cs-hero) { --cs-accent: var(--color-secondary, #00a3bb); }
+
+  .ms-lead,
+  .ms-chapter {
+    --ms-accent: var(--cs-accent);
+  }
+
+  /* Section heads: the accent as a small label, the sentence does the work */
+  .bodycopy h2,
+  .bodycopy h3,
+  .bodycopy h4 {
+    color: var(--cs-accent);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 56px 0 12px;
+  }
+
+  .bodycopy h2 + p::first-line,
+  .bodycopy h3 + p::first-line {
+    color: #fff0f4;
+  }
+
+  .bodycopy h1 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(2rem, 1.2rem + 2.6vw, 3.2rem);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    max-width: 22ch;
+    margin: 0 0 1.6rem;
+  }
+
+  .bodycopy h1 em {
+    font-weight: 500;
+    font-style: normal; /* the heading face ships without an italic; a synthesized slant reads as a different font */
+    color: var(--cs-accent);
+  }
+
+  .bodycopy p,
+  .bodycopy ol,
+  .bodycopy ul {
+    color: #c9c2c6;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    font-weight: 300;
+    letter-spacing: 0;
+    max-width: 68ch;
+  }
+
+  .bodycopy p {
+    margin-bottom: 22px;
+  }
+
+  .bodycopy strong {
+    color: #fff0f4;
+    font-weight: 600;
+  }
+
+  .bodycopy .accent {
+    color: var(--cs-accent);
+    font-style: italic;
+  }
+
+  .bodycopy code {
+    font-family: var(--font-family-monospace, monospace);
+    font-size: 0.92em;
+    color: #fff0f4;
+  }
+}
