@@ -482,6 +482,7 @@ const TYPES = {
   '.webp': 'image/webp',
   '.mov': 'video/quicktime',
   '.mp4': 'video/mp4',
+  '.vtt': 'text/vtt; charset=utf-8',
   '.woff2': 'font/woff2',
 };
 

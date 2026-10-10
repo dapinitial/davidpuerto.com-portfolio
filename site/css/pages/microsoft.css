@@ -1,0 +1,484 @@
+/* Microsoft case study — the chapter frame + the 2026 chapter.
+   Pairs with js/case-studies/microsoft.js (GSAP scrubs, counters, the pin).
+   Everything is prefixed .ms- and lives as direct children of .cs-body
+   (the centered min(1100px, 92vw) column) or inside .bodycopy. */
+@layer page {
+  .ms-lead {
+    --ms-accent: var(--color-primary);
+
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin: 48px auto 8px;
+    width: 100%;
+  }
+
+  .ms-eyebrow {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9a9499;
+    margin: 0;
+  }
+
+  .ms-eyebrow.accent {
+    color: var(--ms-accent);
+  }
+
+  /* ---------- Executive matrix ---------- */
+  .ms-matrix {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: #2f2f2f;
+    border: 1px solid #2f2f2f;
+    border-radius: 16px;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ms-matrix li {
+    background: #151515;
+    padding: 22px 22px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .ms-matrix li span:last-child {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.35;
+  }
+
+  .ms-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ms-stats li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-left: 2px solid var(--ms-accent);
+    padding-left: 16px;
+    min-width: 0;
+  }
+
+  .ms-stats b {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(32px, 4vw, 44px);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .ms-stats small {
+    font-size: 14px;
+    color: #9a9499;
+  }
+
+  /* ---------- The five beats ---------- */
+  .ms-frame {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid #2a2626;
+  }
+
+  .ms-beat {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 24px;
+    padding: 32px 0;
+    border-bottom: 1px solid #2a2626;
+  }
+
+  .ms-beat:last-child {
+    border-bottom: 0;
+  }
+
+  .ms-beat-n {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: 44px;
+    line-height: 1;
+    color: var(--ms-accent);
+    will-change: auto;
+  }
+
+  .ms-beat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .ms-beat h2 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(24px, 2.6vw, 30px);
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .ms-beat p {
+    margin: 0;
+    max-width: 66ch;
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .ms-beat p.ms-taught {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(22px, 2.4vw, 26px);
+    line-height: 1.3;
+  }
+
+  /* ---------- 2026 chapter ---------- */
+  .ms-chapter {
+    --ms-accent: var(--color-primary);
+
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    margin: 24px auto 72px;
+    width: 100%;
+  }
+
+  .ms-chapter > header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ms-chapter > header h2 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(30px, 3.6vw, 40px);
+    line-height: 1.1;
+    margin: 0;
+    max-width: 24ch;
+    text-wrap: balance;
+  }
+
+  .ms-chapter > header p,
+  .ms-chapter .ms-copy {
+    margin: 0;
+    max-width: 66ch;
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .ms-callback {
+    margin: 0;
+    padding: 20px 24px;
+    border-left: 2px solid #4a4448;
+    color: #c9c2c6;
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 300;
+    max-width: 66ch;
+  }
+
+  .ms-callback cite {
+    display: block;
+    margin-top: 8px;
+    font-style: normal;
+    font-size: 13px;
+    color: #9a9499;
+  }
+
+  /* The reel */
+  .ms-reel {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ms-reel video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    border: 1px solid #2f2f2f;
+    background: #000;
+  }
+
+  .ms-reel figcaption,
+  .ms-figure figcaption {
+    font-size: 13px;
+    color: #9a9499;
+  }
+
+  /* Pinned narration: the figure sticks, the beats scroll past */
+  .ms-pin {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px;
+    align-items: flex-start;
+  }
+
+  .ms-pin-figure {
+    flex: 0 1 360px;
+    min-width: 0;
+    position: sticky;
+    top: calc(48px + 6vh); /* clear the fixed header */
+    margin: 0;
+    background: #151515;
+    border: 1px solid #2f2f2f;
+    border-radius: 24px;
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ms-pin-figure svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    color: #fff0f4;
+  }
+
+  .ms-pin-beats {
+    flex: 1 1 380px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 36vh;
+    padding: 12vh 0 18vh;
+  }
+
+  .ms-pin-beat {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ms-pin-beat h3 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(24px, 2.6vw, 28px);
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .ms-pin-beat p {
+    margin: 0;
+    max-width: 52ch;
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* generation nodes: default quiet, .is-active lit in the accent */
+  .ms-gen rect {
+    fill: #0e0e0e;
+    stroke: #4a4448;
+    stroke-width: 1;
+    transition: stroke 0.35s ease, fill 0.35s ease;
+  }
+
+  .ms-gen text {
+    fill: #c9c2c6;
+    transition: fill 0.35s ease;
+  }
+
+  .ms-gen.is-active rect {
+    stroke: var(--ms-accent);
+    stroke-width: 2;
+    fill: #151515;
+  }
+
+  .ms-gen.is-active text {
+    fill: #fff0f4;
+  }
+
+  .ms-gen.is-active text.ms-gen-title {
+    fill: var(--ms-accent);
+  }
+
+  .ms-gen-link {
+    stroke: #6e6870;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .ms-gen-link.is-active {
+    stroke: var(--ms-accent);
+  }
+
+  /* One record, five readings */
+  .ms-figure {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ms-figure svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    color: #fff0f4;
+    font-family: var(--font-family-default, sans-serif);
+  }
+
+  .ms-figure .node rect {
+    fill: #0e0e0e;
+    stroke: #4a4448;
+  }
+
+  .ms-figure .node.hub rect,
+  .ms-figure .node.lit rect {
+    fill: #151515;
+    stroke: var(--ms-accent);
+    stroke-width: 2;
+  }
+
+  .ms-figure .node text {
+    fill: #c9c2c6;
+    font-size: 14px;
+  }
+
+  .ms-figure .node text.t {
+    fill: #fff0f4;
+    font-weight: 600;
+  }
+
+  .ms-figure .node.hub text.t,
+  .ms-figure .node.lit text.t {
+    fill: var(--ms-accent);
+  }
+
+  .ms-figure .link {
+    stroke: #6e6870;
+    stroke-width: 2;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  .ms-figure .link.lit {
+    stroke: var(--ms-accent);
+  }
+
+  /* Numbers + "what it caught" */
+  .ms-caught {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: flex-start;
+    background: #151515;
+    border: 1px solid #2f2f2f;
+    border-radius: 20px;
+    padding: 32px;
+  }
+
+  .ms-caught > div {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .ms-caught > div:first-child {
+    flex: 1 1 420px;
+  }
+
+  .ms-caught > div:last-child {
+    flex: 0 1 320px;
+  }
+
+  .ms-caught ul {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 58ch;
+    font-size: 16px;
+    line-height: 1.55;
+    font-weight: 300;
+  }
+
+  .ms-caught p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: #c9c2c6;
+    font-weight: 300;
+  }
+
+  .ms-chapter .glass-button {
+    align-self: flex-start;
+  }
+
+  .ms-close {
+    margin: 0;
+    max-width: 30ch;
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(26px, 3vw, 34px);
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 960px) {
+    .ms-matrix {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ms-pin-figure {
+      position: static;
+      flex-basis: 100%;
+    }
+
+    .ms-pin-beats {
+      gap: 48px;
+      padding: 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .ms-matrix,
+    .ms-stats {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ms-beat {
+      grid-template-columns: 48px minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .ms-beat-n {
+      font-size: 32px;
+    }
+  }
+
+  /* No motion: everything already sits at its resting state; the script
+     bails out, so nothing here needs to change. Keep transitions short. */
+  @media (prefers-reduced-motion: reduce) {
+    .ms-gen rect,
+    .ms-gen text {
+      transition: none;
+    }
+  }
+}
