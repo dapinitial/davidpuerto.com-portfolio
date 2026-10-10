@@ -507,8 +507,9 @@
   }
 
   .bodycopy h1 em {
+    font-family: inherit; /* an older rule put <em> in Mona-Sans; the title stays in Fraunces */
     font-weight: 500;
-    font-style: normal; /* the heading face ships without an italic; a synthesized slant reads as a different font */
+    font-style: italic; /* Fraunces ships its italic (fonts.css) */
     color: var(--cs-accent);
   }
 
