@@ -690,3 +690,26 @@
     white-space: nowrap;
   }
 }
+
+@layer page {
+  /* a spread that carries a figure gives the figure the room: smaller copy */
+  @media (min-width: 1100px) and (min-height: 640px) {
+    html.deck .deck-beat.ms-read .deck-copy:has(figure) p {
+      font-size: clamp(15px, 1vw, 18px);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy:has(figure) > p:first-child {
+      font-size: clamp(17px, 1.15vw, 20px);
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy figure {
+      margin-top: 12px;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy figcaption {
+      font-size: 14px;
+    }
+  }
+}

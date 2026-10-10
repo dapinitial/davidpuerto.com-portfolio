@@ -590,3 +590,11 @@
     margin: 0 0 1.4rem;
   }
 }
+
+@layer page {
+  /* A figure outside the chapter frame still lights its hub and end node in
+     the study's accent (the frame scopes --ms-accent to .ms-lead/.ms-chapter). */
+  .ms-figure {
+    --ms-accent: var(--cs-accent, #fb836d);
+  }
+}
