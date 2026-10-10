@@ -5,7 +5,7 @@
 @layer page {
   /* ---------- Per-section theme ---------- */
   #apple {
-    --color-highlight: var(--color-silver);
+    --color-highlight: var(--color-purple);
     --color-selector: var(--color-primary);
     --image: url(/images/apple.png);
   }
@@ -29,7 +29,7 @@
   }
 
   #nordstrom {
-    --color-highlight: var(--color-purple);
+    --color-highlight: var(--color-silver);
     --color-selector: var(--color-red-2);
     --image: url('/images/nordstrom.png');
   }
@@ -397,10 +397,10 @@
     background: radial-gradient(90% 60% at 50% 100%, var(--glow-from), var(--glow-to) 72%);
   }
 
-  .glow i:nth-child(1) { --glow-from: rgba(208, 212, 220, 0.14); --glow-to: rgba(208, 212, 220, 0); }
+  .glow i:nth-child(1) { --glow-from: rgba(171, 101, 192, 0.22); --glow-to: rgba(171, 101, 192, 0); }
   .glow i:nth-child(2) { --glow-from: rgba(251, 131, 109, 0.22); --glow-to: rgba(251, 131, 109, 0); }
   .glow i:nth-child(3) { --glow-from: rgba(237, 180, 23, 0.22); --glow-to: rgba(237, 180, 23, 0); }
-  .glow i:nth-child(4) { --glow-from: rgba(171, 101, 192, 0.22); --glow-to: rgba(171, 101, 192, 0); }
+  .glow i:nth-child(4) { --glow-from: rgba(208, 212, 220, 0.14); --glow-to: rgba(208, 212, 220, 0); }
   .glow i:nth-child(5) { --glow-from: rgba(0, 163, 187, 0.22); --glow-to: rgba(0, 163, 187, 0); }
   .glow i:nth-child(6) { --glow-from: rgba(18, 119, 225, 0.22); --glow-to: rgba(18, 119, 225, 0); }
 

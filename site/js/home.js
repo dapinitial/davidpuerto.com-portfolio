@@ -23,7 +23,7 @@ const glows = gsap.utils.toArray('.glow i');
 
 // Exact sRGB values of the per-section --color-highlight oklch palette
 // (hex so GSAP interpolates cleanly) — same values as base.css fallbacks.
-const SECTION_COLORS = ['#d0d4dc', '#fb836d', '#edb417', '#ab65c0', '#00a3bb', '#1277e1'];
+const SECTION_COLORS = ['#ab65c0', '#fb836d', '#edb417', '#d0d4dc', '#00a3bb', '#1277e1'];
 
 // iOS address-bar collapse fires height-only resizes; refreshing mid-scroll
 // would shift every trigger. Width changes (rotation) still refresh.
