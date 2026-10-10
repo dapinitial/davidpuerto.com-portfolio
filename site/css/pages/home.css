@@ -478,3 +478,19 @@
     }
   }
 }
+
+@layer page {
+  /* "Super Composer" stays on one line without widening the heading column
+     past the devices' heading, so the Apple still gets the same room as
+     Microsoft's. */
+  @media (min-width: 64rem) {
+    #apple h2 {
+      flex: 1.25;
+    }
+
+    #apple h2 .nowrap {
+      font-size: 0.82em;
+      letter-spacing: -0.01em;
+    }
+  }
+}

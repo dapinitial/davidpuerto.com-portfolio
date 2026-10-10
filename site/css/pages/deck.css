@@ -1221,3 +1221,123 @@
     }
   }
 }
+
+/* ---------- round three: no big number; one fixed glow; full-bleed art ---------- */
+@layer page {
+  html.deck .deck-num {
+    display: none;
+  }
+
+  /* the glow is one fixed layer under the slides; slides are transparent over it */
+  html.deck .deck-glow {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(90% 60% at 50% 100%, rgb(var(--cs-glow, 251 131 109) / 0.22), rgb(var(--cs-glow, 251 131 109) / 0) 72%),
+      var(--color-background, #0e0e0e);
+  }
+
+  html.deck .deck-beat {
+    background: transparent;
+  }
+
+  html.deck .deck-beat::before {
+    display: none;
+  }
+
+  /* a slide never scrolls as a whole; a panel inside it may */
+  html.deck .deck-beat.ms-readers {
+    overflow: hidden;
+  }
+
+  /* the page hero's scroll cue sits at the bottom centre, as on a study hero */
+  html.deck .deck-beat.page-hero .scroll-down {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(40px, 7vh, 80px);
+    transform: translateX(-50%);
+  }
+
+  /* art fills the slide behind the copy; the copy sits over it on the left */
+  @media (min-width: 1001px) {
+    html.deck .deck-beat.ms-read .deck-copy:has(.ms-art) {
+      display: block;
+      columns: auto;
+      max-width: 52ch;
+      position: static;
+      z-index: auto;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy:has(.ms-art) > p {
+      position: relative;
+      z-index: 1;
+      max-width: 52ch;
+      font-size: clamp(17px, 1.2vw, 22px);
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy:has(.ms-art) > p:first-child {
+      font-size: clamp(19px, 1.35vw, 25px);
+    }
+
+    html.deck .deck-beat.ms-read > h2,
+    html.deck .deck-beat.ms-read > h1 {
+      position: relative;
+      z-index: 2;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy > .ms-art {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      z-index: 0;
+      pointer-events: none;
+      grid-row: auto;
+      grid-column: auto;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy .ms-art img {
+      width: 100%;
+      height: 100%;
+      max-height: none;
+      object-fit: cover;
+      object-position: right center;
+      border-radius: 0;
+      box-shadow: none;
+      opacity: 0.78;
+      mix-blend-mode: screen;
+      -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.12) 0, rgba(0, 0, 0, 0.45) 38%, #000 62%);
+      mask-image: linear-gradient(to right, rgba(0, 0, 0, 0.12) 0, rgba(0, 0, 0, 0.45) 38%, #000 62%);
+      will-change: transform, filter, opacity;
+    }
+
+    html.deck .deck-beat.ms-read .deck-copy .ms-art figcaption {
+      position: absolute;
+      right: clamp(24px, 8vw, 160px);
+      bottom: clamp(56px, 8vh, 96px);
+      max-width: 36ch;
+      text-align: right;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: #9a9499;
+    }
+  }
+}
+
+@layer page {
+  /* the piece's caption hangs below the canvas instead of across its base */
+  html.deck .deck-beat.ms-chapter-open > glass-piece {
+    position: relative;
+    padding-bottom: 0;
+    margin-bottom: 56px;
+  }
+
+  html.deck .deck-beat.ms-chapter-open > glass-piece .glass-piece-caption {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 14px 0 0;
+  }
+}
