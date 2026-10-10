@@ -71,6 +71,18 @@ if (isDeck) {
       stage.appendChild(b);
       return slot;
     });
+    // a read slide's still leaves the scaled layer for a fixed layer of its
+    // own, so it is full size from the first pixel and only ever crossfades
+    const arts = beats.map((b) => {
+      const fig = reduced ? null : b.querySelector('.ms-art'); // still motion keeps it in flow
+      if (!fig) return null;
+      const layer = document.createElement('div');
+      layer.className = 'deck-art';
+      layer.setAttribute('aria-hidden', 'true');
+      layer.appendChild(fig);
+      b.classList.add('has-art');
+      return layer;
+    });
     [...main.children].forEach((c) => c.classList.add('deck-hidden')); // a class: author display rules beat the hidden attribute
     main.appendChild(stage);
     // one glow under every slide, fixed, so a slide that scrolls inside itself never drags it
@@ -78,6 +90,7 @@ if (isDeck) {
     glow.className = 'deck-glow';
     glow.setAttribute('aria-hidden', 'true');
     main.appendChild(glow);
+    arts.forEach((a) => a && main.appendChild(a));
 
     // Presenter chrome
     const ui = document.createElement('div');
@@ -145,9 +158,6 @@ if (isDeck) {
           gsap.fromTo(l, { opacity: 0, [axis]: off }, { opacity: 1, [axis]: 0, duration: 1.5 + Math.random(), ease: 'power3.inOut', clearProps: 'transform' });
         });
       }
-      b.querySelectorAll('.ms-art img').forEach((img) => {
-        gsap.fromTo(img, { opacity: 0, scale: 1.08, filter: 'blur(18px)' }, { opacity: 0.78, scale: 1, filter: 'blur(0px)', duration: 1.6, ease: 'power2.out' });
-      });
       const kids = [...b.children].filter((k) => !k.matches('canvas, video'));
       if (kids.length) gsap.fromTo(kids, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.07, ease: 'power3.out', clearProps: 'transform' });
       b.querySelectorAll('[data-count]').forEach((el) => {
@@ -277,12 +287,14 @@ if (isDeck) {
       // snap quantizes the scrubbed value so rest lands on exactly 1.0 — a
       // 0.999 scale leaves the layer permanently bitmap-blurred.
       inTl.fromTo(b, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, immediateRender: false, snap: { scale: 0.01 } }, 0);
+      if (arts[i]) inTl.fromTo(arts[i], { autoAlpha: 0 }, { autoAlpha: 1, immediateRender: false }, 0);
       if (blurEls.length) inTl.fromTo(blurEls, { filter: 'blur(48px)' }, { filter: 'blur(0px)', immediateRender: false }, 0);
       const outTl = gsap.timeline({
         defaults: { ease: EASE },
         scrollTrigger: { trigger: slot, start: 'top top', end: 'bottom top', scrub: true },
       });
       outTl.fromTo(b, { scale: 1, autoAlpha: 1 }, { scale: 1.5, autoAlpha: 0, immediateRender: false, snap: { scale: 0.01 } }, 0);
+      if (arts[i]) outTl.fromTo(arts[i], { autoAlpha: 1 }, { autoAlpha: 0, immediateRender: false }, 0);
       if (blurEls.length) outTl.fromTo(blurEls, { filter: 'blur(0px)' }, { filter: 'blur(32px)', immediateRender: false }, 0);
     });
 
