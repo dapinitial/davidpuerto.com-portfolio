@@ -10,6 +10,7 @@ const BACK_PATH =
 
 const MAIN_LINKS = [
   ['About Me', '/about-me/'],
+  ['Approach', '/approach/'],
   ['Case Studies', null], // null href = opens the submenu
   ['Contact', '/contact/'],
 ];

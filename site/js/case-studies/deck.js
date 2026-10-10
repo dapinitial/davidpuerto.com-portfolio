@@ -52,6 +52,11 @@ if (isDeck) {
       // every disclosure opens on its slide, except the five readings: that
       // slide is a menu the presenter opens for whoever just asked
       if (!b.classList.contains('ms-readers')) b.querySelectorAll('details').forEach((d) => { d.open = true; });
+      if (b.classList.contains('ms-readers')) {
+        // one reading open at a time, shown beside the list, the first by default
+        const ds = [...b.querySelectorAll('details')];
+        ds.forEach((d, k) => { d.open = k === 0; d.addEventListener('toggle', () => { if (d.open) ds.forEach((o) => { if (o !== d) o.open = false; }); }); });
+      }
       // a read slide is a spread: heading across the top, the copy in columns
       if (b.classList.contains('ms-read') && !b.querySelector('.deck-copy')) {
         const copy = document.createElement('div');
@@ -75,10 +80,16 @@ if (isDeck) {
     ui.innerHTML = `
       <div class="deck-bar" aria-hidden="true"><span class="deck-fill"></span></div>
       <div class="deck-num" aria-hidden="true"></div>
+      <button type="button" class="deck-arc-btn" aria-label="Open the story arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
       <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen · R read</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
     const fill = ui.querySelector('.deck-fill');
+    const arcBtn = ui.querySelector('.deck-arc-btn');
+    const arcN = ui.querySelector('.deck-arc-n');
+    const prog = ui.querySelector('.deck-arc-btn .prog');
+    const RING = 2 * Math.PI * 20;
+    prog.style.strokeDasharray = `${RING}`;
     const num = ui.querySelector('.deck-num');
     const hint = ui.querySelector('.deck-hint');
     const notes = ui.querySelector('.deck-notes');
@@ -207,6 +218,8 @@ if (isDeck) {
     let numT = 0;
     const paint = (i) => {
       fill.style.width = `${((i + 1) / beats.length) * 100}%`;
+      prog.style.strokeDashoffset = `${RING * (1 - (i + 1) / beats.length)}`;
+      arcN.textContent = String(i + 1).padStart(2, '0');
       num.innerHTML = i === 0 ? '' : `${String(i + 1).padStart(2, '0')}<small> / ${beats.length}</small>`;
       num.classList.add('show');
       clearTimeout(numT);
@@ -292,6 +305,7 @@ if (isDeck) {
       else if (k === 'r') { location.href = `${location.pathname}?read=1`; }
       else if (e.key === 'Escape') closeToc();
     });
+    arcBtn.addEventListener('click', () => { if (toc.classList.contains('open')) closeToc(); else openToc(); });
     toc.addEventListener('click', (e) => {
       const i = e.target.closest('[data-i]')?.dataset.i;
       if (i !== undefined) { closeToc(); go(Number(i)); return; }

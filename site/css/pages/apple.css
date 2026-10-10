@@ -1,9 +1,9 @@
 /* Apple case study — the chapter frame in the Apple accent (black glass,
-   silver edge). The frame itself comes from pages/microsoft.css (.ms-*). */
+   purple edge). The frame itself comes from pages/microsoft.css (.ms-*). */
 @layer page {
   .ms-lead,
   .ms-chapter {
-    --ms-accent: var(--color-silver, #d0d4dc);
+    --ms-accent: var(--color-purple, #ab65c0);
   }
 
   /* Fourteen into one: the small panels converge on the surface */
@@ -37,7 +37,7 @@
 
   .ap-surface {
     fill: #151515;
-    stroke: var(--color-silver, #d0d4dc);
+    stroke: var(--color-purple, #ab65c0);
     stroke-width: 2;
   }
 
@@ -61,7 +61,7 @@
   }
 
   .ap-text.accent {
-    fill: var(--color-silver, #d0d4dc);
+    fill: var(--color-purple, #ab65c0);
   }
 
   /* The ingestion and containment loop reuses the readings-figure styles */

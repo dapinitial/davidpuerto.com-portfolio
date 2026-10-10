@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About Me — David Puerto</title>
-  <meta name="description" content="Things you might not know about David Puerto — climbing, running, cooking, side projects, and roller rinks.">
+  <meta name="description" content="Who David Puerto is, what he has been doing since Microsoft, and what he is here to do: lead design engineering in an AI-native world and grow the next people who do it.">
   <meta name="ga-id" content="G-5GZRVPT875">
   <script src="/boot/arriving.js"></script>
   <link rel="stylesheet" href="/css/main.css">
@@ -15,66 +15,105 @@
   <link rel="stylesheet" href="/css/elements/infinity-loader.css">
   <link rel="stylesheet" href="/css/elements/rain-fall.css">
   <link rel="stylesheet" href="/css/elements/clipped-image.css">
+  <link rel="stylesheet" href="/css/pages/case-study.css">
+  <link rel="stylesheet" href="/css/pages/microsoft.css">
   <link rel="stylesheet" href="/css/pages/about.css">
+  <link rel="stylesheet" href="/css/pages/deck.css">
   <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/case-studies/deck.js"></script>
   <script type="module" src="/js/about.js"></script>
 </head>
 
 <body>
   <site-header></site-header>
   <main>
-    <article class="dark-section">
+    <article class="dark-section page-hero about-hero" data-beat="1" data-stage="exposition" data-title="David Puerto" data-notes="Who I am in one breath: a design engineer who builds the thing before it exists so the right people can decide early. Fifteen years of it, six companies, and now the part where I grow the next people who do it.">
       <h2 class="text-align-center about-heading">
-        <em>What are some things<br /> you</em> <span class="text-mask">might not know</span> <em>about me...</em>
+        <em>I build the thing</em> <span class="text-mask">before it exists</span><em>, so the right people can decide early.</em>
       </h2>
       <rain-fall></rain-fall>
       <clipped-image image="/images/spacelabforever.jpg" video="/images/about.mov"></clipped-image>
     </article>
 
-    <article class="dark-section">
-      <div class="container">
-        <hr /><hr />
-        <h4><em>I take</em> <span class="text-mask">calculated</span> <em>risks</em></h4>
-        <p>Alpine escapades coming soon...</p>
-        <hr /><hr />
-      </div>
-    </article>
+    <section class="cs-body">
+      <section class="ms-lead" aria-labelledby="ab-lead-h">
+        <div class="ms-lead-top" data-beat="2" data-stage="exposition" data-title="Who I am, in numbers" data-notes="The call: I am a design engineer, not a designer who codes or an engineer who designs. Who came with me: PMs, researchers, engineers, SLT, across six companies. What I left behind at each: a system that outlived me.">
+          <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:baseline;justify-content:space-between">
+            <p class="ms-eyebrow accent" id="ab-lead-h">Who I am · Fifteen years · Six companies</p>
+            <p class="ms-eyebrow">Rising to the occasion, then handing it to the next person</p>
+          </div>
+          <ul class="ms-matrix">
+            <li><span class="ms-eyebrow">Role</span><span>Design engineer and prototyper. I sit between research, design, product and engineering and make the decision visible early, in working code, on real data shapes</span></li>
+            <li><span class="ms-eyebrow">Where</span><span>SonoSite, Facebook, WebMD, Nordstrom, Microsoft, Apple. Now a studio practice: Unakin, Spacelab Studio, and the XSD playbook</span></li>
+            <li><span class="ms-eyebrow">Stack</span><span>Web Components, React, TypeScript, design systems with the judgment held in tests. GSAP, three.js, WebGL. Agents, MCP servers, skills, computer vision gates</span></li>
+            <li><span class="ms-eyebrow">What I am here to do</span><span>Lead design engineering in an AI-native world, and grow the next people who do it. Standards that travel without me in the room</span></li>
+          </ul>
+          <ul class="ms-stats" aria-label="The numbers">
+            <li><b><span data-count="15">15</span> yrs</b><small>of prototypes that became the product's first draft, from an iPad Mini in 2013 to a gated preview factory in 2026</small></li>
+            <li><b><span data-count="4">4</span></b><small>design systems shipped across four companies: WebMD, Nordstrom CommonUI, Microsoft Sovereign UI, Apple SuperKit</small></li>
+            <li><b><span data-count="40">40</span>+</b><small>teams on Email Composer without a mandate; thousands of engineers on Lyric; every tented project on Personnel</small></li>
+          </ul>
+        </div>
+        <ol class="ms-frame">
+          <li class="ms-beat" data-beat="3" data-stage="exposition" data-notes="The occasion, every time: a room full of people deciding on static mocks, with a sprint about to be spent on a guess."><span class="ms-beat-n" aria-hidden="true">1</span><div class="ms-beat-body"><p class="ms-eyebrow">The occasion</p><h2>A room deciding on a guess, and a sprint about to be spent on it.</h2></div></li>
+          <li class="ms-beat" data-beat="4" data-stage="rising" data-notes="The unthinkable, every time: build it before anyone has agreed to, in the medium it will ship in, on data shaped like the real thing. Then let the room argue with the thing instead of with each other."><span class="ms-beat-n" aria-hidden="true">2</span><div class="ms-beat-body"><p class="ms-eyebrow">The unthinkable</p><p>Build it before anyone has agreed to, in the medium it will ship in, on data shaped like the real thing. Let the room argue with the thing instead of with each other.</p></div></li>
+          <li class="ms-beat" data-beat="5" data-stage="rising" data-notes="The technology I had to wield, in order: touch physics on an iPad Mini, a React design system, a router within a router behind a custom auth gateway, Web Components in Electron, Vision and SSIM, MCP servers, forensic agents, computer-vision gates in CI. I learned each one because the occasion demanded it."><span class="ms-beat-n" aria-hidden="true">3</span><div class="ms-beat-body"><p class="ms-eyebrow">The technology I had to wield</p><p>Touch physics on an iPad Mini. A React design system. A router within a router behind a custom auth gateway. Web Components in Electron. Vision and SSIM, MCP servers, a forensic agent. A computer-vision gate in CI. Each one learned because the occasion demanded it.</p></div></li>
+          <li class="ms-beat" data-beat="13" data-stage="falling" data-notes="Who moved: surgeons, PMs, SLT, engineers, forty-plus teams. The number is always a count of other people: thousands of Lyric engineers, every tented project on Personnel, twelve hours to twenty minutes for the C-suite."><span class="ms-beat-n" aria-hidden="true">4</span><div class="ms-beat-body"><p class="ms-eyebrow">Who moved, and the number</p><p>Surgeons held the probe differently. PMs and senior leadership changed decisions in the meeting. Engineers took the prototype as the blueprint. Forty-plus teams adopted a publishing system nobody mandated. Adoption is a count of other people, and I keep count.</p></div></li>
+          <li class="ms-beat" data-beat="14" data-stage="resolution" data-notes="What it taught the next person, which is what I am here to do: judgment belongs in the system, not in whoever is in the room. I want to grow the people who build those systems."><span class="ms-beat-n" aria-hidden="true">5</span><div class="ms-beat-body"><p class="ms-eyebrow">What it taught the next person</p><p class="ms-taught">Judgment belongs in the system, not in whoever is in the room. Now I want to grow the people who build those systems.</p></div></li>
+        </ol>
+      </section>
 
-    <article class="light-section">
-      <div class="container">
-        <hr /><hr />
-        <h4><em>I run, swim, and more on</em> <span class="text-mask">Strava</span></h4>
-        <p>Training + Performance data coming soon...</p>
-        <hr /><hr />
-      </div>
-    </article>
+      <article id="article" class="bodycopy">
+        <div class="ms-read" data-beat="6" data-stage="rising" data-notes="Since Microsoft, three things at once. Apple: Project Studio, Email Composer, SuperKit. The studio practice: Unakin, shipmate, the cursor lab, Spacelab Studio. And the playbook: the fourth generation of the Preview Site, built in the open as a design-engineering practice. Say which one is the day job and which ones are the lab.">
+          <h2>Since Microsoft</h2>
+          <p>At <a href="/case-studies/apple/">Apple</a> I collapsed fourteen executive dashboards into Project Studio, built the ingestion pipelines that rebuild thousands of hand-tuned charts one to one, and turned the surface into Email Composer, a publishing system forty-plus teams run themselves with Editor and Approver roles built in.</p>
+          <p>Alongside it I run a studio practice. Unakin is where the hard things get tried first: a client portal gated by row-level security, shipmate, a deploy tool that refuses to execute unless a plan ran in the last ten minutes, and the cursor lab, where every input modality is an adapter over one bus. Spacelab Studio is the production side of that practice.</p>
+          <p>And I wrote the <a href="/case-studies/microsoft/">playbook</a>: the fourth generation of the Preview Site, where a mockup becomes a gated preview, the design language is data, and the judgment lives in 118 rules with checks. It is the thing I would hand a distinguished engineer on day one and say, finesse this.</p>
+        </div>
 
-    <article class="dark-section">
-      <div class="container">
-        <hr /><hr />
-        <h4><em>Have mercy</em> <span class="text-mask">on the dishwasher</span></h4>
-        <p>Recipes for paella, pastelon, and arepas coming soon...</p>
-        <hr /><hr />
-      </div>
-    </article>
+        <div class="ms-read" data-beat="7" data-stage="rising" data-notes="One sentence, then three proofs. Design is a decision about someone else's time, made visible early enough to be cheap to change. The Preview Site, the iViz wheel, the factory's gate.">
+          <h2>What design means to me</h2>
+          <p>Design is a decision about someone else's time, made visible early enough to be cheap to change.</p>
+          <p>Everything I have built is that sentence. The Preview Site made a PM's decision visible before engineering spent a sprint. The iViz wheel made a surgeon's one-handed grip the constraint before hardware was cut. The playbook's gate makes a design-system violation visible before a reviewer's afternoon is spent on it.</p>
+        </div>
 
-    <article class="light-section">
-      <div class="container">
-        <hr /><hr />
-        <h4><em>I have some</em> <span class="text-mask">Side Projects</span></h4>
-        <p>Life hacks, coding, vehicle modification, home improvements, etc. coming soon...</p>
-        <hr /><hr />
-      </div>
-    </article>
+        <div class="ms-read" data-beat="8" data-stage="rising" data-notes="How teams work best, five things I have watched be true. One shared artifact. Judgment in the system. Short loops with receipts. Clear roles. Being wrong is cheap.">
+          <h2>How I have seen design teams work best</h2>
+          <p><strong>One shared artifact beats shared opinions.</strong> The 2013 Experience Team at SonoSite put industrial design, interaction design, human factors, mechanical engineering and one software engineer around one prototype. The arguments were with the thing.</p>
+          <p><strong>Judgment lives in the system, not in whoever is in the room.</strong> The playbook's 118 rules and 473 tests. Apple's test harness on the design system. Quality that survives a reorg.</p>
+          <p><strong>Short loops with real users, with receipts.</strong> Lyric's telemetry plus Facebook Groups feedback. iViz A/B on camera first, then with SonoSite users and non-users.</p>
+          <p><strong>Clear roles let people run in parallel.</strong> Email Composer: editors draft, approvers sign, schedulers deliver, in sandboxed collections so seven lines of business never cross.</p>
+          <p><strong>Make being wrong cheap.</strong> Plan before execute. Per-change undo. Drafts gated by row-level security. Teams take risks when rollback is one step.</p>
+        </div>
 
-    <article class="dark-section">
-      <div class="container">
-        <hr /><hr />
-        <h4><em>I can still</em> <span class="text-mask">get down at the roller rink</span></h4>
-        <p>Details coming soon...</p>
-        <hr /><hr />
-      </div>
-    </article>
+        <div class="ms-read" data-beat="9" data-stage="climax" data-notes="The climax of this page: adoption is a method, and it is mine. Ship the thing they already need and put the system inside it. Lower the switching cost to zero. Give receipts. Make it self-serve. Hand it off with a named owner. Say the number of teams.">
+          <h2>How I get adoption across teams and orgs</h2>
+          <p><strong>Ship the thing they already need and put the system inside it.</strong> Email Composer makes the branded email a team needs today; the design system rides along. Forty-plus teams, no mandate.</p>
+          <p><strong>Lower the switching cost to near zero.</strong> Project Studio onboarded the existing charts one to one, so moving off Tableau felt safe. Preview Sites ran on corpnet with synthetic data, so engineers could open them without a ticket.</p>
+          <p><strong>Give receipts, not promises.</strong> Weekly executive reporting from twelve hours to under twenty minutes. Nordstrom task completion from sixty to a hundred percent. A forensic agent surfacing data bugs before the C-suite saw them.</p>
+          <p><strong>Make it self-serve, then hand it off with a named owner.</strong> Guest passes. Installable skills. A Chrome extension. Documentation that outlived my involvement at WebMD. Adoption is a count of other people, and the count is the receipt.</p>
+        </div>
+
+        <div class="ms-read" data-beat="10" data-stage="falling" data-notes="What I am here to do today. Lead the charge in an AI-native world: the judgment held in tests, the design language as data, agents that are trusted because they are contained. And grow new blood: people who can bridge PMs, researchers, designers, engineers, security and SLT, because I have sat in every one of those chairs.">
+          <h2>What I am here to do today</h2>
+          <p>Lead design engineering in an AI-native world. That means the design language is data, the judgment is held in tests, and agents get adopted because they are contained, not because they are capable. Capability is the easy half.</p>
+          <p>And grow the next people who do it. I have sat in the PM chair, the designer's chair, the engineer's chair and the security review, so I can translate between them and I can teach the translation. The standard should travel without me in the room. That is the whole job.</p>
+        </div>
+
+        <div class="ms-read" data-beat="11" data-stage="falling" data-notes="One slide off the clock, so the room meets a person. Calculated risks in the mountains. Strava. Paella, pastelón, arepas. The roller rink.">
+          <h2>Off the clock</h2>
+          <p><strong>I take calculated risks.</strong> Alpine routes, planned the way I plan a build: objectives, partners, systems for mechanical advantage, and an eye on the weather.</p>
+          <p><strong>I run and swim</strong>, and the data lives on Strava, because I like receipts there too.</p>
+          <p><strong>Have mercy on the dishwasher.</strong> Paella, pastelón and arepas, for as many people as the table holds.</p>
+          <p><strong>Side projects</strong>: vehicle modifications, home improvements, life hacks, and I can still get down at the roller rink.</p>
+        </div>
+
+        <div class="ms-read" data-beat="12" data-stage="resolution" data-notes="Close the way the whole site closes. Rising to the occasion, trying the difficult, learning the hard technology because the occasion demanded it. Now the occasion is other people.">
+          <h2>The through-line</h2>
+          <p>I keep rising to the occasion, trying the difficult thing, and learning whatever technology it takes. The occasion now is other people: the engineers and designers who will build the next generation of this, better than I did. I am here to make sure they can.</p>
+        </div>
+      </article>
+    </section>
   </main>
 </body>
 
