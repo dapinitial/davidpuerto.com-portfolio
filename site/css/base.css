@@ -35,6 +35,7 @@
     --color-red-2: #d04a55;
     --color-red-2: oklch(57% 0.2 15);
     --color-zillow: #1277e1;
+    --color-silver: #d0d4dc; /* Apple chapter: black glass, silver edge */
 
     --color-link: var(--color-primary);
     --color-link-hover: var(--color-secondary);
