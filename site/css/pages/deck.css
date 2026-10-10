@@ -713,3 +713,39 @@
     }
   }
 }
+
+@layer page {
+  /* an image slide: the picture is the point, one line under it */
+  html.deck .deck-beat.deck-image {
+    place-content: center;
+    justify-items: center;
+    text-align: center;
+  }
+
+  html.deck .deck-beat.deck-image img {
+    max-height: 72vh;
+    width: auto;
+    max-width: 100%;
+    border-radius: 18px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+
+  html.deck .deck-beat.deck-image figcaption {
+    margin-top: 18px;
+    font-size: clamp(15px, 1.1vw, 19px);
+    color: #9a9499;
+    max-width: 60ch;
+  }
+
+  /* in the long read the same figure is just a wide image */
+  html:not(.deck) .deck-image {
+    margin: 48px auto;
+    max-width: 1100px;
+  }
+
+  html:not(.deck) .deck-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+  }
+}
