@@ -489,3 +489,396 @@
     }
   }
 }
+
+/* ---------- 2026 chapter, progressive disclosure ---------- */
+@layer page {
+  .ms-plain {
+    border-left: 2px solid var(--ms-accent, var(--color-primary));
+    padding: 4px 0 4px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ms-plain .ms-copy strong {
+    color: var(--color-text, #fff0f4);
+    font-weight: 600;
+  }
+
+  .ms-section-head {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ms-section-head h3 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(24px, 2.8vw, 30px);
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+    max-width: 28ch;
+  }
+
+  .ms-expand {
+    align-self: flex-start;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: 1px solid #4a4448;
+    background: transparent;
+    color: #fff0f4;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .ms-expand:hover,
+  .ms-expand:focus-visible {
+    border-color: var(--ms-accent, var(--color-primary));
+    outline: none;
+  }
+
+  /* details/summary in the house style */
+  .ms-readers,
+  .ms-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid #2a2626;
+  }
+
+  .ms-d {
+    border-bottom: 1px solid #2a2626;
+  }
+
+  .ms-d summary {
+    list-style: none;
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 24px;
+    align-items: start;
+    gap: 16px;
+    padding: 20px 0;
+  }
+
+  .ms-d summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* explicit placement: the label + line stack in column 1, the chevron
+     sits alone in the last column, spanning both rows */
+  .ms-readers .ms-d-who,
+  .ms-readers .ms-d-line {
+    grid-column: 1;
+  }
+
+  .ms-timeline .ms-d-n {
+    grid-column: 1;
+  }
+
+  .ms-timeline .ms-d-line {
+    grid-column: 2;
+  }
+
+  .ms-d summary::after {
+    content: '';
+    grid-column: -2 / -1;
+    grid-row: 1 / span 2;
+    width: 10px;
+    height: 10px;
+    margin: 8px 6px 0 0;
+    border-right: 1.5px solid #9a9499;
+    border-bottom: 1.5px solid #9a9499;
+    transform: rotate(45deg);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .ms-d[open] summary::after {
+    transform: rotate(-135deg);
+    border-color: var(--ms-accent, var(--color-primary));
+  }
+
+  .ms-d summary:hover .ms-d-line,
+  .ms-d summary:focus-visible .ms-d-line {
+    color: #fff0f4;
+  }
+
+  .ms-d summary:focus-visible {
+    outline: 2px solid var(--ms-accent, var(--color-primary));
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  .ms-d-who,
+  .ms-d-n {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ms-accent, var(--color-primary));
+    margin-bottom: 6px;
+  }
+
+  .ms-timeline .ms-d summary {
+    grid-template-columns: 48px minmax(0, 1fr) 24px;
+  }
+
+  .ms-timeline .ms-d-n {
+    margin: 0;
+    font-family: var(--font-family-heading, serif);
+    font-size: 22px;
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1.2;
+  }
+
+  .ms-d-line {
+    display: block;
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(19px, 2vw, 23px);
+    line-height: 1.25;
+    color: #e6dde1;
+    transition: color 0.2s ease;
+    text-wrap: balance;
+  }
+
+  .ms-d-body {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 4px 0 28px;
+  }
+
+  .ms-d-body p {
+    margin: 0;
+    max-width: 66ch;
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  .ms-d-body a {
+    color: var(--ms-accent, var(--color-primary));
+  }
+
+  .ms-shop {
+    padding: 16px 20px;
+    background: #151515;
+    border: 1px solid #2f2f2f;
+    border-radius: 14px;
+    font-size: 15px !important;
+    line-height: 1.6;
+    max-width: none !important;
+  }
+
+  .ms-shop b {
+    color: var(--ms-accent, var(--color-primary));
+    font-weight: 600;
+  }
+
+  .ms-shop code {
+    font-family: var(--font-family-monospace, monospace);
+    font-size: 0.9em;
+    color: #fff0f4;
+  }
+
+  .ms-note {
+    font-size: 15px !important;
+    color: #c9c2c6;
+  }
+
+  /* evidence */
+  .ms-shot,
+  .ms-trio {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ms-shot img,
+  .ms-trio img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    border: 1px solid #2f2f2f;
+    background: #000;
+  }
+
+  .ms-trio {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .ms-trio figcaption,
+  .ms-shot figcaption {
+    grid-column: 1 / -1;
+    font-size: 13px;
+    color: #9a9499;
+  }
+
+  .ms-numbers {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ms-numbers th,
+  .ms-numbers td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #2a2626;
+    vertical-align: top;
+  }
+
+  .ms-numbers th {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #9a9499;
+    font-weight: 500;
+  }
+
+  .ms-numbers td:not(:first-child),
+  .ms-numbers th:not(:first-child) {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .ms-numbers td b {
+    color: var(--ms-accent, var(--color-primary));
+    font-weight: 600;
+  }
+
+  .ms-skills {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 14px;
+  }
+
+  .ms-skills li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    color: #c9c2c6;
+  }
+
+  .ms-skills img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid #2f2f2f;
+    display: block;
+  }
+
+  .ms-dialog {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #151515;
+    border: 1px solid #2f2f2f;
+    border-radius: 16px;
+    padding: 18px 20px;
+    max-width: 62ch;
+  }
+
+  .ms-dialog-row {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 12px;
+    align-items: start;
+  }
+
+  .ms-dialog-row p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: #0e0e0e;
+    border: 1px solid #2a2626;
+  }
+
+  .ms-dialog-who {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9a9499;
+    padding-top: 12px;
+  }
+
+  .ms-dialog-row.is-ok p {
+    border-color: #2e8a66;
+  }
+
+  .ms-dialog-row.is-refused p {
+    border-color: var(--ms-accent, var(--color-primary));
+  }
+
+  .ms-dialog figcaption {
+    font-size: 13px;
+    color: #9a9499;
+  }
+
+  .ms-inventory {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    background: #2f2f2f;
+    border: 1px solid #2f2f2f;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .ms-inventory li {
+    background: #151515;
+    padding: 18px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .ms-inventory b {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .ms-inventory span {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #c9c2c6;
+    font-weight: 300;
+  }
+
+  .ms-inventory a {
+    color: var(--ms-accent, var(--color-primary));
+  }
+
+  @media (max-width: 700px) {
+    .ms-trio {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ms-timeline .ms-d summary {
+      grid-template-columns: 36px minmax(0, 1fr) 24px;
+    }
+  }
+}
