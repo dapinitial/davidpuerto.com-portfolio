@@ -136,3 +136,18 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
     );
   }
 }
+
+// --- Progressive disclosure: one control opens every reading and stage ------
+// Works with or without motion; it is plain <details>.
+const expandAll = document.querySelector('[data-expand-all]');
+if (expandAll) {
+  const all = () => document.querySelectorAll('.ms-chapter details');
+  expandAll.addEventListener('click', () => {
+    const open = expandAll.getAttribute('aria-expanded') !== 'true';
+    all().forEach((d) => { d.open = open; });
+    expandAll.setAttribute('aria-expanded', String(open));
+    expandAll.textContent = open ? 'Collapse everything' : 'Expand everything';
+    // Images landed and heights changed: let the scroll triggers re-measure.
+    ScrollTrigger.refresh();
+  });
+}
