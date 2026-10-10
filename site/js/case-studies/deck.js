@@ -1,17 +1,22 @@
 // Deck mode for a case study: ?deck=1 turns the page's marked beats into
-// full-screen slides, one at a time, with the story arc as the map.
+// full-screen slides with the story arc as the map.
 //
 // Markup contract (set by the page):
 //   data-beat="12"        an element that becomes one slide; the number is its
 //                         order in the deck (the read order may differ)
 //   data-stage="climax"   exposition | rising | climax | falling | resolution
 //                         (unset: inferred from position, climax near 62%)
-//   data-notes="…"        speaker notes, shown with N
+//   data-notes="…"        talking points, shown with N
+//   data-title="…"        the arc's label for the beat (else its heading)
+//
+// Mechanism: the homepage's. Every beat gets a 100svh slot in the document
+// and the browser snaps between slots (native CSS scroll-snap). The beat
+// itself is a fixed layer that GSAP scrubs in (scale 0 → 1, blur off) as its
+// slot arrives and out (scale 1 → 1.5, blur on) as it leaves. Keys and the
+// arc only scroll to a slot; nothing else moves the deck.
 //
 // Presenter keys: → ↓ space next · ← ↑ back · Home/End · N notes · T story
-// arc · F fullscreen · Esc closes the arc. Wheel and swipe move one slide.
-// Same mechanism as the homepage and the unakin decks: the slides are a
-// fixed stack, GSAP paints the hand-off, the document scroll is parked.
+// arc · F fullscreen · Esc closes the arc.
 import { gsap, ScrollTrigger } from '../lib/gsap.js';
 
 const params = new URLSearchParams(location.search);
@@ -21,6 +26,8 @@ if (isDeck) {
   const root = document.documentElement;
   root.classList.add('deck');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || params.has('nomotion');
+  const isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+  if (reduced) root.classList.add('deck-still');
 
   // The deck owns the screen: drop the read-mode scroll choreography.
   ScrollTrigger.getAll().forEach((t) => t.kill());
@@ -31,13 +38,26 @@ if (isDeck) {
   );
 
   if (main && beats.length) {
-    // Lift every beat into one stage, in deck order; hide the rest of main.
+    // One slot per beat in document flow (the thing that snaps); the beat
+    // itself becomes a fixed layer. The rest of main is hidden.
     const stage = document.createElement('div');
     stage.className = 'deck-stage';
-    beats.forEach((b) => {
+    const slots = beats.map((b, i) => {
       b.classList.add('deck-beat');
       b.querySelectorAll('details').forEach((d) => { d.open = true; });
+      // a read slide is a spread: heading across the top, the copy in columns
+      if (b.classList.contains('ms-read') && !b.querySelector('.deck-copy')) {
+        const copy = document.createElement('div');
+        copy.className = 'deck-copy';
+        [...b.children].filter((k) => !k.matches('h1, h2')).forEach((k) => copy.appendChild(k));
+        b.appendChild(copy);
+      }
+      const slot = document.createElement('div');
+      slot.className = 'deck-slot';
+      slot.dataset.i = String(i);
+      stage.appendChild(slot);
       stage.appendChild(b);
+      return slot;
     });
     [...main.children].forEach((c) => c.classList.add('deck-hidden')); // a class: author display rules beat the hidden attribute
     main.appendChild(stage);
@@ -48,7 +68,7 @@ if (isDeck) {
     ui.innerHTML = `
       <div class="deck-bar" aria-hidden="true"><span class="deck-fill"></span></div>
       <div class="deck-num" aria-hidden="true"></div>
-      <p class="deck-hint" aria-hidden="true">→ next · ← back · N notes · T story arc · F fullscreen</p>
+      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
     const fill = ui.querySelector('.deck-fill');
@@ -167,9 +187,8 @@ if (isDeck) {
     donePath.style.strokeDasharray = `${doneLen}`;
     donePath.style.strokeDashoffset = `${doneLen}`;
 
-    // --- navigation -------------------------------------------------------
+    // --- state: which slot is centred -------------------------------------
     let cur = -1;
-    let busy = false;
     let numT = 0;
     const paint = (i) => {
       fill.style.width = `${((i + 1) / beats.length) * 100}%`;
@@ -187,59 +206,62 @@ if (isDeck) {
       toc.querySelectorAll('.stage').forEach((t) => t.classList.toggle('on', t.dataset.stage === st));
       donePath.style.strokeDashoffset = `${doneLen * (1 - (beats.length > 1 ? i / (beats.length - 1) : 1))}`;
     };
-    const go = (i) => {
-      i = Math.max(0, Math.min(beats.length - 1, i));
-      if (i === cur || busy) return;
-      busy = true;
-      const prev = cur >= 0 ? beats[cur] : null;
-      const next = beats[i];
-      const dir = i > cur ? 1 : -1;
+    const setCur = (i) => {
+      if (i === cur) return;
       cur = i;
+      beats.forEach((b, k) => b.classList.toggle('active', k === i));
+      beats[i].scrollTop = 0;
       paint(i);
-      const done = () => { busy = false; };
-      if (reduced) {
-        prev?.classList.remove('active');
-        next.classList.add('active');
-        done();
-        return;
-      }
-      const heroOut = !!prev?.classList.contains('cs-hero');
-      const inAt = !prev ? 0 : heroOut ? 0.6 : 0.12;
-      const t = gsap.timeline({ onComplete: done });
-      if (prev) {
-        t.to(prev, heroOut ? { opacity: 0, duration: 0.55, ease: 'power2.inOut' } : { opacity: 0, yPercent: -7 * dir, scale: 0.94, filter: 'blur(6px)', duration: 0.7, ease: 'power2.inOut' }, 0);
-        t.add(() => { prev.classList.remove('active'); gsap.set(prev, { clearProps: 'transform,opacity,filter' }); }, 0.7);
-      }
-      t.add(() => { next.classList.add('active'); next.scrollTop = 0; }, inAt);
-      t.fromTo(next, { opacity: 0, yPercent: 9 * dir, scale: 1.06, filter: 'blur(4px)' }, { opacity: 1, yPercent: 0, scale: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power3.out', clearProps: 'transform,filter' }, inAt);
-      t.add(() => enter(next), inAt + (prev ? 0.2 : 0.1));
+      enter(beats[i]);
     };
 
-    // wheel: one slide per gesture; a tall slide scrolls inside itself first
-    let lastWheel = 0;
-    window.addEventListener('wheel', (e) => {
-      if (e.target.closest('.deck-notes, .arc-toc')) return;
-      const b = e.target.closest('.deck-beat');
-      if (b && b.scrollHeight > b.clientHeight + 4) {
-        const atEnd = e.deltaY > 0 ? b.scrollTop + b.clientHeight >= b.scrollHeight - 2 : b.scrollTop <= 0;
-        if (!atEnd) return;
+    // --- the scrub: the homepage's in/out, per slot -----------------------
+    const EASE = 'power1.inOut';
+    beats.forEach((b, i) => {
+      const slot = slots[i];
+      ScrollTrigger.create({
+        trigger: slot,
+        start: 'top center',
+        end: 'bottom center',
+        onToggle: (self) => { if (self.isActive) setCur(i); },
+      });
+      if (reduced) return;
+      // Blur the headline elements, never the layer itself (an ancestor
+      // filter rasterizes the whole subtree). Safari skips media: its blur
+      // bleed renders as a ghost glow.
+      const blurEls = b.querySelectorAll(
+        isSafari
+          ? 'h1, h2, .ms-taught, .ms-close, .ms-stats b, .ms-beat-n'
+          : 'h1, h2, .ms-taught, .ms-close, .ms-stats b, .ms-beat-n, img, video',
+      );
+      const inTl = gsap.timeline({
+        defaults: { ease: EASE },
+        scrollTrigger: { trigger: slot, start: 'top bottom', end: 'top top', scrub: true },
+      });
+      // snap quantizes the scrubbed value so rest lands on exactly 1.0 — a
+      // 0.999 scale leaves the layer permanently bitmap-blurred.
+      inTl.fromTo(b, { scale: 0, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, immediateRender: false, snap: { scale: 0.01 } }, 0);
+      if (blurEls.length) inTl.fromTo(blurEls, { filter: 'blur(48px)' }, { filter: 'blur(0px)', immediateRender: false }, 0);
+      const outTl = gsap.timeline({
+        defaults: { ease: EASE },
+        scrollTrigger: { trigger: slot, start: 'top top', end: 'bottom top', scrub: true },
+      });
+      outTl.fromTo(b, { scale: 1, autoAlpha: 1 }, { scale: 1.5, autoAlpha: 0, immediateRender: false, snap: { scale: 0.01 } }, 0);
+      if (blurEls.length) outTl.fromTo(blurEls, { filter: 'blur(0px)' }, { filter: 'blur(32px)', immediateRender: false }, 0);
+    });
+
+    // --- navigation: only ever a scroll to a slot --------------------------
+    const go = (i, instant = false) => {
+      i = Math.max(0, Math.min(beats.length - 1, i));
+      const top = slots[i].offsetTop;
+      if (instant) {
+        root.style.scrollBehavior = 'auto';
+        window.scrollTo(0, top);
+        root.style.scrollBehavior = '';
+      } else {
+        window.scrollTo({ top, behavior: 'smooth' });
       }
-      e.preventDefault();
-      const now = performance.now();
-      if (now - lastWheel < 900 || Math.abs(e.deltaY) < 8) return;
-      lastWheel = now;
-      go(cur + (e.deltaY > 0 ? 1 : -1));
-    }, { passive: false });
-    // touch: a vertical swipe moves one slide
-    let touchY = null;
-    window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
-    window.addEventListener('touchend', (e) => {
-      if (touchY == null) return;
-      const dy = touchY - e.changedTouches[0].clientY;
-      touchY = null;
-      if (Math.abs(dy) > 48) go(cur + (dy > 0 ? 1 : -1));
-    }, { passive: true });
-    // keys and the arc
+    };
     const openToc = () => { toc.classList.add('open'); setTimeout(() => (toc.querySelector('.arc-col button.now') ?? toc.querySelector('.arc-col button'))?.focus(), 50); };
     const closeToc = () => toc.classList.remove('open');
     window.addEventListener('keydown', (e) => {
@@ -261,7 +283,12 @@ if (isDeck) {
     });
 
     // start: the hash remembers the slide
+    ScrollTrigger.refresh();
     const m = /#b(\d+)/.exec(location.hash);
-    go(m ? Number(m[1]) - 1 : 0);
+    const start = m ? Number(m[1]) - 1 : 0;
+    if (start > 0) go(start, true);
+    if (cur < 0) setCur(start);
+    // the slot heights settle after fonts/images; keep the scrub honest
+    addEventListener('load', () => ScrollTrigger.refresh());
   }
 }
