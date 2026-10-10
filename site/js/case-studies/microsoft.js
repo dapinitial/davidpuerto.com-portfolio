@@ -5,7 +5,9 @@ import { initChapterMotion } from './chapter-motion.js';
 
 initChapterMotion();
 
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+const DECK = document.documentElement.classList.contains('deck');
+
+if (!DECK && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const EASE = 'power1.inOut';
   // --- Pinned narration: the figure is CSS-sticky; each beat lights its node
   const pin = document.querySelector('.ms-pin');

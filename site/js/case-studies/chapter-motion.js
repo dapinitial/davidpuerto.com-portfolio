@@ -5,6 +5,7 @@
 import { gsap, ScrollTrigger } from '../lib/gsap.js';
 
 export function initChapterMotion() {
+  if (document.documentElement.classList.contains('deck')) return; // deck.js owns the screen
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const EASE = 'power1.inOut';
 
