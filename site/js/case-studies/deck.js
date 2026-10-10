@@ -49,7 +49,9 @@ if (isDeck) {
     stage.className = 'deck-stage';
     const slots = beats.map((b, i) => {
       b.classList.add('deck-beat');
-      b.querySelectorAll('details').forEach((d) => { d.open = true; });
+      // every disclosure opens on its slide, except the five readings: that
+      // slide is a menu the presenter opens for whoever just asked
+      if (!b.classList.contains('ms-readers')) b.querySelectorAll('details').forEach((d) => { d.open = true; });
       // a read slide is a spread: heading across the top, the copy in columns
       if (b.classList.contains('ms-read') && !b.querySelector('.deck-copy')) {
         const copy = document.createElement('div');

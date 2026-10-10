@@ -749,3 +749,123 @@
     border-radius: 18px;
   }
 }
+
+/* ---------- the glow: the study's accent breathes under every slide, as on the homepage ---------- */
+@layer page {
+  html.deck .deck-beat::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(90% 60% at 50% 100%, rgb(var(--cs-glow, 251 131 109) / 0.2), rgb(var(--cs-glow, 251 131 109) / 0) 72%);
+  }
+}
+
+/* ---------- timeline beats as slides: the line is the title, the proof sits beside the copy ---------- */
+@layer page {
+  html.deck li.deck-beat .ms-d {
+    border: 0;
+  }
+
+  html.deck li.deck-beat .ms-d summary {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    column-gap: 16px;
+    align-items: start;
+    padding: 0;
+    margin: 0 0 20px;
+  }
+
+  html.deck li.deck-beat .ms-d-n {
+    grid-column: 1;
+    margin: 0;
+    font-family: var(--font-family-heading, serif);
+    font-size: clamp(22px, 2vw, 30px);
+    letter-spacing: 0;
+    text-transform: none;
+    line-height: 1.15;
+    color: var(--cs-accent, #fb836d);
+  }
+
+  html.deck li.deck-beat .ms-d-line {
+    grid-column: 2;
+    font-family: var(--font-family-heading, serif);
+    font-weight: 500;
+    font-size: clamp(26px, 2.6vw, 42px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: #fff0f4;
+    max-width: 30ch;
+    text-wrap: balance;
+  }
+
+  html.deck li.deck-beat .ms-d-body {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    column-gap: 48px;
+    align-items: start;
+    padding: 0 0 0 80px;
+  }
+
+  html.deck li.deck-beat .ms-d-body > p {
+    grid-column: 1;
+    margin: 0 0 14px;
+    font-size: clamp(15px, 1.05vw, 19px);
+    line-height: 1.55;
+    color: #c9c2c6;
+    max-width: none;
+  }
+
+  html.deck li.deck-beat .ms-d-body > p:first-child {
+    font-size: clamp(17px, 1.2vw, 22px);
+    color: #fff0f4;
+  }
+
+  html.deck li.deck-beat .ms-d-body > figure {
+    grid-column: 2;
+    grid-row: 1 / span 8;
+    margin: 0;
+  }
+
+  html.deck li.deck-beat .ms-d-body img {
+    max-height: 56vh;
+    width: auto;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  html.deck li.deck-beat .ms-trio img {
+    max-height: 30vh;
+    width: 100%;
+  }
+
+  html.deck li.deck-beat .ms-d-body figcaption {
+    font-size: 13px;
+    color: #9a9499;
+  }
+
+  @media (max-width: 1000px) {
+    html.deck li.deck-beat .ms-d-body {
+      grid-template-columns: minmax(0, 1fr);
+      padding-left: 0;
+    }
+
+    html.deck li.deck-beat .ms-d-body > figure {
+      grid-column: 1;
+      grid-row: auto;
+    }
+  }
+
+  /* the five readings: a menu the presenter opens for whoever asked */
+  html.deck .deck-beat.ms-readers details summary {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  html.deck .deck-beat.ms-readers .ms-d-body img {
+    max-height: 34vh;
+    width: auto;
+    max-width: 100%;
+  }
+}
