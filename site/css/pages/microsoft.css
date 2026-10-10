@@ -10,7 +10,9 @@
     flex-direction: column;
     gap: 40px;
     margin: 48px auto 8px;
+    padding: 0; /* interior.css pads every <section>; these live inside the column */
     width: 100%;
+    box-sizing: border-box;
   }
 
   .ms-eyebrow {
@@ -155,7 +157,9 @@
     flex-direction: column;
     gap: 48px;
     margin: 24px auto 72px;
+    padding: 0; /* same: no section padding inside the column */
     width: 100%;
+    box-sizing: border-box;
   }
 
   .ms-chapter > header {
@@ -226,15 +230,16 @@
   }
 
   /* Pinned narration: the figure sticks, the beats scroll past */
+  /* A grid, not a wrapping flex row: the figure column can never fall under
+     the beats on desktop, whatever the column width turns out to be. */
   .ms-pin {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
     gap: 48px;
-    align-items: flex-start;
+    align-items: start;
   }
 
   .ms-pin-figure {
-    flex: 0 1 360px;
     min-width: 0;
     position: sticky;
     top: calc(48px + 6vh); /* clear the fixed header */
@@ -256,7 +261,6 @@
   }
 
   .ms-pin-beats {
-    flex: 1 1 380px;
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -446,9 +450,12 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
+    .ms-pin {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
     .ms-pin-figure {
       position: static;
-      flex-basis: 100%;
     }
 
     .ms-pin-beats {
