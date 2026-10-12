@@ -38,7 +38,13 @@ hand-mark path.line { stroke-width: 4; }
 
 html.deck .deck-beat.active hand-mark path,
 html:not(.deck) hand-mark.seen path {
-  animation: hand-mark-draw 0.55s cubic-bezier(0.3, 0.1, 0.25, 1) 0.35s forwards;
+  animation: hand-mark-draw 0.55s cubic-bezier(0.3, 0.1, 0.25, 1) 1s forwards;
+}
+
+/* a chapter opener or timeline beat scrambles its title in first: the line waits for it */
+html.deck .deck-beat.ms-chapter-open.active hand-mark path,
+html.deck .deck-beat.ms-beat.active hand-mark path {
+  animation-delay: 2.8s;
 }
 
 /* reduced motion: the mark is simply there */
