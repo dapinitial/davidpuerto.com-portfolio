@@ -21,13 +21,15 @@ const mulberry32 = (a) => () => {
 
 const hash = (s) => { let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return h >>> 0; };
 
-// viewBox is 0 0 100 12; the word spans x 4…96, the stroke sits around y 6
-export function handLine(seed, { drift = 1.2, sway = 1.5, lag = 0 } = {}) {
+// The box is W wide and 12 tall in user units, W set by the element so one
+// unit is the same size on both axes (dashes and stroke then scale evenly).
+// The word spans x 4%…96%, the stroke sits around y 6.
+export function handLine(seed, { drift = 1.2, sway = 1.5, lag = 0, W = 100 } = {}) {
   const rnd = mulberry32(seed);
   const freqs = [0.7, 1.6, 3.1, 5.3, 8.9];
   const waves = freqs.map((f) => ({ f, a: (sway / f ** 1.1) * (0.6 + rnd() * 0.8), p: rnd() * Math.PI * 2 }));
   const over0 = 1 + rnd() * 2.5, over1 = 1 + rnd() * 2.5;
-  const x0 = 4 - over0, x1 = 96 + over1;
+  const x0 = (4 - over0) * W / 100, x1 = (96 + over1) * W / 100;
   const tilt = (rnd() - 0.5) * 1.2;
   const n = 28, pts = [];
   for (let i = 0; i <= n; i++) {
@@ -52,12 +54,12 @@ export function handLine(seed, { drift = 1.2, sway = 1.5, lag = 0 } = {}) {
 
 class HandMark extends HTMLElement {
   #io;
+  #ro;
 
   connectedCallback() {
     if (this.querySelector('svg')) return;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 100 12');
-    svg.setAttribute('preserveAspectRatio', 'none');
     svg.setAttribute('aria-hidden', 'true');
     for (const cls of ['line', 'pass']) {
       const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -70,6 +72,9 @@ class HandMark extends HTMLElement {
     // a fresh line every time the CSS starts a draw (the deck re-enters a
     // slide, or the long read scrolls it back in)
     svg.firstElementChild.addEventListener('animationstart', () => this.redraw());
+    // the box follows the word's width, so the line is never stretched
+    this.#ro = new ResizeObserver(() => this.redraw());
+    this.#ro.observe(this);
 
     // the long read: draw when the word scrolls in. In the deck the beat's
     // .active class drives the CSS instead.
@@ -82,13 +87,17 @@ class HandMark extends HTMLElement {
   }
 
   redraw() {
+    const svg = this.querySelector('svg');
+    const r = svg.getBoundingClientRect();
+    const W = r.height > 0 ? Math.max(20, Math.round((r.width / r.height) * 12)) : 100;
+    svg.setAttribute('viewBox', `0 0 ${W} 12`);
     const seed = hash(this.textContent.trim()) ^ (Date.now() & 0xffffffff);
     const [line, pass] = this.querySelectorAll('path');
-    line.setAttribute('d', handLine(seed));
-    pass.setAttribute('d', handLine(seed ^ 0x9e3779b9, { drift: 0.8, sway: 1.1, lag: 1.1 }));
+    line.setAttribute('d', handLine(seed, { W }));
+    pass.setAttribute('d', handLine(seed ^ 0x9e3779b9, { drift: 0.8, sway: 1.1, lag: 1.1, W }));
   }
 
-  disconnectedCallback() { this.#io?.disconnect(); }
+  disconnectedCallback() { this.#io?.disconnect(); this.#ro?.disconnect(); }
 }
 
 customElements.define('hand-mark', HandMark);
