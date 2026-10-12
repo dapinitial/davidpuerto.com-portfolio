@@ -1480,3 +1480,16 @@
     font-weight: 500;
   }
 }
+
+@layer page {
+  /* copy on a slide is one column, always: split columns do not read on a screen */
+  html.deck .deck-beat.ms-read .deck-copy {
+    columns: auto !important;
+    column-gap: 0;
+    max-width: 66ch;
+  }
+
+  html.deck .deck-beat.ms-read .deck-copy > p {
+    max-width: 66ch;
+  }
+}
