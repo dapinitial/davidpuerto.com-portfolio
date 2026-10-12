@@ -1,7 +1,6 @@
 // <hand-mark> — a hand-drawn underline under one word.
 //   <p>… a design language that was <hand-mark>scriptable</hand-mark>.</p>
-// Light DOM. The element appends one inline SVG with two strokes: the line,
-// and a fainter second pass a hair below it, the way a marker doubles back.
+// Light DOM. The element appends one inline SVG with one stroke.
 // JS only builds the path (once per draw); the drawing itself is a CSS
 // keyframe on stroke-dashoffset (css/elements/hand-mark.css), so the browser
 // owns the animation. pathLength="1" normalises every generated line to a
@@ -61,12 +60,10 @@ class HandMark extends HTMLElement {
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 100 12');
     svg.setAttribute('aria-hidden', 'true');
-    for (const cls of ['line', 'pass']) {
-      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      p.setAttribute('class', cls);
-      p.setAttribute('pathLength', '1');
-      svg.appendChild(p);
-    }
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'line');
+    path.setAttribute('pathLength', '1');
+    svg.appendChild(path);
     this.appendChild(svg);
     this.redraw();
     // a fresh line every time the CSS starts a draw (the deck re-enters a
@@ -92,9 +89,7 @@ class HandMark extends HTMLElement {
     const W = r.height > 0 ? Math.max(20, Math.round((r.width / r.height) * 12)) : 100;
     svg.setAttribute('viewBox', `0 0 ${W} 12`);
     const seed = hash(this.textContent.trim()) ^ (Date.now() & 0xffffffff);
-    const [line, pass] = this.querySelectorAll('path');
-    line.setAttribute('d', handLine(seed, { W }));
-    pass.setAttribute('d', handLine(seed ^ 0x9e3779b9, { drift: 0.8, sway: 1.1, lag: 1.1, W }));
+    this.querySelector('path').setAttribute('d', handLine(seed, { W }));
   }
 
   disconnectedCallback() { this.#io?.disconnect(); this.#ro?.disconnect(); }
