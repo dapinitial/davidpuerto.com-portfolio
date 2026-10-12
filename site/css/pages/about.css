@@ -48,3 +48,29 @@
     100% { background-position: 0% 0%; }
   }
 }
+
+@layer page {
+  /* the approach sign, carried over from the old Approach page: two lines and
+     one ampersand the height of both, hung to the right */
+  .cs-splash neon-text.neon-amp .bright {
+    position: relative;
+    padding-right: 1.15em;
+    text-align: left;
+  }
+
+  .cs-splash neon-text.neon-amp .bright div {
+    line-height: 1.05;
+  }
+
+  .cs-splash neon-text.neon-amp .bright::after {
+    content: '&';
+    position: absolute;
+    right: -0.18em;
+    top: 50%;
+    transform: translateY(-52%) rotate(-2deg);
+    font-size: 2.35em;
+    line-height: 1;
+    color: var(--neon-bright, #fff);
+    text-shadow: 0 0 0 transparent, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
+  }
+}

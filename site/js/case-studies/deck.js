@@ -170,7 +170,57 @@ if (isDeck) {
       h.dataset.scrambled = '1';
       return h.querySelectorAll('.ltr');
     };
-    const enter = (b) => {
+    // --- the word morph: words the next slide shares with this one travel to
+    //     their new place; the rest fade. A FLIP on the Web Animations API,
+    //     after the pen David wrote years ago. Apple, Microsoft and About only.
+    const MORPH = /\/(case-studies\/(apple|microsoft)|about-me)\//.test(location.pathname) && !reduced;
+    const STOP = new Set(['that', 'this', 'with', 'from', 'have', 'were', 'they', 'them', 'their', 'than', 'then', 'into', 'about', 'every', 'would', 'could', 'when', 'what', 'which', 'where', 'there', 'these', 'those', 'because', 'before', 'after', 'while', 'being', 'been', 'over', 'under', 'through']);
+    const wordKey = (el) => { const t = el.textContent.toLowerCase().replace(/[^a-z0-9]/g, ''); return t.length >= 4 && !STOP.has(t) ? t : null; };
+    if (MORPH) {
+      beats.forEach((b) => {
+        b.querySelectorAll('.deck-copy > p:not(.read-only)').forEach((p) => {
+          const walk = (n) => {
+            [...n.childNodes].forEach((c) => {
+              if (c.nodeType === 3) {
+                const frag = document.createDocumentFragment();
+                c.textContent.split(/(\s+)/).forEach((part) => {
+                  if (!part) return;
+                  if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+                  const w = document.createElement('span'); w.className = 'mw'; w.textContent = part; frag.appendChild(w);
+                });
+                c.replaceWith(frag);
+              } else if (c.nodeType === 1 && !c.matches('hand-mark, code, a, svg')) walk(c);
+            });
+          };
+          walk(p);
+        });
+      });
+    }
+    const wordMorph = (from, to) => {
+      if (!MORPH || !from || !to) return false;
+      const pool = new Map();
+      from.querySelectorAll('.mw').forEach((w) => { const k = wordKey(w); if (k) (pool.get(k) ?? pool.set(k, []).get(k)).push(w); });
+      const pairs = [];
+      to.querySelectorAll('.mw').forEach((w) => { const k = wordKey(w); const src = k && pool.get(k)?.shift(); if (src) pairs.push([src, w]); });
+      if (pairs.length < 2) return false;
+      const accent = getComputedStyle(document.body).getPropertyValue('--cs-accent').trim() || '#fb836d';
+      const copy = to.querySelector('.deck-copy');
+      if (copy) gsap.set(copy, { opacity: 1, y: 0 });
+      to.querySelectorAll('.mw').forEach((w) => { w.classList.remove('morphed'); w.style.opacity = '0'; });
+      pairs.forEach(([src, w], i) => {
+        const a = src.getBoundingClientRect(), b = w.getBoundingClientRect();
+        const colour = getComputedStyle(w).color;
+        w.classList.add('morphed'); w.style.opacity = '';
+        w.animate(
+          [{ transform: `translate(${a.left - b.left}px, ${a.top - b.top}px)`, color: accent }, { transform: 'translate(0, 0)', color: accent, offset: 0.7 }, { transform: 'translate(0, 0)', color: colour }],
+          { duration: 1100, delay: 80 + i * 40, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'both' },
+        );
+      });
+      const rest = [...to.querySelectorAll('.mw:not(.morphed)')];
+      rest.forEach((w, i) => { w.style.opacity = ''; w.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: 600 + Math.min(i, 40) * 12, easing: 'ease-out', fill: 'both' }); });
+      return true;
+    };
+    const enter = (b, prev) => {
       if (reduced) return;
       const title = b.matches('.ms-beat, .ms-chapter-open, .ms-statement') ? b.querySelector('h2, .ms-taught') : null;
       if (title) {
@@ -182,7 +232,8 @@ if (isDeck) {
           gsap.fromTo(l, { opacity: 0, [axis]: off }, { opacity: 1, [axis]: 0, duration: 1.5 + Math.random(), ease: 'power3.inOut', clearProps: 'transform' });
         });
       }
-      const kids = [...b.children].filter((k) => !k.matches('canvas, video'));
+      const morphed = wordMorph(prev, b);
+      const kids = [...b.children].filter((k) => !k.matches('canvas, video') && !(morphed && k.classList.contains('deck-copy')));
       if (kids.length) gsap.fromTo(kids, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.07, ease: 'power3.out', clearProps: 'transform' });
       b.querySelectorAll('[data-count]').forEach((el) => {
         const target = Number(el.dataset.count);
@@ -280,6 +331,7 @@ if (isDeck) {
     };
     const setCur = (i) => {
       if (i === cur) return;
+      const prev = cur >= 0 ? beats[cur] : null;
       cur = i;
       beats.forEach((b, k) => b.classList.toggle('active', k === i));
       beats[i].scrollTop = 0;
@@ -294,7 +346,7 @@ if (isDeck) {
         break;
       }
       paint(i);
-      enter(beats[i]);
+      enter(beats[i], prev);
     };
 
     // --- the scrub: the homepage's in/out, per slot -----------------------

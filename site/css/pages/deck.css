@@ -1989,3 +1989,11 @@ html.deck .deck-beat.cs-splash neon-text .bright {
     z-index: 2;
   }
 }
+
+@layer page {
+  /* words that travel between slides */
+  html.deck .mw {
+    display: inline-block;
+    will-change: transform;
+  }
+}
