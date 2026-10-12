@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Approach · David Puerto</title>
-  <meta name="description" content="Design approach and process: the guide, the eight questions, prototyping as the catalyst, frozen answers versus composed ones, judgment in the system, and research that ships. A prototype is worth 1,000 meetings.">
+  <meta name="description" content="How David Puerto works, step by step: start with the people who have to decide, ask the eight questions, prototype in the medium it will ship in, let the room argue with the thing, write the judgment down, hand off a thing, leave the route marked.">
   <meta name="ga-id" content="G-5GZRVPT875">
   <script src="/boot/arriving.js"></script>
   <link rel="stylesheet" href="/css/main.css">
@@ -29,7 +29,7 @@
 <body>
   <site-header></site-header>
   <main>
-<section class="approach-hero page-hero" data-beat="1" data-stage="exposition" data-title="Design approach" data-notes="The approach in one line: I am the guide. The summit is the decision the room needs to make; my job is to make it visible early, in the medium it will ship in, and to leave the route better marked than I found it.">
+<section class="approach-hero page-hero" data-beat="1" data-stage="exposition" data-title="Design approach" data-notes="The approach in one line: find out who has to decide, build the thing they can decide on in the medium it ships in, write the judgment down, hand off a thing, and leave the route marked. Seven slides, ninety seconds.">
       <neon-text dim="If a picture is worth 1,000 words, a prototype is worth 1,000 meetings"
         bright="my approach<br />design process" class="neon-amp"></neon-text>
       <div class="scroll-down"><p>Scroll down</p></div>
@@ -39,108 +39,54 @@
       <div class="row bodycopy-details">
         <div class="column"><tts-button target="#article"></tts-button></div>
         <div class="column reading-duration">
-          <p>~4 minutes to read</p>
+          <p>~3 minutes to read</p>
           <p>Updated October 2026</p>
         </div>
       </div>
 
-      <section class="ms-lead" aria-labelledby="ap-lead-h">
-        <div class="ms-lead-top">
-          <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:baseline;justify-content:space-between">
-            <p class="ms-eyebrow accent" id="ap-lead-h">Design approach · The guide</p>
-            <p class="ms-eyebrow">Leave it better than you found it. Prototypes are worth a thousand meetings.</p>
-          </div>
-          <ul class="ms-matrix">
-            <li><span class="ms-eyebrow">The role</span><span>A guide. The summit belongs to the people deciding; I set the route, carry the systems, read the weather, and get everyone up and back</span></li>
-            <li><span class="ms-eyebrow">The method</span><span>Prototype first, in the medium it will ship in, on data shaped like the real thing. Then let the room argue with the thing</span></li>
-            <li><span class="ms-eyebrow">The questions</span><span>Eight of them, asked on every project, so the work is an outcome with receipts and not a technical exercise playing to my biases</span></li>
-            <li><span class="ms-eyebrow">The hand-off</span><span>A thing, not a recommendation. The judgment goes into rules with checks. The route is marked for whoever climbs it next</span></li>
-          </ul>
-          <ul class="ms-stats" aria-label="The numbers">
-            <li><b><span data-count="8">8</span></b><small>questions every project has to answer before I believe it is the best solution</small></li>
-            <li><b><span data-count="1000">1000</span></b><small>meetings a working prototype is worth, give or take; the room argues with the thing instead of with each other</small></li>
-            <li><b><span data-count="118">118</span></b><small>rules with checks in the playbook: the judgment, written once, so the argument is had once</small></li>
-          </ul>
-        </div>
-      </section>
-
       <article id="article" class="bodycopy">
-        <div class="ms-read" data-beat="3" data-stage="exposition" data-title="The guide" data-notes="The guide. Say the metaphor once and then make it literal: objectives, partners, mechanical advantage, readiness, weather. Then the line: my role is nothing short of being a guide, summit after summit.">
-          <h2>The guide</h2>
-        <p class="deck-only">Objectives, partners, systems for mechanical advantage, readiness, and weather that will change. The summit belongs to the people who have to decide. I set the route and get everyone up and back.</p>
-          <p class="read-only">Climbers prepare for an ascent by setting objectives, strategizing with partners, mastering systems for mechanical advantage, staying physically ready, and watching the weather and the terrain change under them. I start every project the same way, and I expect to improvise on the way up.</p>
-          <p class="read-only">My role as a UX engineer and product designer is nothing short of being a guide. The summit belongs to the people who have to decide. I set the route, carry the systems, read the conditions, and get everyone up and back, mountain after mountain after mountain.</p>
+        <div class="ms-read" data-beat="2" data-stage="exposition" data-title="Start with the people who have to decide" data-notes="Step one, with two real rooms. On Personnel the deciders were a PM team choosing between dozens of workflow permutations. At Apple it was the senior leadership team reading charts every week. Who decides, what they are deciding, and when it gets expensive to change: I find that out before I open an editor.">
+          <h2>Start with the people who have to decide.</h2>
+          <p>On Personnel the deciders were a PM team choosing between dozens of workflow permutations. At Apple it was the senior leadership team reading charts every week in a medium that forgives nothing. I find out who decides, what they are deciding, and when it becomes expensive to change, before I open an editor.</p>
         </div>
 
-        <div class="ms-read" data-beat="4" data-stage="rising" data-title="The eight questions" data-notes="The eight questions, all on the slide. Read three aloud and let the room read the rest. Will it significantly improve the current experience; how do we prove it; who have we left out; is this still the best solution.">
-          <h2>The eight questions</h2>
-        <ol class="deck-only ms-questions">
-          <li>Will it significantly improve the current experience?</li>
-          <li>How can we empirically demonstrate it?</li>
-          <li>What are the tangible and intangible costs?</li>
-          <li>What is the learning curve, and how fast can people adapt?</li>
-          <li>How well does it scale?</li>
-          <li>Who have we left out?</li>
-          <li>What technical constraints must we overcome?</li>
-          <li>Is this still the best solution?</li>
-        </ol>
-          <p class="read-only">Will our solution significantly improve the current experience? How can we empirically demonstrate it? What are the tangible and intangible costs? What is the learning curve, and how quickly can people adapt? How well does it scale? Who have we left out? What technical constraints must we overcome? Is this still the best solution?</p>
-          <p class="read-only">These keep the work from being a technical exercise playing to my own design biases. The answer is an outcome with receipts, mindful of the jobs that must be done, the budget, the needs and the timeline.</p>
+        <div class="ms-read" data-beat="3" data-stage="exposition" data-title="Ask the eight questions" data-notes="The eight questions, all on the slide. Read three aloud and let the room read the rest. They keep the work from being a technical exercise playing to my own biases.">
+          <h2>Ask the eight questions.</h2>
+          <ol class="ms-questions">
+            <li>Will it significantly improve the current experience?</li>
+            <li>How can we empirically demonstrate it?</li>
+            <li>What are the tangible and intangible costs?</li>
+            <li>What is the learning curve, and how fast can people adapt?</li>
+            <li>How well does it scale?</li>
+            <li>Who have we left out?</li>
+            <li>What technical constraints must we overcome?</li>
+            <li>Is this still the best solution?</li>
+          </ol>
         </div>
 
-        <div class="ms-read" data-beat="5" data-stage="rising" data-title="Prototyping as the catalyst" data-notes="Prototyping as the catalyst. Whiteboard with engineers and product first; the most feasible wins; flows, scenarios, wireframes to hold scope; then the browser. Prototypes are not disposable: every iteration leaves reusable assets.">
-          <h2>Prototyping as the catalyst</h2>
-        <p class="deck-only">Whiteboard with engineers and product first. Hold scope with flows, scenarios and wireframes. Then the browser, on real data shapes, so the hypothesis is tested in the medium it will ship in.</p>
-          <p class="read-only">It starts at a whiteboard with engineers and product teams, naming the jobs the people we are designing for need to carry out. We build off the most feasible wins, then hold scope with flows, scenarios, personas and wireframes before the browser takes over.</p>
-          <p class="read-only">In the browser the prototype runs on real data shapes with simulated events, so the hypothesis is tested in the medium it will ship in. Prototypes are not disposable artifacts. Each iteration leaves reusable assets, and the design tools come after, turning what worked into editable deliverables, a language and a set of patterns.</p>
-        </div>
-      </article>
-
-      <section class="ms-chapter" aria-labelledby="ap-bishop">
-        <header class="ms-chapter-open" data-beat="5.5" data-title="The bishop: the guide" data-stage="rising" data-notes="The bishop: it moves on the diagonal, the line nobody else on the board uses. The guide takes the route the others cannot see, and brings them along it.">
-          <div class="ms-chapter-open-copy">
-            <p class="ms-eyebrow accent">The guide</p>
-            <h2 id="ap-bishop">The route nobody else is on, and everyone can follow.</h2>
-            <p>A bishop moves along the diagonal, the line the other pieces do not use. That is the guide's job: find the route the room cannot see yet, prove it is safe by walking it first in working code, and mark it so the next person can take it without me.</p>
-          </div>
-          <glass-piece class="ms-piece" model="/models/bishop.glb" caption="Moves on the diagonal. The route the others cannot see." aria-hidden="true"></glass-piece>
-        </header>
-      </section>
-
-      <article class="bodycopy">
-        <div class="ms-read" data-beat="6" data-stage="rising" data-title="Frozen answers" data-notes="The frame, carefully. A dashboard is a frozen answer to a question someone asked once. So is a report. Never say dashboards are dead; say they are expensive to keep true. Skills compose the answer when you ask. The surface gets disposable; the definitions underneath get more valuable. That is where the judgment goes.">
-          <h2>Frozen answers</h2>
-        <p class="deck-only">A dashboard, a report, a slide: frozen answers to a question someone asked once. Not dead, just expensive to keep true. Skills compose the answer when you ask. The surface gets disposable; the definitions get more valuable.</p>
-          <p class="read-only">A dashboard is a frozen answer to a question someone asked once. So is a report, and so is a slide. They are not dead. They are expensive to keep true, and they stop being asked new questions.</p>
-          <p class="read-only">Skills compose the answer when you ask. The surface becomes disposable, and the definitions underneath it, the metrics, the rules, the states, the tokens, become the valuable thing. That is where the judgment goes, and it is the only part still worth writing by hand.</p>
+        <div class="ms-read" data-beat="4" data-stage="rising" data-title="Prototype in the medium it will ship in" data-notes="Not a picture of the product. A signed-in preview on real data shapes with simulated events, so the PM can click the workflow and the engineer can read the code. On Personnel: TypeScript and React behind our own gateway; engineers took the TSX and CSS as the blueprint.">
+          <h2>Prototype in the medium it will ship in.</h2>
+          <p>Not a picture of the product: a signed-in preview on real data shapes, with simulated events, so the PM can click through the workflow and the engineer can read the code. On Personnel the previews were TypeScript and React behind our own gateway, and engineers took the TSX and CSS as the blueprint.</p>
         </div>
 
-        <div class="ms-read" data-beat="7" data-stage="rising" data-title="The house" data-notes="The house. The framing and the plumbing are the expensive decisions; the finishes are cheap to change. Most teams argue about the finishes on a rendering and discover the plumbing in the sprint. A prototype in the medium it ships in is the framed house you can walk through before the drywall. The definitions are the plumbing.">
-          <h2>The house</h2>
-        <p class="deck-only">Framing and plumbing are the expensive decisions; finishes are cheap. A prototype in the medium it ships in is the framed house you walk through before the drywall. The definitions are the plumbing.</p>
-          <p class="read-only">In a house, the framing and the plumbing are the expensive decisions and the finishes are cheap to change. Most teams build backwards: they argue about the finishes on a rendering, and discover the plumbing in the sprint.</p>
-          <p class="read-only">A prototype in the medium it will ship in is the framed house you can walk through before the drywall goes up. The definitions are the plumbing. Get those right once, and the rooms can change every week without anyone opening a wall.</p>
+        <div class="ms-read" data-beat="5" data-stage="rising" data-title="Let the room argue with the thing" data-notes="Live-coded over Teams during the pandemic; PMs changed decisions in the meeting. At Apple, moving the existing charts in one to one made the switch feel safe. The argument is with the artifact, not with each other, and it is had once.">
+          <h2>Let the room argue with the thing.</h2>
+          <p>I live-coded previews over Teams during the pandemic, and PMs changed decisions in the meeting instead of a sprint later. At Apple, bringing the existing charts in one to one is what made leaving Tableau feel safe. The argument is with the artifact, not with each other, and it is had once.</p>
         </div>
 
-        <div class="ms-read" data-beat="8" data-stage="climax" data-title="Judgment in the system" data-notes="The climax of the approach, and where it has grown since 2024: the judgment goes into the system. A rule either has a check or it is marked judgment. The design language is data, so permutations never exist. The argument is had once and written where the next person will find it.">
-          <h2>Judgment in the system</h2>
-        <p class="deck-only">A rule either has a check that measures it, or it is marked judgment. There is no third option. The design language is data, worn rather than copied, so the permutation that introduces the bug never exists.</p>
-          <p class="read-only">This is where the approach has grown. The prototype used to be the hand-off. Now the judgment about it is written down too: a rule either has a check that measures it, or it is marked judgment, and there is no third option. The design language is data, worn by every product rather than copied, so the permutation that introduces the bug never exists.</p>
-          <p class="read-only">That lets a design review happen in CI, a gate refuse a build that lowers an accessibility floor, and a second team adopt the standard without me in the room. The argument is had once and written where the next person will find it.</p>
+        <div class="ms-read" data-beat="6" data-stage="climax" data-title="Write the judgment down" data-notes="A rule either has a check that measures it, or it is marked judgment. 118 rules with checks, 46 marked judgment. The gate refused my own restyle four hundred times because 38px buttons would have lowered a 44px touch floor. A skin may carry the language; it may not lower an accessibility rule.">
+          <h2>Write the judgment down.</h2>
+          <p>A rule either has a check that measures it, or it is marked judgment. The playbook holds 118 rules with checks and 46 marked judgment. Its gate refused my own restyle four hundred times, because the mockup's 38px buttons would have lowered the kit's 44px touch floor. A skin may carry the language. It may not lower an accessibility rule.</p>
         </div>
 
-        <div class="ms-read" data-beat="9" data-stage="falling" data-title="Research that ships" data-notes="The payoff for a research-led studio. Recommendations die between the readout and the roadmap because by the time there is capacity they are a slide. Hand off a thing: a walkable, accessible preview from the research in an afternoon, every state a story on the board, the rules already checks. And design for the person delivering the experience, the mediator, as carefully as for the person receiving it.">
-          <h2>Research that ships</h2>
-        <p class="deck-only">Recommendations die between the readout and the roadmap. Hand off a thing instead: a walkable, accessible preview from the research in an afternoon, every state a story on the board. Design for the mediator as carefully as the customer.</p>
-          <p class="read-only">Research recommendations die between the readout and the roadmap. Not because anyone disagrees with them, but because by the time an engineer has capacity the recommendation is a slide and the context is gone.</p>
-          <p class="read-only">The fix is to hand off a thing instead of a recommendation: a walkable, accessible preview built from the research in an afternoon, with every state a story on the board and the rules it must not break already written as checks. Then design for the person delivering the experience as carefully as for the person receiving it. A mediator with a working tool operationalizes more research than any deck.</p>
+        <div class="ms-read" data-beat="7" data-stage="falling" data-title="Hand off a thing, not a recommendation" data-notes="Every state in the preview is a story in Azure DevOps, linked both ways: 85 stories from one data twin. Engineering receives states, rules and tokens instead of a link to a picture. A researcher with a brief gets a walkable, accessible preview in an afternoon. This is the line for Todd's studio.">
+          <h2>Hand off a thing, not a recommendation.</h2>
+          <p>Every state in the preview is a story in Azure DevOps, linked both ways: 85 stories from one data twin. Engineering receives states, rules and tokens instead of a link to a picture. A researcher with a brief gets a walkable, accessible preview in an afternoon, and the recommendation survives contact with the backlog.</p>
         </div>
 
-        <div class="ms-read" data-beat="10" data-stage="resolution" data-title="Design as empowerment" data-notes="Empowerment. Bridging design and implementation is how individuals and organizations get more done. Collaboration, relationships, trust. Then the close: actions speak louder than words.">
-          <h2>Design as empowerment</h2>
-        <p class="deck-only">Bridging design and implementation is how people achieve more than they thought they could. The bridge is collaboration, relationships and trust, and trust is earned by shipping something that runs.</p>
-          <p class="read-only">Bridging design and implementation is how people and organizations achieve more than they thought they could. My path as a designer and a software engineer taught me that the bridge is built from collaboration, relationships and trust, and that trust is earned by shipping something that runs.</p>
-          <p class="read-only">Actions speak louder than words. We owe it to the people we design for that the work renders on any device, meets their basic needs, and can be relied on. That is the standard, and the craft I keep honing.</p>
+        <div class="ms-read" data-beat="8" data-stage="resolution" data-title="Leave the route marked" data-notes="PeopleCard went into the shared core with its documentation. The Azure accessibility fixes went in with a wiki the next engineer could follow, and Robert Taft wrote to everyone involved. Email Composer runs on forty-plus teams with Editor and Approver roles and no mandate. The standard holds without me in the room.">
+          <h2>Leave the route marked.</h2>
+          <p>PeopleCard went into the shared core with its documentation. The Azure accessibility fixes went in with a wiki the next engineer could follow, and Robert Taft wrote to everyone involved. Email Composer runs on forty-plus teams with Editor and Approver roles and no mandate. The standard holds without me in the room.</p>
         </div>
       </article>
     </section>
