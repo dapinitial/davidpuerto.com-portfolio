@@ -1450,3 +1450,28 @@
     transition: opacity 0.6s;
   }
 }
+
+@layer page {
+  /* the eight questions: two short columns, numbered */
+  html.deck .deck-beat .ms-questions {
+    columns: 2;
+    column-gap: 48px;
+    margin: 0;
+    padding-left: 1.4em;
+    font-size: clamp(17px, 1.25vw, 23px);
+    line-height: 1.4;
+    color: #c9c2c6;
+    font-weight: 300;
+  }
+
+  html.deck .deck-beat .ms-questions li {
+    break-inside: avoid;
+    margin-bottom: 10px;
+    padding-left: 0.2em;
+  }
+
+  html.deck .deck-beat .ms-questions li::marker {
+    color: var(--cs-accent, #fb836d);
+    font-weight: 500;
+  }
+}
