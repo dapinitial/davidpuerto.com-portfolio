@@ -1,5 +1,6 @@
 // About page: rain + the clipped image/video reveal.
 import './elements/rain-fall.js';
+import './elements/neon-text.js';
 import './elements/clipped-image.js';
 
 // --- The piece: load three.js only when a glass piece is near ---------------
