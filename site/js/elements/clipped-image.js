@@ -36,7 +36,8 @@ class ClippedImage extends HTMLElement {
       gsap.set(content, { paddingTop: Math.min(window.innerHeight / 2, 300) });
       gsap.set(gradient, { height: Math.min(window.innerHeight * 0.3, 200) });
 
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // in deck mode the hero is a fixed slide and cannot scroll the reveal: show the media whole
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('deck')) {
         gsap.set(media, { clipPath: 'circle(75%)' });
         return;
       }
