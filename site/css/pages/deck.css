@@ -1843,3 +1843,22 @@ html.deck .deck-beat.cs-splash neon-text .bright {
 html.deck .deck-beat.cs-splash neon-text .bright {
   font-size: clamp(40px, 7vw, 120px) !important;
 }
+
+@layer page {
+  /* a one-line code sample stays on one line and centres under the heading */
+  html.deck .deck-beat.ms-read blockquote .subheading {
+    white-space: nowrap;
+    width: max-content;
+    max-width: 100%;
+    margin-inline: auto;
+    font-size: clamp(15px, 1.15vw, 20px);
+  }
+
+  /* two paragraphs side by side where the second is the quieter voice */
+  html.deck .deck-beat.ms-read.deck-dim-second:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy > p:nth-of-type(1) {
+    color: var(--color-text, #fff0f4);
+  }
+  html.deck .deck-beat.ms-read.deck-dim-second:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy > p:nth-of-type(2) {
+    color: rgb(255 240 244 / 0.56);
+  }
+}

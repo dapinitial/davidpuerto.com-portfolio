@@ -13,9 +13,8 @@ hand-mark {
 hand-mark svg {
   position: absolute;
   left: -0.06em;
-  right: -0.06em;
   bottom: -0.22em;
-  width: auto;
+  width: calc(100% + 0.12em);
   height: 0.42em;
   overflow: visible;
   pointer-events: none;
@@ -26,13 +25,12 @@ hand-mark svg {
 }
 
 hand-mark path {
-  vector-effect: non-scaling-stroke;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
 
-hand-mark path.line { stroke-width: 0.14em; }
-hand-mark path.pass { stroke-width: 0.07em; opacity: 0.5; }
+hand-mark path.line { stroke-width: 4; }
+hand-mark path.pass { stroke-width: 2; opacity: 0.5; }
 
 @keyframes hand-mark-draw {
   from { stroke-dashoffset: 1; }
