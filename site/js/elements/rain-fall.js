@@ -28,6 +28,9 @@ class RainFall extends HTMLElement {
       drip.className = 'drip';
       drip.style.left = `${Math.random() * 100}%`;
       drip.style.animationDelay = `${Math.random() * 3}s`;
+      // each drop carries a random amount of the chapter colour, most of them
+      // barely any, so the rain stays rain and never outshines a white sign
+      drip.style.setProperty('--tint', `${Math.round(Math.random() ** 2 * 70)}%`);
       this.append(drip);
       setTimeout(() => drip.remove(), 4000);
       this.#lastDrip = timestamp;

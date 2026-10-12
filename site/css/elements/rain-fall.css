@@ -37,7 +37,7 @@ rain-fall .drip::before {
   content: '';
   width: 15px;
   height: 15px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: color-mix(in srgb, color-mix(in srgb, var(--cs-accent, white) var(--tint, 0%), white) 20%, transparent);
   border-radius: 50%;
   opacity: 0;
   animation: rain-drip 4s ease infinite;
@@ -56,7 +56,7 @@ rain-fall .drip::after {
   content: '';
   width: 0;
   height: 0;
-  border: solid 4px rgba(255, 255, 255, 0.2);
+  border: solid 4px color-mix(in srgb, color-mix(in srgb, var(--cs-accent, white) var(--tint, 0%), white) 20%, transparent);
   border-radius: 50%;
   opacity: 0;
   animation: rain-splash 4s ease infinite;
