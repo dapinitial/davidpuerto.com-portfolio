@@ -274,8 +274,15 @@ if (isDeck) {
       beats.forEach((b, k) => b.classList.toggle('active', k === i));
       beats[i].scrollTop = 0;
       // a chapter opener may recolor the glow and the accent for the slides after it
-      if (beats[i].dataset.glow) document.body.style.setProperty('--cs-glow', beats[i].dataset.glow);
-      if (beats[i].dataset.accent) document.body.style.setProperty('--cs-accent', beats[i].dataset.accent);
+      // the nearest opener at or before this slide owns the colour, so a jump
+      // from the arc map lands in the right chapter colour too
+      for (let k = i; k >= 0; k--) {
+        const d = beats[k].dataset;
+        if (!d.glow && !d.accent) continue;
+        if (d.glow) document.body.style.setProperty('--cs-glow', d.glow);
+        if (d.accent) document.body.style.setProperty('--cs-accent', d.accent);
+        break;
+      }
       paint(i);
       enter(beats[i]);
     };
