@@ -162,7 +162,7 @@ if (isDeck) {
     };
     const enter = (b) => {
       if (reduced) return;
-      const title = b.matches('.ms-beat, .ms-chapter-open') ? b.querySelector('h2, .ms-taught') : null;
+      const title = b.matches('.ms-beat, .ms-chapter-open, .ms-statement') ? b.querySelector('h2, .ms-taught') : null;
       if (title) {
         const letters = scramble(title);
         const axes = ['x', 'y', 'z'];
