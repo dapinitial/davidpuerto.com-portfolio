@@ -218,9 +218,11 @@
       position: absolute;
       inset: auto;
       float: none;
-      top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge) - 6%);
-      left: -112%;
-      height: min(1000px, 104cqh);
+      /* between the old size (877px) and the big one (1000px): the devices
+         read at the heading's weight without crowding the copy */
+      top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge));
+      left: -92%;
+      height: min(920px, 94cqh);
       width: auto;
       max-width: none;
       margin: 0;
@@ -520,7 +522,10 @@
      drawn larger and a little lower to read at the devices' weight. */
   @media (min-width: 64rem) {
     #apple .text img {
+      /* Apple stays exactly as it was: the big box, lowered, brighter */
       top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge) + 60px);
+      left: -112%;
+      height: min(1000px, 104cqh);
       opacity: 0.62;
     }
   }
