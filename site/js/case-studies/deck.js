@@ -257,6 +257,9 @@ if (isDeck) {
       cur = i;
       beats.forEach((b, k) => b.classList.toggle('active', k === i));
       beats[i].scrollTop = 0;
+      // a chapter opener may recolor the glow and the accent for the slides after it
+      if (beats[i].dataset.glow) document.body.style.setProperty('--cs-glow', beats[i].dataset.glow);
+      if (beats[i].dataset.accent) document.body.style.setProperty('--cs-accent', beats[i].dataset.accent);
       paint(i);
       enter(beats[i]);
     };

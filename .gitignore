@@ -5,6 +5,7 @@ site/case-studies/facebook/
 site/case-studies/nordstrom/
 site/case-studies/sonosite/
 site/case-studies/zillow/
+site/case-studies/review/
 site/public/images/case-studies/
 
 # Secrets — never commit credentials in any form
