@@ -1314,3 +1314,38 @@
     margin: 14px 0 0;
   }
 }
+
+@layer page {
+  /* a long read over a still fits a short laptop viewport: the type scales with height */
+  @media (max-height: 880px) {
+    html.deck .deck-beat.ms-read.has-art {
+      padding-top: clamp(64px, 8vh, 96px);
+    }
+
+    html.deck .deck-beat.ms-read.has-art > h2 {
+      font-size: clamp(26px, 4.6vh, 44px) !important;
+    }
+
+    html.deck .deck-beat.ms-read.has-art .deck-copy > p {
+      font-size: clamp(15px, 2vh, 18px);
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    html.deck .deck-beat.ms-read.has-art .deck-copy > p:first-child {
+      font-size: clamp(16px, 2.3vh, 21px);
+    }
+  }
+
+  /* an image-only slide: the beat is empty and the still carries it, unmasked and full */
+  html.deck .deck-beat.deck-image.has-art {
+    padding: 0;
+  }
+
+  html.deck .deck-art.deck-art-full .ms-art img {
+    -webkit-mask-image: none;
+    mask-image: none;
+    opacity: 0.92;
+    object-position: center;
+  }
+}

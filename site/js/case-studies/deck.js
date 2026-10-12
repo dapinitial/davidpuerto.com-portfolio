@@ -77,7 +77,7 @@ if (isDeck) {
       const fig = reduced ? null : b.querySelector('.ms-art'); // still motion keeps it in flow
       if (!fig) return null;
       const layer = document.createElement('div');
-      layer.className = 'deck-art';
+      layer.className = b.classList.contains('deck-image') ? 'deck-art deck-art-full' : 'deck-art';
       layer.setAttribute('aria-hidden', 'true');
       layer.appendChild(fig);
       b.classList.add('has-art');
