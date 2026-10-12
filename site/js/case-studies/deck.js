@@ -61,7 +61,7 @@ if (isDeck) {
       if (b.classList.contains('ms-read') && !b.querySelector('.deck-copy')) {
         const copy = document.createElement('div');
         copy.className = 'deck-copy';
-        [...b.children].filter((k) => !k.matches('h1, h2')).forEach((k) => copy.appendChild(k));
+        [...b.children].filter((k) => !k.matches('h1, h2, .ms-epigraph')).forEach((k) => copy.appendChild(k));
         b.appendChild(copy);
       }
       const slot = document.createElement('div');
@@ -99,6 +99,7 @@ if (isDeck) {
       <div class="deck-bar" aria-hidden="true"><span class="deck-fill"></span></div>
       <div class="deck-num" aria-hidden="true"></div>
       <button type="button" class="deck-arc-btn" aria-label="Open the story arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
+      <p class="deck-kicker" aria-hidden="true"></p>
       <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen · R read</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
@@ -110,6 +111,18 @@ if (isDeck) {
     prog.style.strokeDasharray = `${RING}`;
     const num = ui.querySelector('.deck-num');
     const hint = ui.querySelector('.deck-hint');
+    const kicker = ui.querySelector('.deck-kicker');
+    // the chapter each slide belongs to: the eyebrow of the last opener before it
+    const chapterOf = beats.map((b, i) => {
+      for (let k = i; k >= 0; k--) {
+        const o = beats[k];
+        if (o.matches('.ms-chapter-open') || o.dataset.glow) {
+          const e = o.querySelector('.ms-eyebrow');
+          return e ? e.textContent.replace(/\s+/g, ' ').trim() : '';
+        }
+      }
+      return '';
+    });
     const notes = ui.querySelector('.deck-notes');
     const notesBody = ui.querySelector('.deck-notes-body');
 
@@ -244,6 +257,8 @@ if (isDeck) {
       numT = setTimeout(() => num.classList.remove('show'), 2000);
       notesBody.textContent = beats[i].dataset.notes ?? '(no notes for this beat)';
       hint.style.opacity = i >= beats.length - 1 ? '0' : '';
+      const showKicker = chapterOf[i] && !beats[i].matches('.cs-hero, .page-hero, .ms-chapter-open');
+      kicker.textContent = showKicker ? chapterOf[i] : '';
       history.replaceState(null, '', `${location.pathname}${location.search}#b${i + 1}`);
       toc.querySelectorAll('.dot').forEach((d) => { const k = Number(d.dataset.i); d.classList.toggle('now', k === i); d.classList.toggle('past', k < i); });
       toc.querySelectorAll('.arc-col button').forEach((btn) => { const k = Number(btn.dataset.i); btn.classList.toggle('now', k === i); btn.classList.toggle('past', k < i); });

@@ -1519,3 +1519,258 @@
     max-width: none;
   }
 }
+
+@layer page {
+  /* ---------- the keynote pass: rhythm, scale, and a chapter kicker ---------- */
+  .deck-kicker {
+    position: fixed;
+    top: 64px;
+    left: clamp(24px, 8vw, 160px);
+    z-index: 70;
+    margin: 0;
+    font-family: var(--font-family-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cs-accent, #fb836d);
+    opacity: 0.85;
+    pointer-events: none;
+  }
+
+  .deck-kicker:empty {
+    display: none;
+  }
+
+  /* heading to copy: one clear step */
+  html.deck .deck-beat.ms-read > h2 {
+    margin-bottom: 8px;
+  }
+
+  html.deck .deck-beat.ms-read .deck-copy {
+    margin-top: 12px;
+  }
+
+  /* text-only slides: larger, airier */
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) > h2 {
+    font-size: clamp(36px, 4.2vw, 72px) !important;
+    line-height: 1.08;
+    max-width: 20ch;
+  }
+
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy {
+    max-width: 54ch;
+  }
+
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy > p {
+    font-size: clamp(19px, 1.45vw, 27px);
+    line-height: 1.55;
+    color: #d8d1d5;
+  }
+
+  /* statements: one line, as large as the room allows */
+  html.deck .deck-beat.ms-statement > h2 {
+    font-size: clamp(44px, 5.6vw, 104px) !important;
+    line-height: 1.02;
+  }
+
+  html.deck .deck-beat.ms-statement .deck-copy {
+    margin-top: 20px;
+  }
+
+  /* slides with a still: the copy a touch larger and looser */
+  html.deck .deck-beat.ms-read.has-art > h2 {
+    font-size: clamp(34px, 3.6vw, 62px) !important;
+    line-height: 1.08;
+  }
+
+  html.deck .deck-beat.ms-read.has-art .deck-copy > p {
+    line-height: 1.55;
+    color: #d8d1d5;
+  }
+
+  /* the quote slide */
+  html.deck .deck-beat.ms-read blockquote.ms-callback {
+    font-size: clamp(22px, 2vw, 36px);
+    line-height: 1.35;
+    max-width: 30ch;
+  }
+
+  /* openers: the eyebrow carries the chapter, so it reads as a kicker too */
+  html.deck .deck-beat.ms-chapter-open .ms-eyebrow {
+    font-family: var(--font-family-monospace, monospace);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+}
+
+@layer page {
+  /* a figure on its own slide: full width, readable, the parent heading as a kicker */
+  html.deck .deck-beat.ms-figure-beat {
+    justify-items: stretch;
+    align-content: center;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-eyebrow {
+    max-width: 1240px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-figure {
+    width: 100%;
+    max-width: 1240px;
+    margin: 12px auto 0;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-figure svg {
+    width: 100%;
+    height: auto;
+    max-height: 66vh;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-figure figcaption {
+    margin-top: 16px;
+    font-size: clamp(15px, 1.1vw, 20px);
+    color: #c9c2c6;
+    max-width: 70ch;
+  }
+
+  /* in the long read the split figure follows its section as before */
+  html:not(.deck) .ms-figure-beat {
+    margin: 0 0 32px;
+  }
+
+  html:not(.deck) .ms-figure-beat > .ms-eyebrow {
+    display: none;
+  }
+}
+
+@layer page {
+  /* a figure on its own slide: full width, readable, the parent heading as a kicker */
+  html.deck .deck-beat.ms-figure-beat {
+    justify-items: stretch;
+    align-content: center;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-eyebrow,
+  html.deck .deck-beat.ms-figure-beat > .ms-figure {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-figure {
+    margin-top: 12px;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-figure svg {
+    width: 100%;
+    height: auto;
+    max-height: 64vh;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > .ms-figure figcaption {
+    margin-top: 16px;
+    font-size: clamp(15px, 1.1vw, 20px);
+    color: #c9c2c6;
+    max-width: 70ch;
+  }
+
+  html:not(.deck) .ms-figure-beat {
+    margin: 0 0 32px;
+  }
+
+  html:not(.deck) .ms-figure-beat > .ms-eyebrow {
+    display: none;
+  }
+
+  /* the quote slide: one large opening and closing mark, big type, the attribution beneath */
+  html.deck .deck-beat.ms-read blockquote.ms-callback {
+    position: relative;
+    margin: 8px 0 0;
+    padding: 0 0 0 0.9em;
+    border-left: 2px solid var(--cs-accent, #fb836d);
+    font-family: var(--font-family-serif, 'Fraunces', serif);
+    font-size: clamp(26px, 2.6vw, 48px);
+    line-height: 1.25;
+    max-width: 24ch;
+    color: #fff0f4;
+    quotes: "\201C" "\201D";
+  }
+
+  html.deck .deck-beat.ms-read blockquote.ms-callback::before {
+    content: open-quote;
+    position: static;
+    display: inline;
+    font-size: inherit;
+    opacity: 1;
+    color: var(--cs-accent, #fb836d);
+    margin: 0;
+  }
+
+  html.deck .deck-beat.ms-read blockquote.ms-callback::after {
+    content: close-quote;
+    color: var(--cs-accent, #fb836d);
+  }
+
+  html.deck .deck-beat.ms-read blockquote.ms-callback cite {
+    display: block;
+    margin-top: 20px;
+    font-family: var(--font-family-monospace, monospace);
+    font-style: normal;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9a9499;
+  }
+
+  /* text-only slides: a wider measure and a wider heading */
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) > h2 {
+    max-width: 26ch;
+  }
+
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy {
+    max-width: 64ch;
+  }
+
+  /* exactly two whole paragraphs sit side by side; a paragraph is never split */
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy:has(> p:nth-child(2)):not(:has(> p:nth-child(3))) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    max-width: 1100px;
+    text-align: left;
+  }
+}
+
+@layer page {
+  /* a splash: the neon sign alone, mid-deck */
+  html.deck .deck-beat.cs-splash { padding: 0; display: flex !important; align-items: center; justify-content: center; }
+
+  /* an epigraph above the heading: someone else's line, then the slide answers it */
+  .ms-epigraph { font-style: italic; font-size: clamp(16px, 1.15vw, 21px); line-height: 1.45; color: #b9b2b6; max-width: 52ch; margin: 0 0 14px; }
+  .ms-epigraph cite { display: block; font-style: normal; font-family: var(--font-family-monospace, monospace); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cs-accent, #fb836d); margin-top: 6px; }
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) > .ms-epigraph { margin-inline: auto; text-align: center; }
+
+  /* the quote slide: one opening and one closing mark, big type, the attribution beneath */
+  html.deck .deck-beat.ms-read blockquote.ms-callback {
+    position: relative; margin: 8px 0 0; padding: 0 0 0 0.9em;
+    border-left: 2px solid var(--cs-accent, #fb836d);
+    font-family: var(--font-family-serif, 'Fraunces', serif);
+    font-size: clamp(26px, 2.6vw, 48px); line-height: 1.25; max-width: 24ch; color: #fff0f4;
+    quotes: "\201C" "\201D";
+  }
+  html.deck .deck-beat.ms-read blockquote.ms-callback::before { content: open-quote; position: static; display: inline; font-size: inherit; line-height: inherit; opacity: 1; color: var(--cs-accent, #fb836d); margin: 0; transform: none; }
+  html.deck .deck-beat.ms-read blockquote.ms-callback::after { content: close-quote; color: var(--cs-accent, #fb836d); }
+  html.deck .deck-beat.ms-read blockquote.ms-callback cite { display: block; margin-top: 20px; font-family: var(--font-family-monospace, monospace); font-style: normal; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: #9a9499; }
+
+  /* text-only slides: a wider measure and a wider heading */
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) > h2 { max-width: 26ch; }
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy { max-width: 64ch; }
+
+  /* exactly two whole paragraphs sit side by side; a paragraph is never split */
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy:has(> p:nth-of-type(2)):not(:has(> p:nth-of-type(3))) {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 56px; max-width: 1100px; text-align: left;
+  }
+}
