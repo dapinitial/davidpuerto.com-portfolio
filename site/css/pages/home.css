@@ -513,13 +513,22 @@
     justify-content: flex-end;
     gap: 10px;
     list-style: none;
-    margin: 12px 0 0;
+    margin: calc(var(--spacing) / 2) 0 0;
     padding: 0;
     clear: none;
   }
 
+  /* the button sits on its own line under the chips, with the same gap it has
+     on the sections that have no chips */
+  .text ul li:has(.glass-button) {
+    flex-basis: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: calc(var(--spacing) / 2 - 10px);
+  }
+
   .text ul .glass-button {
-    margin: 0 0 0 6px;
+    margin: 0;
   }
 
   .text ul li {

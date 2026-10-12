@@ -1493,3 +1493,29 @@
     max-width: 66ch;
   }
 }
+
+@layer page {
+  /* a text-only read slide (no still, no figure, no quote, no list) is centred
+     like a statement, so the copy is not left on one side of an empty stage */
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) {
+    justify-items: center;
+  }
+
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) > h2 {
+    max-width: 22ch;
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy {
+    max-width: 58ch;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy > p {
+    font-size: clamp(18px, 1.35vw, 25px);
+    line-height: 1.5;
+    max-width: none;
+  }
+}
