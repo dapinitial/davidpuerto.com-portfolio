@@ -192,17 +192,18 @@
       padding-block-start: var(--spacing);
       position: relative;
       z-index: -1;
-      /* the polish: the copy is set ragged-left against the device and flush
-         on its right edge, so every line ends at the same x and a last word
-         never falls alone under the image; no orphans */
+      /* the polish: a little larger and looser, so the lines are fewer and the
+         edge along the device reads as a curve; no orphans */
       text-align: end;
       text-wrap: pretty;
+      font-size: 1.06em;
+      line-height: 1.55;
     }
 
     .text img {
       float: inline-start;
       height: var(--height);
-      margin-left: -36.88%; /* (1 - 587/930) * -100% — pre-computed (Safari) */
+      margin-left: -52%; /* further under the heading: the copy keeps a readable measure beside it */
       /* --image-top is measured from the stage top; subtract the stage and
          block padding that already sit above the float. */
       margin-top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge));
