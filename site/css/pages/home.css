@@ -552,8 +552,12 @@
     margin: 0;
   }
 
+  /* one chip per line, stacked on the right edge like the button */
   .text ul li {
     margin: 0;
+    flex-basis: 100%;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .text ul a:not(.glass-button) {
