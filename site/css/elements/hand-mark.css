@@ -8,10 +8,12 @@ hand-mark {
   position: relative;
   display: inline-block;
   white-space: nowrap;
+  isolation: isolate; /* the word sits above its own line */
 }
 
 hand-mark svg {
   position: absolute;
+  z-index: -1;
   left: -0.06em;
   bottom: -0.22em;
   width: calc(100% + 0.12em);
