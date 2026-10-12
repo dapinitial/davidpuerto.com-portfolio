@@ -66,13 +66,12 @@ mm.add(
 
     sections.forEach((section, i) => {
       const content = section.querySelector('.content');
-      // Blur the hero elements — never .content itself (an ancestor filter
-      // rasterizes the whole subtree, glass button included -> smudge).
-      // Safari only: skip the IMG — its blur bleed renders as a ghost glow
-      // there; Chrome keeps the full image+headline melt.
-      const blurEls = desktop
-        ? section.querySelectorAll(isSafari ? 'h2' : 'h2, .text img')
-        : [];
+      // Blur the headline only — never .content itself (an ancestor filter
+      // rasterizes the whole subtree, glass button included -> smudge), and
+      // not the device image: when its blur reaches zero the browser drops
+      // the filtered layer and repaints the large image sharp in one frame,
+      // which reads as a flash. The image still scales and fades with the slide.
+      const blurEls = desktop ? section.querySelectorAll('h2') : [];
 
       // IN: section top travels viewport bottom -> viewport top.
       // Ends at identity exactly where snap rests.
