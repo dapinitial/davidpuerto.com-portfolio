@@ -66,6 +66,13 @@
     list-style: none;
   }
 
+  /* room between the matrix and the numbers beneath it */
+  .ms-matrix + .ms-stats {
+    margin-top: clamp(40px, 6vh, 72px);
+    padding: 0;
+    list-style: none;
+  }
+
   .ms-stats li {
     display: flex;
     flex-direction: column;
