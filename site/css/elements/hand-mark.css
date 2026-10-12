@@ -1,0 +1,57 @@
+/* <hand-mark> — a hand-drawn underline under one word. Pair with
+   js/elements/hand-mark.js, which builds the path. The draw is a CSS
+   keyframe on stroke-dashoffset: the deck starts it when the beat becomes
+   .active, the long read when the element is .seen. Each start also gets a
+   freshly generated line from the element. */
+
+hand-mark {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+hand-mark svg {
+  position: absolute;
+  left: -0.06em;
+  right: -0.06em;
+  bottom: -0.22em;
+  width: auto;
+  height: 0.42em;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+  stroke: var(--cs-accent, var(--color-secondary, #00a3bb));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+hand-mark path {
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+hand-mark path.line { stroke-width: 0.14em; }
+hand-mark path.pass { stroke-width: 0.07em; opacity: 0.5; }
+
+@keyframes hand-mark-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+html.deck .deck-beat.active hand-mark path,
+html:not(.deck) hand-mark.seen path {
+  animation: hand-mark-draw 0.55s cubic-bezier(0.3, 0.1, 0.25, 1) 0.35s forwards;
+}
+
+html.deck .deck-beat.active hand-mark path.pass,
+html:not(.deck) hand-mark.seen path.pass {
+  animation-duration: 0.45s;
+  animation-delay: 0.75s;
+}
+
+/* reduced motion: the mark is simply there */
+@media (prefers-reduced-motion: reduce) {
+  hand-mark path { stroke-dashoffset: 0; animation: none !important; }
+}
+html.deck.deck-still hand-mark path { stroke-dashoffset: 0; animation: none !important; }

@@ -18,6 +18,7 @@
 // Presenter keys: → ↓ space next · ← ↑ back · Home/End · N notes · T story
 // arc · F fullscreen · Esc closes the arc.
 import { gsap, ScrollTrigger } from '../lib/gsap.js';
+import '../elements/hand-mark.js';
 
 const params = new URLSearchParams(location.search);
 // The deck is the default on a desktop (a fine pointer and room for the
