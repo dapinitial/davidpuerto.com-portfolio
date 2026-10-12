@@ -1774,3 +1774,72 @@
     display: grid; grid-template-columns: 1fr 1fr; gap: 56px; max-width: 1100px; text-align: left;
   }
 }
+
+@layer page {
+  /* the splash sign sits dead centre */
+  html.deck .deck-beat.cs-splash neon-text {
+    position: static;
+    inset: auto;
+    transform: none;
+    margin: 0 auto;
+    width: auto;
+    min-height: 0;
+    place-items: center;
+    text-align: center;
+  }
+
+  html.deck .deck-beat.cs-splash neon-text .dim,
+  html.deck .deck-beat.cs-splash neon-text .bright {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  /* the closing mark follows the words; the attribution hangs beneath */
+  html.deck .deck-beat.ms-read blockquote.ms-callback {
+    padding-bottom: 56px;
+  }
+
+  html.deck .deck-beat.ms-read blockquote.ms-callback cite {
+    position: absolute;
+    left: 0.9em;
+    bottom: 0;
+    margin-top: 0;
+  }
+
+  /* a figure slide: the figure's own svg scales to the slide, whatever class it came with */
+  html.deck .deck-beat.ms-figure-beat > figure {
+    width: 100%;
+    max-width: 1240px;
+    margin: 12px auto 0;
+  }
+
+  html.deck .deck-beat.ms-figure-beat > figure svg {
+    width: 100%;
+    height: auto;
+    max-height: 64vh;
+  }
+}
+
+/* unlayered on purpose: the study hero positions its sign with an unlayered rule, and the splash must win */
+html.deck .deck-beat.cs-splash neon-text {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  margin: 0 auto !important;
+  width: auto !important;
+  max-width: 90vw;
+  min-height: 0 !important;
+  place-items: center;
+  text-align: center;
+}
+
+html.deck .deck-beat.cs-splash neon-text .dim,
+html.deck .deck-beat.cs-splash neon-text .bright {
+  margin-inline: auto !important;
+  text-align: center !important;
+  white-space: nowrap;
+}
+
+html.deck .deck-beat.cs-splash neon-text .bright {
+  font-size: clamp(40px, 7vw, 120px) !important;
+}
