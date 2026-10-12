@@ -1900,3 +1900,53 @@ html.deck .deck-beat.cs-splash neon-text .bright {
     line-height: 1.12;
   }
 }
+
+@layer page {
+  /* Talk shop is a panel of its own inside a reading: a tab that opens, and
+     while it is open the rest of the reading steps aside, so the slide never
+     has to scroll */
+  .ms-shop-d {
+    margin-top: 16px;
+  }
+
+  .ms-shop-d > summary {
+    display: inline-block;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-family-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cs-accent, #fb836d);
+    border: 1px solid color-mix(in srgb, var(--cs-accent, #fb836d) 55%, transparent);
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+
+  .ms-shop-d > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .ms-shop-d[open] > summary {
+    background: color-mix(in srgb, var(--cs-accent, #fb836d) 18%, transparent);
+  }
+
+  .ms-shop-d > .ms-shop {
+    margin-top: 14px;
+  }
+
+  /* on the readers slide the open reading is a pane: Talk shop opens inside it
+     and the pane scrolls within itself, so the slide never scrolls */
+  html.deck .deck-beat.ms-readers details[open] > .ms-d-body {
+    max-height: calc(100svh - 160px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding-right: 8px;
+  }
+
+  html.deck .deck-beat.ms-readers .ms-d-body:has(> .ms-shop-d[open]) > figure,
+  html.deck .deck-beat.ms-readers .ms-d-body:has(> .ms-shop-d[open]) > p:not(.ms-shop):first-child {
+    display: none;
+  }
+}
