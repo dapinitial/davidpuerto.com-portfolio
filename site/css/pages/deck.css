@@ -1452,7 +1452,12 @@
 }
 
 @layer page {
-  /* the eight questions: two short columns, numbered */
+  /* the eight questions: two short columns, numbered (the copy wrapper stays single) */
+  html.deck .deck-beat.ms-read .deck-copy:has(.ms-questions) {
+    columns: auto;
+    max-width: 72ch;
+  }
+
   html.deck .deck-beat .ms-questions {
     columns: 2;
     column-gap: 48px;
