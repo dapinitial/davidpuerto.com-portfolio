@@ -43,7 +43,8 @@ html:not(.deck) hand-mark.seen path {
 
 /* a chapter opener or timeline beat scrambles its title in first: the line waits for it */
 html.deck .deck-beat.ms-chapter-open.active hand-mark path,
-html.deck .deck-beat.ms-beat.active hand-mark path {
+html.deck .deck-beat.ms-beat.active hand-mark path,
+html.deck .deck-beat.ms-statement.active hand-mark path {
   animation-delay: 2.8s;
 }
 
