@@ -200,34 +200,33 @@
       line-height: 1.55;
     }
 
-    .text img {
+    /* the wrap, hybrid: the copy wraps around a soft curve that stands in
+       for the devices, while the real image sits large behind everything,
+       so the devices read at the size of the heading instead of the column */
+    .text::before {
+      content: '';
       float: inline-start;
-      height: var(--height);
-      margin-left: -52%; /* further under the heading: the copy keeps a readable measure beside it */
-      /* --image-top is measured from the stage top; subtract the stage and
-         block padding that already sit above the float. */
+      width: 48%;
+      height: calc(var(--height) * 0.86);
+      margin-left: -22%;
       margin-top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge));
-      opacity: 0.5;
-      position: relative;
+      shape-outside: ellipse(58% 50% at 32% 50%);
+      shape-margin: calc(var(--spacing) * 1.25);
+    }
+
+    .text img {
+      position: absolute;
       inset: auto;
-      shape-outside: var(--image);
-      shape-margin: calc(var(--spacing) * 1.5);
-    }
-
-    /* Per-section optical nudges (Chrome tuning) */
-    html:not(.is-safari) #facebook .text,
-    html:not(.is-safari) #nordstrom .text {
-      --image-nudge: 20px;
-    }
-
-    /* Safari: uniform tuning (David's Safari DevTools pass) — its float/shape
-       geometry wants the image pulled further toward center, slightly higher */
-    html.is-safari .text {
-      --image-nudge: -60px;
-    }
-
-    html.is-safari .text img {
-      margin-left: -106.88%;
+      float: none;
+      top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge) - 6%);
+      left: -112%;
+      height: min(1000px, 104cqh);
+      width: auto;
+      max-width: none;
+      margin: 0;
+      opacity: 0.44; /* large now, so a notch quieter under the heading */
+      z-index: -1;
+      pointer-events: none;
     }
 
     /* Paragraphs start just above the image's top edge, never higher than
@@ -521,7 +520,7 @@
      drawn larger and a little lower to read at the devices' weight. */
   @media (min-width: 64rem) {
     #apple .text img {
-      margin-top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge) + 150px);
+      top: calc(var(--image-top) - 2 * var(--spacing) + var(--image-nudge) + 60px);
       opacity: 0.62;
     }
   }

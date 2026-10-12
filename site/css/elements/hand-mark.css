@@ -25,7 +25,9 @@ hand-mark svg {
 }
 
 hand-mark path {
-  stroke-dasharray: 1;
+  /* a gap longer than the path, so before the draw nothing is on: a zero
+     length dash with round caps would otherwise paint a dot at the start */
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 1;
 }
 
