@@ -30,7 +30,6 @@ hand-mark path {
 }
 
 hand-mark path.line { stroke-width: 4; }
-hand-mark path.pass { stroke-width: 2; opacity: 0.5; }
 
 @keyframes hand-mark-draw {
   from { stroke-dashoffset: 1; }
@@ -40,12 +39,6 @@ hand-mark path.pass { stroke-width: 2; opacity: 0.5; }
 html.deck .deck-beat.active hand-mark path,
 html:not(.deck) hand-mark.seen path {
   animation: hand-mark-draw 0.55s cubic-bezier(0.3, 0.1, 0.25, 1) 0.35s forwards;
-}
-
-html.deck .deck-beat.active hand-mark path.pass,
-html:not(.deck) hand-mark.seen path.pass {
-  animation-duration: 0.45s;
-  animation-delay: 0.75s;
 }
 
 /* reduced motion: the mark is simply there */
