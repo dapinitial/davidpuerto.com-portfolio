@@ -1271,13 +1271,13 @@
   html.deck .deck-beat.ms-read.has-art .deck-copy {
     display: block;
     columns: auto;
-    max-width: min(68ch, 60vw);
+    max-width: min(76ch, 64vw);
     position: relative;
     z-index: 1;
   }
 
   html.deck .deck-beat.ms-read.has-art .deck-copy > p {
-    max-width: 68ch;
+    max-width: 76ch;
     font-size: clamp(16px, 1.1vw, 20px);
     line-height: 1.5;
   }
@@ -1558,7 +1558,7 @@
   }
 
   html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy {
-    max-width: 54ch;
+    max-width: 62ch;
   }
 
   html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy > p {
@@ -1860,5 +1860,43 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   }
   html.deck .deck-beat.ms-read.deck-dim-second:not(.has-art):not(.ms-statement):not(:has(figure, blockquote, ol, ul, table, video)) .deck-copy > p:nth-of-type(2) {
     color: rgb(255 240 244 / 0.56);
+  }
+}
+
+@layer page {
+  /* display headings: the optical size Fraunces draws at poster size, and the
+     tracking pulled in, so a headline reads as set rather than typed */
+  html.deck .deck-beat.ms-read h2,
+  html.deck .deck-beat.ms-read h1,
+  html.deck .deck-beat.ms-chapter-open h2,
+  html.deck .deck-beat.ms-statement > h2,
+  html.deck .deck-num {
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.02em;
+  }
+
+  /* the taught line and the close sit at text size: the display cut, lighter tracking */
+  html.deck .deck-beat .ms-taught,
+  html.deck .deck-beat .ms-close {
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.01em;
+  }
+
+  /* one phrase per statement or opener in the chapter colour, italic */
+  html.deck .deck-beat.ms-statement > h2 em,
+  html.deck .deck-beat.ms-chapter-open h2 em,
+  html.deck .deck-beat.ms-read:not(.has-art) > h2 em {
+    font-family: var(--font-family-heading, serif);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--cs-accent, #fb836d);
+    font-variation-settings: 'opsz' 144, 'SOFT' 40;
+  }
+
+  /* the last line of the hour is the brightest thing on the screen */
+  html.deck .deck-beat.ms-chapter-open.ms-close-open .ms-chapter-open-copy p.ms-close {
+    color: var(--color-text, #fff0f4);
+    font-weight: 500;
+    line-height: 1.12;
   }
 }
