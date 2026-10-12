@@ -102,6 +102,9 @@ app.use((req, res, next) => {
 });
 
 /* ---------- auth gate BEFORE static ---------- */
+// the approach merged into About (2026-10-12); the old address forwards
+app.get(['/approach', '/approach/'], (req, res) => res.redirect(301, '/about-me/#how-i-work'));
+
 app.use('/case-studies', (req, res, next) => {
   // The rebuild study is public — the "how this site was built" story.
   if (req.path.startsWith('/rebuild')) return next();
