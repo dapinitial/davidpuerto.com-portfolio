@@ -509,17 +509,24 @@
   .text ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
     list-style: none;
     margin: 12px 0 0;
     padding: 0;
+    clear: none;
+  }
+
+  .text ul .glass-button {
+    margin: 0 0 0 6px;
   }
 
   .text ul li {
     margin: 0;
   }
 
-  .text ul a {
+  .text ul a:not(.glass-button) {
     display: inline-block;
     padding: 6px 14px;
     border: 1px solid color-mix(in srgb, var(--color-highlight) 70%, transparent);
@@ -532,8 +539,8 @@
     white-space: nowrap;
   }
 
-  .text ul a:hover,
-  .text ul a:focus-visible {
+  .text ul a:not(.glass-button):hover,
+  .text ul a:not(.glass-button):focus-visible {
     background: color-mix(in srgb, var(--color-highlight) 18%, transparent);
   }
 }
