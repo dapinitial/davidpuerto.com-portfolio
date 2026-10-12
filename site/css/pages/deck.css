@@ -1735,7 +1735,7 @@
   }
 
   /* exactly two whole paragraphs sit side by side; a paragraph is never split */
-  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement).deck-text-only .deck-copy:has(> p:nth-child(2)):not(:has(> p:nth-child(3))) {
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement).deck-text-only .deck-copy.deck-two-up {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 56px;

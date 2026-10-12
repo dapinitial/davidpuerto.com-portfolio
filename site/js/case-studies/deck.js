@@ -111,7 +111,7 @@ if (isDeck) {
       <div class="deck-num" aria-hidden="true"></div>
       <button type="button" class="deck-arc-btn" aria-label="Open the story arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
       <p class="deck-kicker" aria-hidden="true"></p>
-      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen · R read</p>
+      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
     const fill = ui.querySelector('.deck-fill');
@@ -358,7 +358,7 @@ if (isDeck) {
       else if (k === 'n') notes.hidden = !notes.hidden;
       else if (k === 't') { if (toc.classList.contains('open')) closeToc(); else openToc(); }
       else if (k === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen?.(); }
-      else if (k === 'r') { location.href = `${location.pathname}?read=1`; }
+      else if (k === 'r' && e.ctrlKey && e.shiftKey) { e.preventDefault(); location.href = `${location.pathname}?read=1`; } // the long read: deliberate, not a stray key
       else if (e.key === 'Escape') closeToc();
     });
     arcBtn.addEventListener('click', () => { if (toc.classList.contains('open')) closeToc(); else openToc(); });
