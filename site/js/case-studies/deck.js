@@ -63,6 +63,10 @@ if (isDeck) {
         const copy = document.createElement('div');
         copy.className = 'deck-copy';
         [...b.children].filter((k) => !k.matches('h1, h2, .ms-epigraph')).forEach((k) => copy.appendChild(k));
+        // exactly two paragraphs the deck will show sit side by side; the
+        // long read's hidden paragraphs do not count
+        const shown = [...copy.children].filter((k) => k.tagName === 'P' && !k.classList.contains('read-only'));
+        if (shown.length === 2) copy.classList.add('deck-two-up');
         b.appendChild(copy);
       }
       const slot = document.createElement('div');
@@ -83,6 +87,12 @@ if (isDeck) {
       layer.appendChild(fig);
       b.classList.add('has-art');
       return layer;
+    });
+    // a slide whose only figure or list is in its long-read block is a text
+    // slide in the deck, and takes the centred text layout
+    beats.forEach((b) => {
+      const visible = [...b.querySelectorAll('figure, blockquote, ol, ul, table, video')].some((el) => !el.closest('.read-only'));
+      if (!visible) b.classList.add('deck-text-only');
     });
     [...main.children].forEach((c) => c.classList.add('deck-hidden')); // a class: author display rules beat the hidden attribute
     main.appendChild(stage);
