@@ -170,15 +170,16 @@
     /* one media box for all six: centred a little right of the middle,
        behind both columns */
     .text img {
+      /* centred with auto margins inside an inset box, not a transform: the
+         stage is already being scaled and blurred by GSAP, and a nested
+         transform on a large image layer flickers mid-scrub */
       position: absolute;
-      inset: auto;
-      left: 55%;
-      top: 50%;
+      inset: 0 0 0 10%; /* centre of the remaining 90% = 55% of the stage */
       height: min(820px, 86cqh);
       width: auto;
       max-width: none;
-      margin: 0;
-      transform: translate(-50%, -50%);
+      margin: auto;
+      transform: none;
       object-fit: contain;
       opacity: 0.5;
       pointer-events: none;
@@ -469,7 +470,7 @@
      drawn larger and a little lower to read at the devices' weight. */
   @media (min-width: 64rem) {
     #apple .text img {
-      transform: translate(-50%, calc(-50% + 110px));
+      inset: 220px 0 0 10%; /* the same centre, 110px lower */
       opacity: 0.62;
     }
   }
