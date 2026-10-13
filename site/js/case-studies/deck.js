@@ -343,9 +343,9 @@ if (isDeck) {
       kicker.textContent = showKicker ? chapterOf[i] : '';
       const g = chromeOff ? null : genOf[i];
       genLabel.textContent = g ? g.label : '';
-      gen.classList.toggle('show', !!g);
+      gen.classList.remove('show'); // the ladder row is retired from the chrome (David, Oct 13 2026); the arc map still names the generation
       genTicks.forEach((t, k) => { t.classList.toggle('on', !!g && k + 1 === g.n); t.classList.toggle('past', !!g && k + 1 < g.n); });
-      rule.classList.toggle('show', !!(showKicker || g));
+      rule.classList.toggle('show', !!showKicker);
       history.replaceState(null, '', `${location.pathname}${location.search}#b${i + 1}`);
       toc.querySelectorAll('.dot').forEach((d) => { const k = Number(d.dataset.i); d.classList.toggle('now', k === i); d.classList.toggle('past', k < i); });
       toc.querySelectorAll('.arc-col button').forEach((btn) => { const k = Number(btn.dataset.i); btn.classList.toggle('now', k === i); btn.classList.toggle('past', k < i); });
