@@ -2,6 +2,7 @@
 // frame: the pinned four-generations figure, expand-all, and the knight.
 import { gsap, ScrollTrigger } from '../lib/gsap.js';
 import { initChapterMotion } from './chapter-motion.js';
+import '../elements/image-compare.js'; // the pen-to-card slider on the redesign slide
 
 initChapterMotion();
 

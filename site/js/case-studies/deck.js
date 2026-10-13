@@ -24,8 +24,11 @@ const params = new URLSearchParams(location.search);
 // The deck is the default on a desktop (a fine pointer and room for the
 // spread); ?read=1 asks for the long read, ?deck=1 forces the deck anywhere.
 const STAGE = matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+// ?talk=1 plays the route marked for the room: only beats with data-talk, the
+// same deck otherwise. A opens the full deck at the same slide.
+const TALK = params.get('talk') === '1';
 export const isDeck =
-  params.get('deck') === '1' ||
+  params.get('deck') === '1' || TALK ||
   (params.get('read') !== '1' && STAGE && !!document.querySelector('[data-beat]'));
 
 if (isDeck) {
@@ -39,9 +42,11 @@ if (isDeck) {
   ScrollTrigger.getAll().forEach((t) => t.kill());
 
   const main = document.querySelector('main');
-  const beats = [...document.querySelectorAll('[data-beat]')].sort(
+  const all = [...document.querySelectorAll('[data-beat]')].sort(
     (a, b) => Number(a.dataset.beat) - Number(b.dataset.beat),
   );
+  const beats = TALK && all.some((b) => b.hasAttribute('data-talk')) ? all.filter((b) => b.hasAttribute('data-talk')) : all;
+  if (TALK) root.classList.add('talk');
 
   if (main && beats.length) {
     // One slot per beat in document flow (the thing that snaps); the beat
@@ -111,7 +116,7 @@ if (isDeck) {
       <div class="deck-num" aria-hidden="true"></div>
       <button type="button" class="deck-arc-btn" aria-label="Open the story arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
       <p class="deck-gen" aria-hidden="true"><span class="deck-gen-ticks"><i></i><i></i><i></i><i></i></span><span class="deck-gen-label"></span></p>
-      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen</p>
+      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen${TALK ? ' · A every slide' : ''}</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
     const fill = ui.querySelector('.deck-fill');
@@ -419,6 +424,7 @@ if (isDeck) {
       else if (k === 'n') notes.hidden = !notes.hidden;
       else if (k === 't') { if (toc.classList.contains('open')) closeToc(); else openToc(); }
       else if (k === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen?.(); }
+      else if (k === 'a' && TALK) { location.href = `${location.pathname}?deck=1#b${all.indexOf(beats[cur]) + 1}`; } // the whole deck, same slide
       else if (k === 'r' && e.ctrlKey && e.shiftKey) { e.preventDefault(); location.href = `${location.pathname}?read=1`; } // the long read: deliberate, not a stray key
       else if (e.key === 'Escape') closeToc();
     });
