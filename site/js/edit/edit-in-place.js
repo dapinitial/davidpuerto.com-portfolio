@@ -28,20 +28,34 @@ if (on) {
     [contenteditable].ed-live { outline: 2px solid var(--cs-accent, #fb836d); outline-offset: 6px; border-radius: 4px; }
     .ed-dirty { box-shadow: inset 3px 0 0 var(--cs-accent, #fb836d); padding-left: 0.4em; }
     .deck-notes-body.ed-dirty { box-shadow: none; padding-left: 0; }
+    .ed-saved { animation: ed-saved 1.4s ease forwards; }
+    @keyframes ed-saved { 0% { box-shadow: inset 3px 0 0 var(--cs-accent, #fb836d); } 100% { box-shadow: inset 3px 0 0 transparent; } }
+    .ed-tick { width: 22px; height: 22px; flex: none; display: none; }
+    .ed-tick.go { display: block; }
+    .ed-tick path { fill: none; stroke: var(--cs-accent, #fb836d); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+    .ed-tick.go .ring { animation: ed-draw 0.5s cubic-bezier(0.3,0.1,0.25,1) forwards; }
+    .ed-tick.go .mark { animation: ed-draw 0.35s cubic-bezier(0.3,0.1,0.25,1) 0.4s forwards; }
+    @keyframes ed-draw { to { stroke-dashoffset: 0; } }
   `;
   document.head.appendChild(style);
 
   const bar = document.createElement('div');
   bar.className = 'ed-bar';
   bar.setAttribute('data-ed-skip', '');
-  bar.innerHTML = `<span class="ed-msg">⌘ + double-click a line to edit</span><b class="ed-n"></b><button class="ed-save" disabled>Save ⌘S</button><button class="ed-drop" hidden>Discard</button><button class="ed-pub">Publish</button><button class="ed-exit">Done</button>`;
+  bar.innerHTML = `<svg class="ed-tick" viewBox="0 0 24 24" aria-hidden="true"><path class="ring" pathLength="1" d="M12 2.5a9.5 9.5 0 1 1 0 19 9.5 9.5 0 0 1 0-19z"/><path class="mark" pathLength="1" d="M7.5 12.5l3 3 6-7"/></svg><span class="ed-msg">⌘ + double-click a line to edit</span><b class="ed-n"></b><button class="ed-save" disabled>Save ⌘S</button><button class="ed-drop" hidden>Discard</button><button class="ed-pub">Publish</button><button class="ed-exit">Done</button>`;
   document.body.appendChild(bar);
   const msg = bar.querySelector('.ed-msg');
   const nEl = bar.querySelector('.ed-n');
   const saveBtn = bar.querySelector('.ed-save');
   const pubBtn = bar.querySelector('.ed-pub');
   const dropBtn = bar.querySelector('.ed-drop');
-  const say = (t) => { msg.textContent = t; };
+  const tick = bar.querySelector('.ed-tick');
+  let tickT = 0;
+  const say = (t, ok) => {
+    msg.textContent = t;
+    tick.classList.remove('go'); void tick.offsetWidth; // restart the draw
+    if (ok) { tick.classList.add('go'); clearTimeout(tickT); tickT = setTimeout(() => tick.classList.remove('go'), 2600); }
+  };
   const paint = () => {
     const n = edits.size + pending.length;
     nEl.textContent = n ? `${n} change${n === 1 ? '' : 's'}` : '';
@@ -133,6 +147,14 @@ if (on) {
     el.setAttribute('spellcheck', 'false');
     el.classList.add('ed-live');
     el.focus();
+    // a double-click selects the word under the cursor; typing would replace
+    // it. Put the caret where the click landed instead, collapsed.
+    try {
+      const pos = document.caretPositionFromPoint?.(e.clientX, e.clientY);
+      const range = pos ? (() => { const r = document.createRange(); r.setStart(pos.offsetNode, pos.offset); r.collapse(true); return r; })() : document.caretRangeFromPoint?.(e.clientX, e.clientY);
+      if (range && el.contains(range.startContainer)) { const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range); }
+      else getSelection().collapseToEnd();
+    } catch { getSelection().collapseToEnd(); }
     say(el.matches('.deck-notes-body') ? 'editing the talking points · Enter commits · Esc reverts' : 'Enter commits · Esc reverts · Shift+Enter breaks a line');
   }, true);
 
@@ -155,12 +177,13 @@ if (on) {
       if (error) return say(error);
       const bad = results.filter((r) => !r.ok);
       const ok = results.length - bad.length;
-      say(`${ok} saved${bad.length ? `\n${bad.map((b) => `✕ "${b.before}…": ${b.reason}`).join('\n')}` : ' · reloading from source'}`);
-      // the dev server reloads the page on the file change; the saved copy is what comes back
+      say(`${ok} saved${bad.length ? `\n${bad.map((b) => `✕ "${b.before}…": ${b.reason}`).join('\n')}` : ''}`, ok > 0 && !bad.length);
+      // the page stays put (the plugin holds back the dev server's reload);
+      // the saved text becomes the new baseline for the next edit of that line
       results.forEach((r, i) => {
         if (!r.ok) return;
         const e = list[i];
-        for (const [el, v] of edits) if (v === e) { edits.delete(el); el.classList.remove('ed-dirty'); }
+        for (const [el, v] of edits) if (v === e) { edits.delete(el); snap.set(el, v.after); el.classList.remove('ed-dirty'); el.classList.remove('ed-saved'); void el.offsetWidth; el.classList.add('ed-saved'); }
         const k = pending.indexOf(e); if (k >= 0) pending.splice(k, 1);
       });
       paint();
@@ -176,7 +199,7 @@ if (on) {
     armed = false; pubBtn.textContent = 'Publishing…'; pubBtn.disabled = true; say('lock, commit, push…');
     try {
       const r = await post('/publish', {});
-      say(r.error ? `publish failed: ${r.error}` : r.nothing ? 'nothing to publish' : `pushed ${r.sha} · ${r.ahead}\nlive in about two minutes`);
+      say(r.error ? `publish failed: ${r.error}` : r.nothing ? 'nothing to publish' : `pushed ${r.sha}\nlive in about two minutes`, !r.error && !r.nothing);
     } catch (err) { say(`publish failed: ${err.message}`); }
     pubBtn.textContent = 'Publish'; pubBtn.disabled = false;
   });
