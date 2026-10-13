@@ -38,7 +38,8 @@ const attrEsc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 // first; if the text is not unique there, inside `scope` (the parent's original
 // markup); failing that, any other page under site/ (shared partials).
 const apply = (files, pageSrc, edit) => {
-  let { before, after, scope, kind } = edit;
+  let { before, after, scope, scopes = [], kind, beat } = edit;
+  if (scope) scopes = [scope, ...scopes];
   if (kind === 'notes') {
     const forms = [`data-notes="${before}"`, `data-notes="${attrEsc(before)}"`];
     for (const f of [pageSrc, ...files.filter((x) => x !== pageSrc)]) {
@@ -66,9 +67,24 @@ const apply = (files, pageSrc, edit) => {
       writeFileSync(f, src.split(wrapped).join(`>${after}</`));
       return { ok: true, file: relative(ROOT, f) };
     }
-    if (n > 1 && scope && count(src, scope) === 1 && count(scope, before) === 1) {
-      writeFileSync(f, src.split(scope).join(scope.split(before).join(after)));
-      return { ok: true, file: relative(ROOT, f), scoped: true };
+    // the same drawing placed on two slides: pick the occurrence whose nearest
+    // preceding data-beat is the slide the edit was made on
+    if (n > 1 && beat) {
+      const hits = [];
+      for (let i = src.indexOf(before); i >= 0; i = src.indexOf(before, i + 1)) {
+        const k = src.lastIndexOf('data-beat="', i);
+        if (k >= 0 && src.slice(k + 11, src.indexOf('"', k + 11)) === beat) hits.push(i);
+      }
+      if (hits.length === 1) {
+        writeFileSync(f, src.slice(0, hits[0]) + after + src.slice(hits[0] + before.length));
+        return { ok: true, file: relative(ROOT, f), beat };
+      }
+    }
+    for (const sc of scopes) {
+      if (n > 1 && sc && count(src, sc) === 1 && count(sc, before) === 1) {
+        writeFileSync(f, src.split(sc).join(sc.split(before).join(after)));
+        return { ok: true, file: relative(ROOT, f), scoped: true };
+      }
     }
     if (n > 1) return { ok: false, reason: `found ${n} times in ${relative(ROOT, f)}; edit a longer line` };
   }

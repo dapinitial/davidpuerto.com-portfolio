@@ -34,17 +34,25 @@ if (on) {
   const bar = document.createElement('div');
   bar.className = 'ed-bar';
   bar.setAttribute('data-ed-skip', '');
-  bar.innerHTML = `<span class="ed-msg">⌘ + double-click a line to edit</span><b class="ed-n"></b><button class="ed-save" disabled>Save ⌘S</button><button class="ed-pub">Publish</button><button class="ed-exit">Done</button>`;
+  bar.innerHTML = `<span class="ed-msg">⌘ + double-click a line to edit</span><b class="ed-n"></b><button class="ed-save" disabled>Save ⌘S</button><button class="ed-drop" hidden>Discard</button><button class="ed-pub">Publish</button><button class="ed-exit">Done</button>`;
   document.body.appendChild(bar);
   const msg = bar.querySelector('.ed-msg');
   const nEl = bar.querySelector('.ed-n');
   const saveBtn = bar.querySelector('.ed-save');
   const pubBtn = bar.querySelector('.ed-pub');
+  const dropBtn = bar.querySelector('.ed-drop');
   const say = (t) => { msg.textContent = t; };
   const paint = () => {
     const n = edits.size + pending.length;
     nEl.textContent = n ? `${n} change${n === 1 ? '' : 's'}` : '';
     saveBtn.disabled = !n;
+    dropBtn.hidden = !n;
+  };
+  const dropAll = () => {
+    for (const [el] of edits) { el.innerHTML = snap.get(el); el.classList.remove('ed-dirty'); }
+    edits.clear(); pending.length = 0;
+    document.querySelectorAll('.ed-dirty').forEach((d) => d.classList.remove('ed-dirty'));
+    say('unsaved changes discarded'); paint();
   };
 
   // serialize an element's current content, substituting each custom element's
@@ -79,8 +87,12 @@ if (on) {
     const after = ser(el);
     if (after === before) { edits.delete(el); el.classList.remove('ed-dirty'); }
     else {
-      const parent = home.get(el);
-      edits.set(el, { kind: 'html', before, after, scope: parent && snap.has(parent) ? snap.get(parent) : null });
+      // the ancestors' original markup, nearest first: when the same words sit
+      // in two places, the first ancestor that is unique in the file decides
+      const scopes = []; let a = home.get(el);
+      while (a && a !== document.body && scopes.length < 4) { if (snap.has(a)) scopes.push(snap.get(a)); a = home.get(a); }
+      // the slide it sits on: when a drawing is placed twice, the beat decides
+      edits.set(el, { kind: 'html', before, after, scopes, beat: el.closest('[data-beat]')?.dataset.beat ?? null });
       el.classList.add('ed-dirty');
     }
     paint();
@@ -155,6 +167,7 @@ if (on) {
     } catch (err) { say(`save failed: ${err.message}`); paint(); }
   };
   saveBtn.addEventListener('click', () => { commit(); save(); });
+  dropBtn.addEventListener('click', () => { commit(); dropAll(); });
 
   let armed = false;
   pubBtn.addEventListener('click', async () => {
