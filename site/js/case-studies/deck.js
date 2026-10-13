@@ -65,7 +65,7 @@ if (isDeck) {
         [...b.children].filter((k) => !k.matches('h1, h2, .ms-epigraph')).forEach((k) => copy.appendChild(k));
         // exactly two paragraphs the deck will show sit side by side; the
         // long read's hidden paragraphs do not count
-        const shown = [...copy.children].filter((k) => k.tagName === 'P' && !k.classList.contains('read-only'));
+        const shown = [...copy.children].filter((k) => k.tagName === 'P' && !k.classList.contains('read-only') && !k.classList.contains('ms-links'));
         if (shown.length === 2) copy.classList.add('deck-two-up');
         b.appendChild(copy);
       }
