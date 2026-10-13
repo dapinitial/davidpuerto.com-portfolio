@@ -1997,3 +1997,86 @@ html.deck .deck-beat.cs-splash neon-text .bright {
     will-change: transform;
   }
 }
+
+@layer page {
+  /* the ladder: which of the four generations this slide belongs to */
+  .deck-gen {
+    position: fixed;
+    top: 86px;
+    left: clamp(24px, 8vw, 160px);
+    z-index: 70;
+    margin: 0;
+    display: none;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-family-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9a9499;
+    pointer-events: none;
+  }
+
+  .deck-gen.show {
+    display: flex;
+  }
+
+  .deck-gen-ticks {
+    display: inline-flex;
+    gap: 4px;
+  }
+
+  .deck-gen-ticks i {
+    display: block;
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+    border: 1px solid color-mix(in srgb, var(--cs-accent, #fb836d) 45%, transparent);
+    background: transparent;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  .deck-gen-ticks i.past {
+    background: color-mix(in srgb, var(--cs-accent, #fb836d) 45%, transparent);
+    border-color: transparent;
+  }
+
+  .deck-gen-ticks i.on {
+    background: var(--cs-accent, #fb836d);
+    border-color: transparent;
+  }
+
+  /* the horizon: one hairline under the chrome, margin to counter */
+  .deck-rule {
+    position: fixed;
+    top: 108px;
+    left: clamp(24px, 8vw, 160px);
+    right: clamp(84px, 3vw + 68px, 110px);
+    height: 1px;
+    background: color-mix(in srgb, var(--cs-accent, #fb836d) 28%, transparent);
+    z-index: 69;
+    pointer-events: none;
+    display: none;
+  }
+
+  .deck-rule.show {
+    display: block;
+  }
+
+  .arc-col button .arc-gen {
+    font-family: var(--font-family-monospace, monospace);
+    font-style: normal;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cs-accent, #fb836d);
+    margin-left: 8px;
+    opacity: 0.8;
+  }
+
+  /* the generation dividers: the number in the chapter colour */
+  html.deck .deck-beat.ms-statement.ms-gen > h2 em {
+    font-style: italic;
+    color: var(--cs-accent, #fb836d);
+  }
+}

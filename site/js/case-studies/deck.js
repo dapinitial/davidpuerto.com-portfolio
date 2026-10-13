@@ -111,6 +111,8 @@ if (isDeck) {
       <div class="deck-num" aria-hidden="true"></div>
       <button type="button" class="deck-arc-btn" aria-label="Open the story arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
       <p class="deck-kicker" aria-hidden="true"></p>
+      <p class="deck-gen" aria-hidden="true"><span class="deck-gen-ticks"><i></i><i></i><i></i><i></i></span><span class="deck-gen-label"></span></p>
+      <div class="deck-rule" aria-hidden="true"></div>
       <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
@@ -134,6 +136,23 @@ if (isDeck) {
       }
       return '';
     });
+    // the generation each slide belongs to: one idea, four generations, each
+    // carrying more of the decision. A beat sets data-gen where a generation
+    // begins (0 = none) and every slide after inherits it; data-gen-label
+    // overrides the words. The ladder beside the kicker lights one more tick.
+    const GEN_LABELS = { 1: 'One · By hand', 2: 'Two · As a system', 3: 'Three · With agents', 4: 'Four · The judgment held in tests' };
+    const GEN_SHORT = { 1: 'one', 2: 'two', 3: 'three', 4: 'four' };
+    const genOf = beats.map((b, i) => {
+      for (let k = i; k >= 0; k--) {
+        const d = beats[k].dataset;
+        if (d.gen !== undefined) { const n = Number(d.gen); return n ? { n, label: d.genLabel || GEN_LABELS[n] } : null; }
+      }
+      return null;
+    });
+    const gen = ui.querySelector('.deck-gen');
+    const genLabel = ui.querySelector('.deck-gen-label');
+    const genTicks = [...ui.querySelectorAll('.deck-gen-ticks i')];
+    const rule = ui.querySelector('.deck-rule');
     const notes = ui.querySelector('.deck-notes');
     const notesBody = ui.querySelector('.deck-notes-body');
 
@@ -297,7 +316,7 @@ if (isDeck) {
           ${beats.map((b, i) => `<circle class="dot" data-i="${i}" cx="${px(i)}" cy="${py(i)}" r="6"><title>${i + 1}. ${esc(titleOf(b))}</title></circle>`).join('')}
         </svg>
         <div class="arc-list">
-          ${STAGES.map((n) => `<div class="arc-col" data-stage="${n}"><h4>${n}</h4><ol>${beats.map((b, i) => (stageOf(i) === n ? `<li><button type="button" data-i="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${esc(titleOf(b))}</button></li>` : '')).join('')}</ol></div>`).join('')}
+          ${STAGES.map((n) => `<div class="arc-col" data-stage="${n}"><h4>${n}</h4><ol>${beats.map((b, i) => (stageOf(i) === n ? `<li><button type="button" data-i="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${esc(titleOf(b))}${genOf[i] ? `<em class="arc-gen">${GEN_SHORT[genOf[i].n]}</em>` : ''}</button></li>` : '')).join('')}</ol></div>`).join('')}
         </div>
       </div>`;
     document.body.appendChild(toc);
@@ -319,8 +338,14 @@ if (isDeck) {
       numT = setTimeout(() => num.classList.remove('show'), 2000);
       notesBody.textContent = beats[i].dataset.notes ?? '(no notes for this beat)';
       hint.style.opacity = i >= beats.length - 1 ? '0' : '';
-      const showKicker = chapterOf[i] && !beats[i].matches('.cs-hero, .page-hero, .ms-chapter-open');
+      const chromeOff = beats[i].matches('.cs-hero, .page-hero, .ms-chapter-open');
+      const showKicker = chapterOf[i] && !chromeOff;
       kicker.textContent = showKicker ? chapterOf[i] : '';
+      const g = chromeOff ? null : genOf[i];
+      genLabel.textContent = g ? g.label : '';
+      gen.classList.toggle('show', !!g);
+      genTicks.forEach((t, k) => { t.classList.toggle('on', !!g && k + 1 === g.n); t.classList.toggle('past', !!g && k + 1 < g.n); });
+      rule.classList.toggle('show', !!(showKicker || g));
       history.replaceState(null, '', `${location.pathname}${location.search}#b${i + 1}`);
       toc.querySelectorAll('.dot').forEach((d) => { const k = Number(d.dataset.i); d.classList.toggle('now', k === i); d.classList.toggle('past', k < i); });
       toc.querySelectorAll('.arc-col button').forEach((btn) => { const k = Number(btn.dataset.i); btn.classList.toggle('now', k === i); btn.classList.toggle('past', k < i); });
