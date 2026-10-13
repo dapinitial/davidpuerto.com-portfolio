@@ -1,0 +1,82 @@
+WEBVTT
+
+00:00:00.300 --> 00:00:01.531
+This is the companion.
+
+00:00:01.531 --> 00:00:09.253
+A side panel that sits beside any preview site, so anyone on the team can change the product in plain words, and nothing ships unmeasured.
+
+00:00:09.253 --> 00:00:11.716
+Here is how to install it, and what it does.
+
+00:00:12.565 --> 00:00:13.928
+Installing takes a minute.
+
+00:00:13.928 --> 00:00:17.494
+On the Playbook's Companion page, download the package and unzip it.
+
+00:00:17.494 --> 00:00:19.801
+It makes a folder called playbook-extension.
+
+00:00:21.416 --> 00:00:23.751
+Open the extensions page in Edge or Chrome.
+
+00:00:23.751 --> 00:00:27.389
+Turn on Developer mode, choose Load unpacked, and pick that folder.
+
+00:00:27.389 --> 00:00:28.583
+The companion appears.
+
+00:00:28.583 --> 00:00:33.850
+It is loaded this way because it is not in a store, and it asks for access to preview sites only.
+
+00:00:34.450 --> 00:00:38.689
+Open a preview, click the icon, and the panel reads the page it is beside.
+
+00:00:38.689 --> 00:00:41.840
+Five groups: Look, Change, Decide, Bring in, and Carry.
+
+00:00:41.840 --> 00:00:47.053
+Every button says how far it reaches: reads, tries here, or writes a version everyone sees.
+
+00:00:47.053 --> 00:00:47.969
+It holds no key.
+
+00:00:47.969 --> 00:00:52.266
+Every action goes through the preview's own service, with your own sign-in.
+
+00:00:53.116 --> 00:00:53.349
+Look.
+
+00:00:53.349 --> 00:01:00.352
+Critique the screen measures it against the visual rules, right here, with the same checks the build runs, so the panel and the build cannot disagree.
+
+00:01:01.967 --> 00:01:02.284
+Change.
+
+00:01:02.284 --> 00:01:03.735
+Say what you want in a sentence.
+
+00:01:03.735 --> 00:01:06.137
+It is tried on this page first, and nothing is saved.
+
+00:01:06.137 --> 00:01:09.490
+Then Make current, and it is a version with your name on it, for everyone.
+
+00:01:14.818 --> 00:01:15.173
+Decide.
+
+00:01:15.173 --> 00:01:18.620
+The gate shows the seven numbers the build measured against the bar.
+
+00:01:18.620 --> 00:01:19.938
+Below it, nothing deploys.
+
+00:01:19.938 --> 00:01:24.196
+That is the whole loop: test it here, sign it off, and it ships when the gate holds.
+
+00:01:25.045 --> 00:01:27.566
+Anyone can fix the site, and nothing ships unmeasured.
+
+00:01:27.566 --> 00:01:30.740
+Download it from the Companion page, and open it beside any preview.
