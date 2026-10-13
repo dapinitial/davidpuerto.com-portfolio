@@ -198,6 +198,7 @@
       text-wrap: pretty;
       font-size: 1.06em;
       line-height: 1.55;
+      text-shadow: 2px 2px 2px black; /* legible over the device behind it */
     }
 
     /* the wrap, hybrid: the copy wraps around a soft curve that stands in
