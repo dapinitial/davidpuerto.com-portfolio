@@ -110,9 +110,7 @@ if (isDeck) {
       <div class="deck-bar" aria-hidden="true"><span class="deck-fill"></span></div>
       <div class="deck-num" aria-hidden="true"></div>
       <button type="button" class="deck-arc-btn" aria-label="Open the story arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
-      <p class="deck-kicker" aria-hidden="true"></p>
       <p class="deck-gen" aria-hidden="true"><span class="deck-gen-ticks"><i></i><i></i><i></i><i></i></span><span class="deck-gen-label"></span></p>
-      <div class="deck-rule" aria-hidden="true"></div>
       <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen</p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
@@ -124,22 +122,10 @@ if (isDeck) {
     prog.style.strokeDasharray = `${RING}`;
     const num = ui.querySelector('.deck-num');
     const hint = ui.querySelector('.deck-hint');
-    const kicker = ui.querySelector('.deck-kicker');
-    // the chapter each slide belongs to: the eyebrow of the last opener before it
-    const chapterOf = beats.map((b, i) => {
-      for (let k = i; k >= 0; k--) {
-        const o = beats[k];
-        if (o.matches('.ms-chapter-open') || o.dataset.glow) {
-          const e = o.querySelector('.ms-eyebrow');
-          return e ? e.textContent.replace(/\s+/g, ' ').trim() : '';
-        }
-      }
-      return '';
-    });
     // the generation each slide belongs to: one idea, four generations, each
     // carrying more of the decision. A beat sets data-gen where a generation
     // begins (0 = none) and every slide after inherits it; data-gen-label
-    // overrides the words. The ladder beside the kicker lights one more tick.
+    // overrides the words. The arc map names the generation beside each title.
     const GEN_LABELS = { 1: 'One · By hand', 2: 'Two · As a system', 3: 'Three · With agents', 4: 'Four · The judgment held in tests' };
     const GEN_SHORT = { 1: 'one', 2: 'two', 3: 'three', 4: 'four' };
     const genOf = beats.map((b, i) => {
@@ -152,7 +138,6 @@ if (isDeck) {
     const gen = ui.querySelector('.deck-gen');
     const genLabel = ui.querySelector('.deck-gen-label');
     const genTicks = [...ui.querySelectorAll('.deck-gen-ticks i')];
-    const rule = ui.querySelector('.deck-rule');
     const notes = ui.querySelector('.deck-notes');
     const notesBody = ui.querySelector('.deck-notes-body');
 
@@ -339,13 +324,10 @@ if (isDeck) {
       notesBody.textContent = beats[i].dataset.notes ?? '(no notes for this beat)';
       hint.style.opacity = i >= beats.length - 1 ? '0' : '';
       const chromeOff = beats[i].matches('.cs-hero, .page-hero, .ms-chapter-open');
-      const showKicker = chapterOf[i] && !chromeOff;
-      kicker.textContent = showKicker ? chapterOf[i] : '';
       const g = chromeOff ? null : genOf[i];
       genLabel.textContent = g ? g.label : '';
       gen.classList.remove('show'); // the ladder row is retired from the chrome (David, Oct 13 2026); the arc map still names the generation
       genTicks.forEach((t, k) => { t.classList.toggle('on', !!g && k + 1 === g.n); t.classList.toggle('past', !!g && k + 1 < g.n); });
-      rule.classList.toggle('show', !!showKicker);
       history.replaceState(null, '', `${location.pathname}${location.search}#b${i + 1}`);
       toc.querySelectorAll('.dot').forEach((d) => { const k = Number(d.dataset.i); d.classList.toggle('now', k === i); d.classList.toggle('past', k < i); });
       toc.querySelectorAll('.arc-col button').forEach((btn) => { const k = Number(btn.dataset.i); btn.classList.toggle('now', k === i); btn.classList.toggle('past', k < i); });
@@ -428,7 +410,7 @@ if (isDeck) {
     const openToc = () => { toc.classList.add('open'); setTimeout(() => (toc.querySelector('.arc-col button.now') ?? toc.querySelector('.arc-col button'))?.focus(), 50); };
     const closeToc = () => toc.classList.remove('open');
     window.addEventListener('keydown', (e) => {
-      if (e.target.closest('input, textarea, select, [role=slider]')) return;
+      if (e.target.closest('input, textarea, select, [role=slider], [contenteditable]')) return;
       const k = e.key.toLowerCase();
       if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
       else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }

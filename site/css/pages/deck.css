@@ -2086,9 +2086,7 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   /* :playing is a media-state pseudo-class; browsers without it ignore the whole rule, which is the right fallback */
   html.deck .deck-beat.ms-reel figcaption { transition: opacity 0.4s ease; }
   html.deck .deck-beat.ms-reel:has(video:playing) figcaption { opacity: 0.35; }
-  html.deck:has(.deck-beat.active video:playing) .deck-hint,
-  html.deck:has(.deck-beat.active video:playing) .deck-kicker,
-  html.deck:has(.deck-beat.active video:playing) .deck-rule { opacity: 0; transition: opacity 0.4s ease; }
+  html.deck:has(.deck-beat.active video:playing) .deck-hint { opacity: 0; transition: opacity 0.4s ease; }
   html.deck .deck-beat.ms-reel:has(video:buffering) video,
   html.deck .deck-beat.ms-reel:has(video:stalled) video { outline: 1px solid color-mix(in srgb, var(--cs-accent, #fb836d) 50%, transparent); outline-offset: 4px; }
 }
