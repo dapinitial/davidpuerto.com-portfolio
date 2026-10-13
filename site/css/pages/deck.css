@@ -2018,7 +2018,7 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   }
 
   .deck-gen.show {
-    display: flex;
+    display: none; /* retired: the generation row no longer sits under the chapter line */
   }
 
   .deck-gen-ticks {
@@ -2049,7 +2049,7 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   /* the horizon: one hairline under the chrome, margin to counter */
   .deck-rule {
     position: fixed;
-    top: 108px;
+    top: 96px;
     left: clamp(24px, 8vw, 160px);
     right: clamp(84px, 3vw + 68px, 110px);
     height: 1px;
