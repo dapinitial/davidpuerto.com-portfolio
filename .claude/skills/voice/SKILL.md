@@ -14,6 +14,12 @@ David reads these lines aloud in the room. Copy that is not in his rhythm throws
 3. Pages he wrote before the rebuild: approach, resume, contact.
 4. How he writes in chat: direct, plain, a little wry, says the thing.
 
+## The through-line, in his words
+
+Said in chat on Oct 13 2026, unedited: "I've been building in Flash and now I UX Engineer prototyping in Preview Sites managing design systems but now building factories that connect all the cloud services so that we have boilerplate in isolation passing component governance and we can leverage to bootstrap new sites and adhere to the design language and skills."
+
+That is the arc and the vocabulary: Flash, UX Engineer, prototyping, Preview Sites, design systems, factories, cloud services, boilerplate in isolation, component governance, leverage, bootstrap, design language, skills. When a slide needs the big picture, it is this sentence, not a coinage.
+
 ## What every beat must say, in this order
 
 1. **What was going on.** Anchor it in time and in a room: "In 2020", "Back in the day", "Today". Who was stuck and on what.
@@ -39,8 +45,8 @@ Say the problem before the solution. A slide that is only a mood or only a metap
 - Captions that read "Left, ... Right, ...". Write the sentence.
 - A paragraph that ends on an aphorism for effect ("Nothing hand-built."). If the point is real, say what it means ("so we don't wait days or weeks").
 - Colon-stacked lists in running copy.
-- Buzzwords and borrowed grandeur: leverage, seamless, empower, enable, ecosystem, at scale, north star, journey, unlock, delight, "judgment held in tests" and similar coinages of mine. If David has not said it, it is suspect.
-- Metaphor said out loud. The pawn, the rook, the knight are pictures, not lines.
+- Buzzwords and borrowed grandeur: seamless, empower, enable, ecosystem, at scale, north star, journey, unlock, delight, "judgment held in tests" and similar coinages of mine. If David has not said it, it is suspect. ("Leverage", "bootstrap" and "governance" are his words; they stay.)
+- Metaphor said out loud in lines I write. The pawn, the rook, the knight are pictures. David kept one pawn line of his own ("often leads the way with the opening"); his call, not mine to extend.
 - A number buried in a clause. Give it its own sentence.
 - Em-dashes, always. Apple in past tense. No internal codenames or hostnames.
 
