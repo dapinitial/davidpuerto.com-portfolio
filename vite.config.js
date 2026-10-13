@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
+import { editInPlace } from './tools/edit-in-place.mjs';
 
 const page = (p) => resolve(import.meta.dirname, 'site', p);
 
@@ -42,7 +43,7 @@ export default defineConfig({
   root: 'site',
   appType: 'mpa',
   publicDir: 'public',
-  plugins: [devAuthGate()],
+  plugins: [devAuthGate(), editInPlace()],
   build: {
     outDir: '../dist',
     emptyOutDir: true,
