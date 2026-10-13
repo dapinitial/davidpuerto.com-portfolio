@@ -94,7 +94,7 @@ if (on) {
     if (el.matches('.deck-notes-body')) {
       const beat = el.ed_beat; const after = el.textContent.trim();
       const before = beat?.dataset.notes ?? '';
-      if (beat && after !== before) { pending.push({ kind: 'notes', before, after }); beat.dataset.notes = after; el.classList.add('ed-dirty'); }
+      if (beat && after !== before) { pending.push({ kind: 'notes', before, after, beat: beat.dataset.beat ?? null }); beat.dataset.notes = after; el.classList.add('ed-dirty'); }
       return paint();
     }
     const before = edits.get(el)?.before ?? snap.get(el);

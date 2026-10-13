@@ -4,7 +4,7 @@
 // here unencrypted); Publish locks, commits and pushes. Never shipped: the
 // plugin applies to `vite` serve only, and the client script is not referenced
 // by any built page.
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, appendFileSync, readdirSync, statSync, existsSync, mkdirSync } from 'node:fs';
 import { join, resolve, relative, sep } from 'node:path';
 import { execSync } from 'node:child_process';
 
@@ -133,6 +133,12 @@ export const editInPlace = () => ({
           if (!pageSrc) return send(res, 400, { error: `no source for ${page}` });
           const files = htmlFiles();
           const results = edits.map((e) => ({ before: e.before.slice(0, 60), ...apply(files, pageSrc, e) }));
+          // every saved rewrite is a voice sample: David's words replacing the
+          // draft. voice/edits.jsonl feeds the voice skill (.claude/skills/voice)
+          const text = (h) => String(h).replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+          const rows = edits.filter((e, i) => results[i].ok && text(e.before) !== text(e.after))
+            .map((e) => JSON.stringify({ t: new Date().toISOString(), page, beat: e.beat ?? null, kind: e.kind ?? 'html', before: text(e.before), after: text(e.after) }) + '\n');
+          if (rows.length) { mkdirSync(join(ROOT, 'voice'), { recursive: true }); appendFileSync(join(ROOT, 'voice', 'edits.jsonl'), rows.join('')); }
           return send(res, 200, { results });
         }
         if (req.url === '/publish') {
