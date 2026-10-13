@@ -31,6 +31,13 @@ const pageFile = (pathname) => {
   return null;
 };
 
+// files this plugin just wrote: the dev server's own change watcher would
+// answer each save with a full page reload, which is the one thing an
+// in-place editor must not do. The reload for these paths is dropped for a
+// few seconds after the write; the page already shows the saved text.
+const justWrote = new Map();
+const write = (f, text) => { justWrote.set(f, Date.now()); writeFileSync(f, text); };
+
 const count = (hay, needle) => (needle ? hay.split(needle).length - 1 : 0);
 const attrEsc = (s) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
 
@@ -46,7 +53,7 @@ const apply = (files, pageSrc, edit) => {
       const src = readFileSync(f, 'utf8');
       for (const form of forms) {
         if (count(src, form) === 1) {
-          writeFileSync(f, src.split(form).join(`data-notes="${attrEsc(after).replace(/&amp;/g, '&')}"`));
+          write(f, src.split(form).join(`data-notes="${attrEsc(after).replace(/&amp;/g, '&')}"`));
           return { ok: true, file: relative(ROOT, f) };
         }
       }
@@ -57,14 +64,14 @@ const apply = (files, pageSrc, edit) => {
     const src = readFileSync(f, 'utf8');
     const n = count(src, before);
     if (n === 1) {
-      writeFileSync(f, src.split(before).join(after));
+      write(f, src.split(before).join(after));
       return { ok: true, file: relative(ROOT, f) };
     }
     // the same words may also sit in a data-notes attribute: element content
     // is bracketed by tags, an attribute value is not
     const wrapped = `>${before}</`;
     if (n > 1 && count(src, wrapped) === 1) {
-      writeFileSync(f, src.split(wrapped).join(`>${after}</`));
+      write(f, src.split(wrapped).join(`>${after}</`));
       return { ok: true, file: relative(ROOT, f) };
     }
     // the same drawing placed on two slides: pick the occurrence whose nearest
@@ -76,13 +83,13 @@ const apply = (files, pageSrc, edit) => {
         if (k >= 0 && src.slice(k + 11, src.indexOf('"', k + 11)) === beat) hits.push(i);
       }
       if (hits.length === 1) {
-        writeFileSync(f, src.slice(0, hits[0]) + after + src.slice(hits[0] + before.length));
+        write(f, src.slice(0, hits[0]) + after + src.slice(hits[0] + before.length));
         return { ok: true, file: relative(ROOT, f), beat };
       }
     }
     for (const sc of scopes) {
       if (n > 1 && sc && count(src, sc) === 1 && count(sc, before) === 1) {
-        writeFileSync(f, src.split(sc).join(sc.split(before).join(after)));
+        write(f, src.split(sc).join(sc.split(before).join(after)));
         return { ok: true, file: relative(ROOT, f), scoped: true };
       }
     }
@@ -107,6 +114,16 @@ export const editInPlace = () => ({
     handler: () => [{ tag: 'script', attrs: { type: 'module', src: '/js/edit/edit-in-place.js' }, injectTo: 'head-prepend' }],
   },
   configureServer(server) {
+    const hot = server.environments?.client?.hot ?? server.hot ?? server.ws;
+    const forward = hot.send.bind(hot);
+    hot.send = (payload, ...rest) => {
+      if (payload?.type === 'full-reload') {
+        const rel = String(payload.path ?? '').replace(/^\//, '');
+        const hit = [...justWrote].find(([f, t]) => Date.now() - t < 4000 && (rel === '*' || relative(SITE, f) === rel || f.endsWith(rel)));
+        if (hit) return;
+      }
+      return forward(payload, ...rest);
+    };
     server.middlewares.use('/__edit', async (req, res) => {
       if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
       try {
