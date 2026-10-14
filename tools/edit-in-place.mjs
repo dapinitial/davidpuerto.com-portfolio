@@ -1,4 +1,4 @@
-// Edit in place, dev server only. With ?edit=1 on any page, Cmd + double-click
+// Edit in place, dev server only. Cmd + double-click a line on any page (or ?edit=1 to show the bar first)
 // a line of text to edit it where it sits; Save writes the change straight into
 // the source HTML (site/**/index.html, the gated decks included, since they live
 // here unencrypted); Publish locks, commits and pushes. Never shipped: the

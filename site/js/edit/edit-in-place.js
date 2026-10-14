@@ -1,10 +1,11 @@
 // Edit in place (dev server only; injected by tools/edit-in-place.mjs).
-// ?edit=1 on any page. Cmd (or Ctrl) + double-click a line of text to edit it
-// where it sits. Enter or click away commits, Esc reverts. Save (or Cmd+S)
-// writes every change into the source HTML; Publish locks, commits and pushes.
-// Plain double-click still selects a word, as it always did.
-const on = new URLSearchParams(location.search).get('edit') === '1';
-if (on) {
+// On any page: Cmd (or Ctrl) + double-click a line of text to edit it where it
+// sits, no URL flag and no reload. Select words inside it for the format bar:
+// bold, italic, underline, color, alignment. Enter or click away commits, Esc
+// reverts. Save (or Cmd+S) writes every change into the source HTML; Publish
+// locks, commits and pushes. Plain double-click still selects a word.
+// ?edit=1 still works: it just shows the bar straight away.
+{
   // snapshot every element's markup before any other module runs, so a save
   // matches the source and never carries runtime markup (hand-mark's svg,
   // animated counters) back into the file
@@ -36,6 +37,13 @@ if (on) {
     .ed-tick.go .ring { animation: ed-draw 0.5s cubic-bezier(0.3,0.1,0.25,1) forwards; }
     .ed-tick.go .mark { animation: ed-draw 0.35s cubic-bezier(0.3,0.1,0.25,1) 0.4s forwards; }
     @keyframes ed-draw { to { stroke-dashoffset: 0; } }
+    .ed-tools { position: fixed; z-index: 10000; display: flex; align-items: center; gap: 2px; padding: 4px; border-radius: 10px; background: rgba(12,12,16,0.96); box-shadow: 0 8px 28px rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.12); }
+    .ed-tools[hidden] { display: none; }
+    .ed-tools button { font: 14px/1 ui-sans-serif, system-ui, sans-serif; color: #eee; background: transparent; border: 0; border-radius: 6px; min-width: 30px; height: 30px; padding: 0 6px; cursor: pointer; display: grid; place-items: center; }
+    .ed-tools button:hover { background: rgba(255,255,255,0.12); }
+    .ed-tools .sep { width: 1px; height: 18px; background: rgba(255,255,255,0.18); margin: 0 4px; }
+    .ed-tools .sw { width: 14px; height: 14px; border-radius: 50%; display: block; }
+    .ed-tools .sw-clear { background: #fff0f4; }
   `;
   document.head.appendChild(style);
 
@@ -43,6 +51,7 @@ if (on) {
   bar.className = 'ed-bar';
   bar.setAttribute('data-ed-skip', '');
   bar.innerHTML = `<svg class="ed-tick" viewBox="0 0 24 24" aria-hidden="true"><path class="ring" pathLength="1" d="M12 2.5a9.5 9.5 0 1 1 0 19 9.5 9.5 0 0 1 0-19z"/><path class="mark" pathLength="1" d="M7.5 12.5l3 3 6-7"/></svg><span class="ed-msg">⌘ + double-click a line to edit</span><b class="ed-n"></b><button class="ed-save" disabled>Save ⌘S</button><button class="ed-drop" hidden>Discard</button><button class="ed-pub">Publish</button><button class="ed-exit">Done</button>`;
+  bar.hidden = new URLSearchParams(location.search).get('edit') !== '1';
   document.body.appendChild(bar);
   const msg = bar.querySelector('.ed-msg');
   const nEl = bar.querySelector('.ed-n');
@@ -78,6 +87,7 @@ if (on) {
       else if (node.nodeType === 1) {
         const tag = node.tagName.toLowerCase();
         if (tag === 'br') { out += '<br>'; continue; }
+        if (tag === 'svg') continue; // runtime drawing inside a custom element, never source
         const attrs = [...node.attributes].filter((a) => !/^(contenteditable|spellcheck)$/.test(a.name)).map((a) => ` ${a.name}="${a.value.replace(/"/g, '&quot;')}"`).join('');
         const inner = tag.includes('-') && snap.has(node) ? snap.get(node) : ser(node);
         out += `<${tag}${attrs}>${inner}</${tag}>`;
@@ -91,6 +101,7 @@ if (on) {
     if (!live) return;
     const el = live; live = null;
     el.removeAttribute('contenteditable'); el.removeAttribute('spellcheck'); el.classList.remove('ed-live');
+    tools.hidden = true;
     if (el.matches('.deck-notes-body')) {
       const beat = el.ed_beat; const after = el.textContent.trim();
       const before = beat?.dataset.notes ?? '';
@@ -143,7 +154,8 @@ if (on) {
       }
     }
     live = el;
-    el.setAttribute('contenteditable', 'plaintext-only');
+    bar.hidden = false;
+    el.setAttribute('contenteditable', el.matches('.deck-notes-body') ? 'plaintext-only' : 'true');
     el.setAttribute('spellcheck', 'false');
     el.classList.add('ed-live');
     el.focus();
@@ -159,13 +171,88 @@ if (on) {
   }, true);
 
   document.addEventListener('keydown', (e) => {
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') { e.preventDefault(); commit(); return save(); }
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && !bar.hidden) { e.preventDefault(); commit(); return save(); }
     if (!live) return;
+    if ((e.metaKey || e.ctrlKey) && ['b', 'i', 'u'].includes(e.key.toLowerCase()) && !live.matches('.deck-notes-body')) { e.preventDefault(); e.stopImmediatePropagation(); fmt({ b: 'strong', i: 'em', u: 'hand-mark' }[e.key.toLowerCase()]); return; }
     if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); revert(); }
     else if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.stopImmediatePropagation(); commit(); }
     else if (e.key === 'Enter' && e.shiftKey && !live.matches('.deck-notes-body')) { e.preventDefault(); document.execCommand('insertHTML', false, '<br>'); }
   }, true);
-  document.addEventListener('focusout', (e) => { if (live && e.target === live) setTimeout(() => { if (live === e.target) commit(); }, 0); });
+  document.addEventListener('focusout', (e) => { if (live && e.target === live) setTimeout(() => { if (live === e.target && !tools.contains(document.activeElement)) commit(); }, 0); });
+  document.addEventListener('paste', (e) => {
+    if (!live || !live.contains(e.target)) return;
+    e.preventDefault();
+    document.execCommand('insertText', false, e.clipboardData.getData('text/plain'));
+  }, true);
+
+  // --- the format bar: floats over a selection inside the line being edited
+  const tools = document.createElement('div');
+  tools.className = 'ed-tools';
+  tools.setAttribute('data-ed-skip', '');
+  tools.hidden = true;
+  tools.innerHTML = `
+    <button data-f="strong" title="Bold ⌘B"><b>B</b></button>
+    <button data-f="em" title="Italic: the accent italic in headings ⌘I"><i>I</i></button>
+    <button data-f="hand-mark" title="Hand-drawn underline ⌘U"><u>U</u></button>
+    <span class="sep"></span>
+    <button data-c="accent" title="Accent color"><span class="sw" style="background: var(--cs-accent, #fb836d)"></span></button>
+    <button data-c="muted" title="Muted"><span class="sw" style="background: #9a9499"></span></button>
+    <button data-c="" title="Default color"><span class="sw sw-clear"></span></button>
+    <span class="sep"></span>
+    <button data-a="left" title="Align left">⟸</button>
+    <button data-a="center" title="Center">≡</button>
+    <button data-a="right" title="Align right">⟹</button>
+    <button data-a="" title="Default alignment">↺</button>`;
+  document.body.appendChild(tools);
+  tools.addEventListener('mousedown', (e) => e.preventDefault()); // keep the selection and the focus
+
+  const range = () => { const sel = getSelection(); if (!live || !sel.rangeCount) return null; const r = sel.getRangeAt(0); return live.contains(r.commonAncestorContainer) ? r : null; };
+  const unwrap = (node) => { const parent = node.parentNode; while (node.firstChild) parent.insertBefore(node.firstChild, node); parent.removeChild(node); };
+  const select = (node) => { const sel = getSelection(); const r = document.createRange(); r.selectNodeContents(node); sel.removeAllRanges(); sel.addRange(r); };
+  // wrap the selection in a tag, or unwrap it when it is already inside one
+  const fmt = (tag, attrs) => {
+    const r = range(); if (!r || r.collapsed) return;
+    const anc = r.commonAncestorContainer.nodeType === 1 ? r.commonAncestorContainer : r.commonAncestorContainer.parentElement;
+    const inside = tag === 'span' ? anc.closest('span[data-ed-color]') : anc.closest(tag);
+    if (inside && inside !== live && live.contains(inside)) {
+      if (tag !== 'span') { unwrap(inside); return place(); }
+      if (!attrs) { unwrap(inside); return place(); }
+      Object.entries(attrs).forEach(([k, v]) => inside.setAttribute(k, v)); return place();
+    }
+    if (tag === 'span' && !attrs) return;
+    const w = document.createElement(tag);
+    if (attrs) Object.entries(attrs).forEach(([k, v]) => w.setAttribute(k, v));
+    w.appendChild(r.extractContents());
+    r.insertNode(w);
+    select(w); place();
+  };
+  const COLORS = { accent: 'color: var(--cs-accent, #fb836d)', muted: 'color: #9a9499' };
+  // alignment applies to the whole line: one block wrapper inside it
+  const align = (a) => {
+    if (!live) return;
+    let box = live.querySelector(':scope > span[data-ed-align]');
+    if (!a) { if (box) unwrap(box); return place(); }
+    if (!box) { box = document.createElement('span'); box.setAttribute('data-ed-align', ''); while (live.firstChild) box.appendChild(live.firstChild); live.appendChild(box); }
+    box.setAttribute('style', `display: block; text-align: ${a}`);
+    place();
+  };
+  tools.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b || !live) return;
+    if (b.dataset.f) fmt(b.dataset.f);
+    else if ('c' in b.dataset) fmt('span', b.dataset.c ? { 'data-ed-color': b.dataset.c, style: COLORS[b.dataset.c] } : null);
+    else if ('a' in b.dataset) align(b.dataset.a);
+  });
+  // float the bar just above the selection, or above the line when nothing is selected
+  const place = () => {
+    if (!live || live.matches('.deck-notes-body')) { tools.hidden = true; return; }
+    const r = range();
+    const box = (r && !r.collapsed ? r : live).getBoundingClientRect();
+    tools.hidden = false;
+    const w = tools.offsetWidth, h = tools.offsetHeight;
+    tools.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, box.left + box.width / 2 - w / 2))}px`;
+    tools.style.top = `${Math.max(8, box.top - h - 12)}px`;
+  };
+  document.addEventListener('selectionchange', () => { if (live) place(); });
 
   const post = (path, body) => fetch(`/__edit${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then((r) => r.json());
   const save = async () => {
@@ -204,8 +291,9 @@ if (on) {
     pubBtn.textContent = 'Publish'; pubBtn.disabled = false;
   });
   bar.querySelector('.ed-exit').addEventListener('click', () => {
-    if (edits.size + pending.length && !confirm('Unsaved changes. Leave edit mode?')) return;
-    const u = new URL(location.href); u.searchParams.delete('edit'); location.href = u.href;
+    commit();
+    if (edits.size + pending.length) return say('unsaved changes: Save or Discard first');
+    bar.hidden = true;
   });
   window.addEventListener('beforeunload', (e) => { if (edits.size + pending.length) e.preventDefault(); });
   paint();
