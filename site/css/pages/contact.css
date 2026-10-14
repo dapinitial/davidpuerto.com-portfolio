@@ -23,7 +23,7 @@
 
   .dossier {
     position: relative;
-    z-index: 120; /* above the rain, which falls over the whole page */
+    z-index: 1;
     width: min(1160px, calc(100% - 2 * clamp(20px, 5vw, 64px)));
     margin-inline: auto;
     display: grid;

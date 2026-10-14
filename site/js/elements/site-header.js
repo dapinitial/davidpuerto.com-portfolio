@@ -28,10 +28,10 @@ const CASE_STUDIES = [
 
 const item = ([name, href]) =>
   href
-    ? `<li><a href="${href}" data-navlinkname="${name}"${
+    ? `<li><a href="${href}" data-navlinkname="${name}" aria-label="${name}"${
         location.pathname === href ? ' aria-current="page"' : ''
       }><span class="sr-only">${name}</span></a></li>`
-    : `<li><button type="button" class="submenu-toggle" data-navlinkname="${name}"><span class="sr-only">${name}</span></button></li>`;
+    : `<li><button type="button" class="submenu-toggle" data-navlinkname="${name}" aria-label="${name}" aria-expanded="false" aria-controls="menu-sub"><span class="sr-only">${name}</span></button></li>`;
 
 class SiteHeader extends HTMLElement {
   #ac;
@@ -39,6 +39,7 @@ class SiteHeader extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
       <header class="site-chrome">
+        <a class="skip-link" href="#main">Skip to content</a>
         <a class="logo" href="/" aria-label="Home — davidpuerto.com">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 19" width="24" height="24" aria-hidden="true">
             <path class="logo-shape" d="${LOGO_PATH}"></path>
@@ -46,12 +47,12 @@ class SiteHeader extends HTMLElement {
           <span class="crumb" hidden>/ Case Studies</span>
         </a>
         <button type="button" class="logout" hidden>Logout</button>
-        <button type="button" class="hamburger" aria-expanded="false" aria-label="Open menu">
+        <button type="button" class="hamburger" aria-expanded="false" aria-label="Open menu" aria-controls="site-menu">
           <span></span><span></span><span></span>
         </button>
-        <nav class="overlay" aria-label="Site">
+        <nav class="overlay" id="site-menu" aria-label="Site">
           <ul class="menu menu-main">${MAIN_LINKS.map(item).join('')}</ul>
-          <ul class="menu menu-sub" hidden>${CASE_STUDIES.map(item).join('')}</ul>
+          <ul class="menu menu-sub" id="menu-sub" hidden>${CASE_STUDIES.map(item).join('')}</ul>
         </nav>
       </header>`;
 
@@ -67,26 +68,62 @@ class SiteHeader extends HTMLElement {
     const subMenu = this.querySelector('.menu-sub');
     const logout = this.querySelector('.logout');
 
+    const toggle = this.querySelector('.submenu-toggle');
     const showSub = (sub) => {
+      const hadFocus = this.contains(document.activeElement) && document.activeElement !== hamburger;
       mainMenu.hidden = sub;
       subMenu.hidden = !sub;
       crumb.hidden = !sub;
       shape.setAttribute('d', sub ? BACK_PATH : LOGO_PATH);
       shape.classList.toggle('is-back', sub);
       logo.setAttribute('aria-label', sub ? 'Back to main menu' : 'Home — davidpuerto.com');
+      toggle.setAttribute('aria-expanded', String(sub));
+      // the button that had focus is now hidden; keep focus in the menu
+      if (hadFocus) (sub ? subMenu.querySelector('a') : toggle).focus({ preventScroll: true });
     };
 
-    const setOpen = (open) => {
+    // while the menu is open, the page behind it is out of reach (Tab stays in the menu)
+    const behind = new Set();
+    const setInert = (on) => {
+      if (on) {
+        for (const el of document.body.children) {
+          if (el === this || el.contains(this) || el.inert || el.tagName === 'SCRIPT') continue;
+          el.inert = true;
+          behind.add(el);
+        }
+      } else {
+        behind.forEach((el) => (el.inert = false));
+        behind.clear();
+      }
+    };
+
+    const setOpen = (open, { keyboard = false } = {}) => {
+      const wasOpen = this.classList.contains('open');
       this.classList.toggle('open', open);
       document.body.classList.toggle('menu-open', open);
       hamburger.setAttribute('aria-expanded', String(open));
       hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
       if (!open) showSub(false);
+      setInert(open);
+      skip.tabIndex = open ? -1 : 0; // nothing to skip to while the menu covers the page
+      if (open && !wasOpen && keyboard) mainMenu.querySelector('a, button')?.focus({ preventScroll: true });
+      if (!open && wasOpen && this.querySelector('.overlay').contains(document.activeElement)) hamburger.focus({ preventScroll: true });
     };
 
-    on(hamburger, 'click', () => setOpen(!this.classList.contains('open')));
-    on(this.querySelector('.submenu-toggle'), 'click', () => showSub(true));
+    // detail 0 = Enter or Space, not a pointer
+    on(hamburger, 'click', (e) => setOpen(!this.classList.contains('open'), { keyboard: e.detail === 0 }));
+    on(toggle, 'click', () => showSub(true));
     sprayHover(this, signal);
+    const main = document.querySelector('main');
+    if (main && !main.id) main.id = 'main';
+    const skip = this.querySelector('.skip-link');
+    // skip link: straight to the page's main content, without touching the hash (decks keep #bN there)
+    on(skip, 'click', (e) => {
+      if (!main) return;
+      e.preventDefault();
+      if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
+      main.focus();
+    });
     on(logo, 'click', (e) => {
       if (!subMenu.hidden) {
         e.preventDefault();
@@ -97,7 +134,7 @@ class SiteHeader extends HTMLElement {
       } // else: plain navigation home
     });
     on(document, 'keydown', (e) => {
-      if (e.key === 'Escape' && this.classList.contains('open')) setOpen(false);
+      if (e.key === 'Escape' && this.classList.contains('open')) setOpen(false); // focus returns to the hamburger if it was in the menu
     });
 
     // Ink flip: when a .light-section scrolls under the header, body gets

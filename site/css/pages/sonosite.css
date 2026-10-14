@@ -86,7 +86,7 @@
 .ss-device .ss-home { position: absolute; left: 8%; bottom: 7%; width: 12%; aspect-ratio: 1; border-radius: 50%;
   border: 2px solid rgba(242,233,221,.35); display: grid; place-items: center; color: #f2e9dd; font-size: .8rem; }
 .ss-wheel { position: absolute; right: -14%; bottom: -14%; width: 62%; aspect-ratio: 1; cursor: grab; outline: none; }
-.ss-wheel:focus-visible { filter: drop-shadow(0 0 0 3px var(--amber)); }
+.ss-wheel:focus-visible { filter: drop-shadow(0 0 3px var(--amber)) drop-shadow(0 0 1px var(--amber)); }
 .ss-wheel:active { cursor: grabbing; }
 .ss-wheel svg { width: 100%; height: 100%; display: block; overflow: visible; }
 .ss-wheel .ring { fill: rgba(242,233,221,.06); stroke: rgba(242,233,221,.22); stroke-width: 1.5; }

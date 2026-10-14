@@ -1064,6 +1064,15 @@
     gap: 48px;
   }
 
+  /* phones: one column (this rule sits after the 800px one above and was
+     overriding it, leaving the copy a 0px column and the piece off-screen) */
+  @media (max-width: 800px) {
+    .ms-chapter > header.ms-chapter-open {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 24px;
+    }
+  }
+
   .ms-chapter > header h2 {
     max-width: 22ch;
   }

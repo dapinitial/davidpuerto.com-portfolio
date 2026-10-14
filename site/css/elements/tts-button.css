@@ -18,6 +18,9 @@ tts-button .tts {
   animation: tts-bounce 0.75s 1;
 }
 
+tts-button .tts:focus-visible { outline: 2px solid var(--color-primary, #fb836d); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { tts-button .tts { animation: none; } }
+
 tts-button .tts::after {
   content: 'Read aloud (beta)';
 }

@@ -119,9 +119,10 @@ if (isDeck) {
     ui.innerHTML = `
       <div class="deck-bar" aria-hidden="true"><span class="deck-fill"></span></div>
       <div class="deck-num" aria-hidden="true"></div>
-      <button type="button" class="deck-arc-btn" aria-label="Open the story arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
+      <button type="button" class="deck-arc-btn" aria-label="Open the story arc" aria-expanded="false" aria-controls="deck-arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
       <p class="deck-gen" aria-hidden="true"><span class="deck-gen-ticks"><i></i><i></i><i></i><i></i></span><span class="deck-gen-label"></span></p>
       <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen${TALK ? ' · A every slide' : ''}</p>
+      <p class="sr-only deck-live" aria-live="polite" aria-atomic="true"></p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
     const fill = ui.querySelector('.deck-fill');
@@ -132,6 +133,7 @@ if (isDeck) {
     prog.style.strokeDasharray = `${RING}`;
     const num = ui.querySelector('.deck-num');
     const hint = ui.querySelector('.deck-hint');
+    const live = ui.querySelector('.deck-live');
     // the generation each slide belongs to: one idea, four generations, each
     // carrying more of the decision. A beat sets data-gen where a generation
     // begins (0 = none) and every slide after inherits it; data-gen-label
@@ -156,6 +158,8 @@ if (isDeck) {
     // heading is split into letters that fly in from random offsets and settle.
     const scramble = (h) => {
       if (h.dataset.scrambled) return h.querySelectorAll('.ltr');
+      // letters split into spans read one by one; the heading keeps its words
+      if (!h.hasAttribute('aria-label')) h.setAttribute('aria-label', h.textContent.replace(/\s+/g, ' ').trim());
       const walk = (node) => {
         [...node.childNodes].forEach((n) => {
           if (n.nodeType === 3) {
@@ -298,6 +302,8 @@ if (isDeck) {
     const toc = document.createElement('div');
     toc.className = 'arc-toc';
     toc.setAttribute('role', 'dialog');
+    toc.setAttribute('aria-modal', 'true');
+    toc.id = 'deck-arc';
     toc.setAttribute('aria-label', 'The story arc, every beat');
     toc.innerHTML = `
       <div class="arc-head"><h2>The story arc</h2><button type="button" class="arc-close">Close · Esc</button></div>
@@ -367,6 +373,7 @@ if (isDeck) {
         break;
       }
       paint(i);
+      if (prev) live.textContent = `Slide ${i + 1} of ${beats.length}: ${titleOf(beats[i])}`;
       enter(beats[i], prev);
     };
 
@@ -375,7 +382,7 @@ if (isDeck) {
     beats.forEach((b, i) => {
       const slot = slots[i];
       ScrollTrigger.create({
-        trigger: slot,
+        trigger: reduced ? b : slot, // reduced motion hides the slots; the beats sit in flow
         start: 'top center',
         end: 'bottom center',
         onToggle: (self) => { if (self.isActive) setCur(i); },
@@ -420,7 +427,7 @@ if (isDeck) {
     // --- navigation: only ever a scroll to a slot --------------------------
     const go = (i, instant = false) => {
       i = Math.max(0, Math.min(beats.length - 1, i));
-      const top = slots[i].offsetTop;
+      const top = reduced ? beats[i].getBoundingClientRect().top + scrollY : slots[i].offsetTop;
       if (instant) {
         root.style.scrollBehavior = 'auto';
         window.scrollTo(0, top);
@@ -429,10 +436,15 @@ if (isDeck) {
         window.scrollTo({ top, behavior: 'smooth' });
       }
     };
-    const openToc = () => { toc.classList.add('open'); setTimeout(() => (toc.querySelector('.arc-col button.now') ?? toc.querySelector('.arc-col button'))?.focus(), 50); };
-    const closeToc = () => toc.classList.remove('open');
+    const openToc = () => { toc.classList.add('open'); arcBtn.setAttribute('aria-expanded', 'true'); setTimeout(() => (toc.querySelector('.arc-col button.now') ?? toc.querySelector('.arc-col button'))?.focus(), 50); };
+    const closeToc = () => {
+      if (!toc.classList.contains('open')) return;
+      toc.classList.remove('open');
+      arcBtn.setAttribute('aria-expanded', 'false');
+      if (toc.contains(document.activeElement)) arcBtn.focus({ preventScroll: true }); // focus goes back where it came from
+    };
     window.addEventListener('keydown', (e) => {
-      if (e.target.closest('input, textarea, select, [role=slider], [contenteditable]')) return;
+      if (e.target.closest('input, textarea, select, [role=slider], [contenteditable], video, audio, summary')) return; // their own keys
       const k = e.key.toLowerCase();
       if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
       else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }

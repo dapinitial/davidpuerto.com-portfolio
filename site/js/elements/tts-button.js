@@ -14,7 +14,7 @@ class TtsButton extends HTMLElement {
   connectedCallback() {
     if (!('speechSynthesis' in window)) return; // unsupported: render nothing
 
-    this.innerHTML = `<button type="button" class="tts">${SPEAKER_SVG}</button>`;
+    this.innerHTML = `<button type="button" class="tts" aria-label="Read aloud" aria-pressed="false">${SPEAKER_SVG}</button>`;
     const button = this.querySelector('button');
     this.#ac = new AbortController();
 
@@ -44,6 +44,7 @@ class TtsButton extends HTMLElement {
   #setSpeaking(on, button) {
     this.#speaking = on;
     button.classList.toggle('speaking', on);
+    button.setAttribute('aria-pressed', String(on));
   }
 
   disconnectedCallback() {
