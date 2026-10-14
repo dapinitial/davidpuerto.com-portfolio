@@ -44,6 +44,10 @@
     .ed-tools .sep { width: 1px; height: 18px; background: rgba(255,255,255,0.18); margin: 0 4px; }
     .ed-tools .sw { width: 14px; height: 14px; border-radius: 50%; display: block; }
     .ed-tools .sw-clear { background: #fff0f4; }
+    .ed-neon { gap: 8px; padding: 8px 10px; flex-wrap: wrap; max-width: min(720px, calc(100vw - 16px)); }
+    .ed-neon label { display: flex; align-items: center; gap: 6px; font: 11px/1 ui-monospace, Menlo, monospace; color: #bbb; letter-spacing: 0.04em; }
+    .ed-neon input { font: 14px/1.2 ui-sans-serif, system-ui, sans-serif; color: #fff; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.18); border-radius: 6px; padding: 6px 8px; width: 240px; }
+    .ed-neon button { font: 12px/1 ui-monospace, Menlo, monospace; min-width: 0; padding: 0 10px; border: 1px solid rgba(255,255,255,0.18); }
   `;
   document.head.appendChild(style);
 
@@ -65,6 +69,7 @@
     tick.classList.remove('go'); void tick.offsetWidth; // restart the draw
     if (ok) { tick.classList.add('go'); clearTimeout(tickT); tickT = setTimeout(() => tick.classList.remove('go'), 2600); }
   };
+  const dropFlag = () => { const u = new URL(location.href); if (u.searchParams.has('edit')) { u.searchParams.delete('edit'); history.replaceState(history.state, '', u); } };
   const paint = () => {
     const n = edits.size + pending.length;
     nEl.textContent = n ? `${n} change${n === 1 ? '' : 's'}` : '';
@@ -131,8 +136,51 @@
     commit();
   };
 
+  // --- neon signs (<neon-text dim bright>): the words live in attributes ---
+  const neonPanel = document.createElement('div');
+  neonPanel.className = 'ed-tools ed-neon';
+  neonPanel.setAttribute('data-ed-skip', '');
+  neonPanel.hidden = true;
+  neonPanel.innerHTML = `
+    <label>Small line <input data-n="dim" spellcheck="false"></label>
+    <label>Big line <input data-n="bright" spellcheck="false"></label>
+    <button data-n-ok title="Apply (Enter)">Apply</button><button data-n-x title="Cancel (Esc)">Cancel</button>`;
+  document.body.appendChild(neonPanel);
+  let neon = null, neonOrig = null;
+  const attrEsc = (v) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  const openNeon = (el) => {
+    if (live) commit();
+    neon = el; neonOrig = { dim: el.getAttribute('dim') ?? '', bright: el.getAttribute('bright') ?? '' };
+    neonPanel.querySelectorAll('input').forEach((i) => { i.value = neonOrig[i.dataset.n]; });
+    bar.hidden = false; neonPanel.hidden = false;
+    const r = el.getBoundingClientRect();
+    neonPanel.style.left = `${Math.max(8, Math.min(innerWidth - neonPanel.offsetWidth - 8, r.left + r.width / 2 - neonPanel.offsetWidth / 2))}px`;
+    neonPanel.style.top = `${Math.max(8, r.top - neonPanel.offsetHeight - 16)}px`;
+    neonPanel.querySelector('input[data-n="bright"]').focus();
+    say('editing the sign · Enter applies · Esc cancels');
+  };
+  const closeNeon = (apply) => {
+    if (!neon) return;
+    const beat = neon.closest('[data-beat]')?.dataset.beat ?? null;
+    for (const a of ['dim', 'bright']) {
+      const now = neon.getAttribute(a) ?? '';
+      if (!apply) { neon.setAttribute(a, neonOrig[a]); continue; }
+      if (now !== neonOrig[a]) pending.push({ kind: 'html', before: `${a}="${attrEsc(neonOrig[a])}"`, after: `${a}="${attrEsc(now)}"`, beat });
+    }
+    neon = null; neonPanel.hidden = true; paint();
+  };
+  neonPanel.addEventListener('input', (e) => { const i = e.target.closest('input'); if (i && neon) neon.setAttribute(i.dataset.n, i.value); });
+  neonPanel.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); e.stopImmediatePropagation(); closeNeon(true); }
+    else if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); closeNeon(false); }
+    e.stopPropagation(); // the deck must not read typing as arrow keys or shortcuts
+  }, true);
+  neonPanel.addEventListener('click', (e) => { if (e.target.closest('[data-n-ok]')) closeNeon(true); else if (e.target.closest('[data-n-x]')) closeNeon(false); });
+
   document.addEventListener('dblclick', (e) => {
     if (!(e.metaKey || e.ctrlKey)) return;
+    const sign = e.target.closest?.('neon-text');
+    if (sign && !e.target.closest('[data-ed-skip]')) { e.preventDefault(); openNeon(sign); return; }
     if (e.target.closest(SKIP) && !e.target.closest('.deck-notes-body')) return;
     const el = e.target.closest('.deck-notes-body') || e.target.closest(SEL);
     if (!el || (!snap.has(el) && !el.matches('.deck-notes-body'))) return say('that text is drawn at runtime; edit its source by hand');
@@ -173,10 +221,10 @@
 
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && !bar.hidden) { e.preventDefault(); commit(); return save(); }
-    if (e.key === 'Escape' && !live && !bar.hidden && !(edits.size + pending.length)) { bar.hidden = true; return; }
+    if (e.key === 'Escape' && !live && !neon && !bar.hidden && !(edits.size + pending.length)) { bar.hidden = true; dropFlag(); return; }
     if (!live) return;
     if ((e.metaKey || e.ctrlKey) && ['b', 'i', 'u'].includes(e.key.toLowerCase()) && !live.matches('.deck-notes-body')) { e.preventDefault(); e.stopImmediatePropagation(); fmt({ b: 'strong', i: 'em', u: 'hand-mark' }[e.key.toLowerCase()]); return; }
-    if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); revert(); if (!(edits.size + pending.length)) { bar.hidden = true; live?.blur(); getSelection().removeAllRanges(); } }
+    if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); revert(); if (!(edits.size + pending.length)) { bar.hidden = true; dropFlag(); live?.blur(); getSelection().removeAllRanges(); } }
     else if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.stopImmediatePropagation(); commit(); }
     else if (e.key === 'Enter' && e.shiftKey && !live.matches('.deck-notes-body')) { e.preventDefault(); document.execCommand('insertHTML', false, '<br>'); }
   }, true);
@@ -297,6 +345,7 @@
     if (edits.size + pending.length) return say('unsaved changes: Save or Discard first');
     tools.hidden = true;
     bar.hidden = true;
+    dropFlag();
     document.activeElement?.blur?.();
     getSelection().removeAllRanges();
   });
