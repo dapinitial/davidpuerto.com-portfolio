@@ -24,6 +24,8 @@ A second sample, same night, on the close: "even though I chose to leave Personn
 
 Notice the shape: a concession first ("even though I chose"), then the thing he kept ("I still had the vision, and held it close"), then the proof with a number ("hundreds of likes"), then the honest reason it waited ("the models had not matured"), then what the detour taught, as a list of plain nouns. That is how he tells a setback. Write setbacks that way.
 
+A third sample, on the method: "we're enabling moving fast to make decisions quickly, because in this landscape everything needs to work and look perfect, but getting them off the ground and into code while still making decisions is critical." His words for the method: enabling, moving fast, decisions, the landscape, off the ground, into code. He asked for the borrowed quotes from Claude's design leads to come off About; the point is made in his words instead.
+
 ## What every beat must say, in this order
 
 1. **What was going on.** Anchor it in time and in a room: "In 2020", "Back in the day", "Today". Who was stuck and on what.
