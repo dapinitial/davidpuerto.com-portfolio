@@ -353,6 +353,8 @@ if (isDeck) {
       beats.forEach((b, k) => b.classList.toggle('active', k === i));
       // a reel keeps playing after its slide has gone; stop every video that is not on the active slide
       beats.forEach((b, k) => { if (k !== i) b.querySelectorAll('video').forEach((v) => { if (!v.paused) v.pause(); }); });
+      // a background video that loops on its own (autoplay) starts over when its slide comes back; a reel waits for its play button
+      beats[i]?.querySelectorAll('video[autoplay]').forEach((v) => { v.currentTime = 0; v.play().catch(() => {}); });
       beats[i].scrollTop = 0;
       // a chapter opener may recolor the glow and the accent for the slides after it
       // the nearest opener at or before this slide owns the colour, so a jump
