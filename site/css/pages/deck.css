@@ -2107,3 +2107,8 @@ html.deck .deck-beat.cs-splash neon-text .bright {
     html.deck .deck-beat.ms-plain .ms-eyebrow { margin-bottom: 4px; }
   }
 }
+
+/* the deck tells the story in order; the list numbers belong to the long read */
+@layer page {
+  html.deck .deck-beat .ms-d-n, html.deck .deck-beat .ms-beat-n { display: none; }
+}
