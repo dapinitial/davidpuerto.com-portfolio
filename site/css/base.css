@@ -144,6 +144,15 @@
     animation-play-state: paused !important;
   }
 
+  /* Keyboard focus, everywhere: the coral ring. :focus-visible only, so a
+     mouse or trackpad click never shows it. Components with their own
+     focus style keep it (zero specificity here). */
+  :where(a, button, summary, [tabindex], iframe, video, area):focus-visible {
+    outline: 2px solid var(--color-primary, #fb836d);
+    outline-offset: 3px;
+  }
+  main:focus { outline: none; } /* the skip link's landing spot is not a control */
+
   /* Visually hidden, accessible to screen readers */
   .sr-only {
     border-width: 0;

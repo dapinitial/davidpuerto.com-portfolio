@@ -1,6 +1,5 @@
 // Contact page: the locator (live Pacific clock, decoded coordinates) and the
 // form submission to /api/contact.
-import './elements/rain-fall.js';
 import { track } from './lib/analytics.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;

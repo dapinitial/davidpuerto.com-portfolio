@@ -94,3 +94,8 @@ neon-text .short-out {
   45% { opacity: 0.2; }
   46% { opacity: 0.9; }
 }
+
+/* reduced motion: the sign stays lit, no flicker or hum */
+@media (prefers-reduced-motion: reduce) {
+  neon-text, neon-text * { animation: none !important; }
+}

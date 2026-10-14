@@ -51,6 +51,17 @@ class NeonText extends HTMLElement {
 
     let i = 0;
     const count = (t) => [...t.replaceAll('<br />', '')].filter((c) => c !== ' ').length;
+    // one letter per span reads letter by letter; the sign reads as its words
+    // the hero sign (first thing in <main>) is the page's title, so it is the h1
+    const clean = (t) => t.replaceAll('<br />', ' ').replace(/\s+/g, ' ').trim();
+    const words = [clean(bright), clean(dim)].filter(Boolean).join(': ');
+    const main = this.closest('main');
+    const hero = !!main && (!!this.closest('.cs-hero, [data-beat="1"]') || main.firstElementChild?.contains(this)) && !this.closest('h1, h2, h3, h4, h5, h6');
+    if (words) {
+      this.setAttribute('role', hero ? 'heading' : 'img');
+      if (hero) this.setAttribute('aria-level', '1');
+      this.setAttribute('aria-label', words);
+    }
     this.innerHTML = `
       <span class="dim">${letters(dim, i)}</span>
       <span class="bright">${letters(bright, (i = count(dim)))}</span>`;
@@ -65,6 +76,7 @@ class NeonText extends HTMLElement {
     };
 
     shortOut();
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; // a steady sign
     this.#interval = setInterval(shortOut, 3500);
   }
 }

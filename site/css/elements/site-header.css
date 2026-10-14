@@ -27,6 +27,32 @@ site-header .site-chrome {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
+/* ---------- Skip link: off screen until a keyboard reaches it ---------- */
+site-header .skip-link {
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  translate: -50% -200%;
+  z-index: 1003;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #0e0c0d;
+  color: #fff0f4;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid var(--color-primary, #fb836d);
+}
+site-header .skip-link:focus-visible { translate: -50% 0; }
+
+/* ---------- Keyboard focus: the coral ring, never for a mouse click ---------- */
+site-header .logo:focus-visible,
+site-header .hamburger:focus-visible,
+site-header .logout:focus-visible {
+  outline: 2px solid var(--color-primary, #fb836d);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
 /* ---------- Logo ---------- */
 site-header .logo {
   cursor: pointer;
@@ -141,7 +167,8 @@ site-header .logo:focus-visible .logo-shape.is-back { animation: back-nudge 0.6s
 @keyframes back-nudge { 0%, 100% { translate: 0 0; } 50% { translate: -3px 0; } }
 @media (prefers-reduced-motion: reduce) {
   site-header .hamburger span { transition: none; }
-  site-header .logo:hover .logo-shape.is-back { animation: none; }
+  site-header .logo:hover .logo-shape.is-back,
+  site-header .logo:focus-visible .logo-shape.is-back { animation: none; }
 }
 
 /* ---------- Overlay nav ---------- */

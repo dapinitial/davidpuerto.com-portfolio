@@ -51,6 +51,7 @@ if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const moreInfo = document.querySelector('.more-info .column');
   if (moreInfo) {
     const splitText = new SplitText(moreInfo, { type: 'words, chars' });
+    moreInfo.setAttribute('role', 'group'); // SplitText labels the block with its text; a plain div may not carry a label
     gsap.fromTo(
       splitText.chars,
       { opacity: 0.2 },

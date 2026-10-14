@@ -55,3 +55,7 @@
   50% { opacity: 0; top: 25px; }
   100% { opacity: 0; top: 15px; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-down *, .scroll-down::before, .scroll-down::after { animation: none !important; }
+}

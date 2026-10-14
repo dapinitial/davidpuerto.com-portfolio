@@ -17,7 +17,7 @@ class ClippedImage extends HTMLElement {
             ${image ? `<img src="${image}" alt="" />` : ''}
             ${
               video
-                ? `<div class="ci-video"><video autoplay loop muted playsinline>
+                ? `<div class="ci-video" aria-hidden="true"><video ${matchMedia('(prefers-reduced-motion: reduce)').matches ? 'preload="auto"' : 'autoplay'} loop muted playsinline>
                      <source src="${video}" type="video/mp4" /></video></div>`
                 : ''
             }

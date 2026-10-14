@@ -32,7 +32,9 @@ class ScrollProgress extends HTMLElement {
 
     const onScroll = () => {
       const height = document.documentElement.scrollHeight - window.innerHeight;
-      wrap.classList.toggle('visible', window.scrollY > 50);
+      const shown = window.scrollY > 50;
+      wrap.classList.toggle('visible', shown);
+      wrap.tabIndex = shown ? 0 : -1; // not a Tab stop while it is invisible
       if (height > 0) {
         path.style.strokeDashoffset = pathLength - (window.scrollY * pathLength) / height;
       }
