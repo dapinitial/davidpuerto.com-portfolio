@@ -48,6 +48,8 @@ if (isDeck) {
   );
   // a long paragraph reads better ragged-right than centered: mark it
   all.forEach((b) => b.querySelectorAll('p:not(.read-only)').forEach((p) => { if (p.textContent.trim().length > 320) p.classList.add('deck-long'); }));
+  // the next-study link keeps the mode you are presenting in (?talk=1 or ?deck=1)
+  document.querySelectorAll('a.deck-next').forEach((a) => { a.href = a.getAttribute('href') + location.search; });
   const beats = TALK && all.some((b) => b.hasAttribute('data-talk')) ? all.filter((b) => b.hasAttribute('data-talk')) : all;
   if (TALK) root.classList.add('talk');
 
