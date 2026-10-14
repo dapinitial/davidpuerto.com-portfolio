@@ -316,7 +316,76 @@ def companion_refusal():
     w.t(700, 506, 'Anyone can change it. The gate stands between them and production.', 's')
     return w.svg()
 
+
+
+# ---------- About: the through-line as a timeline
+def through_line():
+    w = W(1100, 360, 'A timeline from Flash to the factory: five stations, each carrying more of the decision')
+    xs = [60, 290, 520, 750, 980]
+    labels = [('Flash', '2007', 'designers should code'), ('Preview Sites', '2020', 'a prototype as the first draft'),
+              ('Design systems', '2021', 'one language, cleared once'), ('Trust', '2025', 'nothing renders unreconciled'),
+              ('Factories', '2026', 'governance held in tests')]
+    w.st(0).line(60, 150, 980, 150)
+    for k, (x, (name, yr, line)) in enumerate(zip(xs, labels)):
+        w.st(1 + k)
+        w.dot(x, 150, 7, 'lit' if k == 4 else '')
+        w.box(x - 95, 60, 190, 62, 'lit' if k == 4 else '', r=10)
+        w.t(x, 86, name, 't', anchor='middle'); w.t(x, 108, yr, 's', anchor='middle')
+        w.t(x, 190, line, 's', anchor='middle')
+    w.st(6)
+    for k, x in enumerate(xs):
+        w.box(x - 14, 300 - 16 * (k + 1), 28, 16 * (k + 1), 'lit' if k == 4 else 'dim', r=3)
+    w.line(40, 300.5, 1000, 300.5, 'thin')
+    w.t(60, 338, 'how much of the decision the tool carried', 'cap')
+    w.t(980, 338, 'the person decides; the tool holds the standard', 'cap', anchor='end')
+    return w.svg()
+
+
+# ---------- About: what a late decision costs
+def decision_cost():
+    w = W(1100, 360, 'The cost of changing a decision rises with time; a prototype in code moves the decision to the cheap end')
+    w.st(0).line(80, 300, 1040, 300); w.line(80, 300, 80, 40)
+    w.t(80, 330, 'idea', 's'); w.t(360, 330, 'mock', 's', anchor='middle'); w.t(640, 330, 'sprint', 's', anchor='middle'); w.t(1000, 330, 'production', 's', anchor='end')
+    w.t(60, 40, 'cost to change', 's', anchor='end', size=12)
+    w.st(1).plot(80, 60, 960, 240, [0.02, 0.03, 0.05, 0.08, 0.12, 0.18, 0.27, 0.4, 0.58, 0.8, 1.0], 'plot')
+    w.st(2).dot(272, 300 - 240 * 0.05, 7, 'lit'); w.t(272, 260, 'decide here', 't', anchor='middle'); w.t(272, 280, 'a signed-in preview, real data shapes', 's', anchor='middle')
+    w.st(3).dot(848, 300 - 240 * 0.58, 7, 'warn'); w.t(848, 110, 'the same decision, re-made later', 'w', anchor='middle'); w.t(848, 130, 'by whoever is next', 's', anchor='middle')
+    w.st(4).path('M 300 200 C 420 200, 700 200, 836 166', 'thin'); w.t(560, 190, 'the argument is had once, against the artifact', 's', anchor='middle')
+    return w.svg()
+
+
+# ---------- About: the method as a loop
+def method_loop():
+    w = W(1100, 420, 'The method as a loop: who decides, ask, prototype, argue, write it down, hand off, mark the route')
+    steps = ['Start with the people who have to decide', 'Ask the questions', 'Prototype in the medium it will ship in', 'Let the room argue with the thing',
+             'Write the judgment down', 'Hand off a thing, not a recommendation', 'Leave the route marked']
+    top = [(20, 60), (290, 60), (560, 60), (830, 60)]; bot = [(830, 260), (560, 260), (290, 260)]
+    pos = top + bot
+    for k, ((x, y), label) in enumerate(zip(pos, steps)):
+        w.st(k); w.box(x, y, 250, 90, 'lit' if k in (2, 4) else '', r=12)
+        words = label.split(' '); mid = len(words) // 2 + (1 if len(words) > 5 else 0)
+        w.t(x + 125, y + 40, ' '.join(words[:mid]), 't', anchor='middle', size=15); w.t(x + 125, y + 62, ' '.join(words[mid:]), 't', anchor='middle', size=15)
+        w.t(x + 14, y + 20, f'0{k+1}', 'm', size=11)
+    w.st(7)
+    for (x, y) in top[:-1]: w.line(x + 250, y + 45, x + 270, y + 45)
+    w.line(955, 150, 955, 260)
+    for (x, y) in bot[:-1]: w.line(x, y + 45, x - 20, y + 45)
+    w.path('M 290 305 H 145 V 150', 'thin')
+    w.t(145, 180, 'the next decision', 's', anchor='middle', size=12)
+    w.t(20, 400, 'The same loop at Microsoft and at Apple; the tools changed, the order did not.', 'cap')
+    return w.svg()
+
+
 FIGS = {
+ 'through-line': dict(fn=through_line, eyebrow='The through-line', title='The through-line, drawn',
+   cap='Five stations, one idea. Each tool carried more of the decision than the last; the person still decides, and the tool holds the standard.',
+   notes='The sentence as a picture. Flash, designers should code. 2020, the Preview Sites, a prototype as the first draft. 2021, the design system, one language cleared once. 2025, trust: nothing renders unreconciled. 2026, the factory, governance held in tests. The bars underneath are how much of the decision the tool carried. The last one is the job.'),
+ 'decision-cost': dict(fn=decision_cost, eyebrow='Design is a decision about someone else\'s time', title='What a late decision costs',
+   cap='The cost of changing a decision climbs toward production. A signed-in preview on real data shapes moves the decision to the cheap end, and the argument is had once, against the artifact.',
+   notes='The curve every studio knows and few draw. Cost to change rises toward production. A mock sits early but decides little. A signed-in preview on real data shapes lets the room decide at the cheap end, once. The amber dot is the same decision re-made later by whoever is next, which is the Microsoft 2026 problem in one picture.'),
+ 'method-loop': dict(fn=method_loop, eyebrow='How I work', title='The method, as a loop',
+   cap='Seven steps, in order, and back to the start for the next decision. The two lit boxes are where the work actually happens: the prototype, and writing the judgment down.',
+   notes='How I work, in one picture, so the next seven slides can go fast or be skipped. Who decides. Ask the questions. Prototype in the medium it will ship in. Let the room argue with the thing. Write the judgment down. Hand off a thing, not a recommendation. Leave the route marked. Then the next decision. The two lit steps are where the time goes.'),
  'apple-before-after': dict(fn=apple_before_after, eyebrow='Before and after', title='Before and after: fourteen dashboards, one surface',
    cap='Before: fourteen dashboards, each its own log-in, fed by thousands of hand-tuned slides a week. After: one surface every chart rebuilt into, reconciled at the source, that forty-plus teams compose from. Drawn from memory.',
    notes='Before and after, before any backstory. Left: fourteen dashboards, fourteen log-ins, thousands of slides a week assembled by hand, numbers nobody could check. Right: one surface, every chart rebuilt one to one and reconciled at the source. Twelve hours became twenty minutes, every error was caught before it rendered, forty-plus teams run it without me. The rest of the deck is how.'),
@@ -342,7 +411,8 @@ FIGS = {
 
 def block(key, beat, over=None):
     f = dict(FIGS[key]); f.update(over or {})
-    return (f'\n        <div class="ms-figure-beat" data-beat="{beat}" data-wf="{key}" data-stage="rising" data-title="{f["title"]}" data-notes="{html.escape(f["notes"], quote=True)}">\n'
+    talk = ' data-talk' if f.get('talk') else ''
+    return (f'\n        <div class="ms-figure-beat" data-beat="{beat}"{talk} data-wf="{key}" data-stage="rising" data-title="{f["title"]}" data-notes="{html.escape(f["notes"], quote=True)}">\n'
             f'          <p class="ms-eyebrow">{f["eyebrow"]}</p>\n'
             f'          <figure class="ms-figure wf" aria-label="{html.escape(f["title"])}">\n'
             + f['fn']() + '\n'
@@ -375,11 +445,9 @@ def insert(path, placements):
     print(path, 'ok', [p[2] for p in placements])
 
 if __name__ == '__main__':
-    insert(ROOT + 'case-studies/apple/index.html', [
-        ('apple-before-after', '1', '1.5'), ('one-surface', '7.05', '7.1'), ('ingest-review', '9', '9.1'),
-        ('quarantine', '10.05', '10.1'), ('composer-room', '13.05', '13.1')])
-    insert(ROOT + 'case-studies/microsoft/index.html', [
-        ('preview-card', '1', '1.5', dict(eyebrow='Before and after', title='Before and after: a preview by hand, a card from the factory', notes='Before and after, before any backstory. Left, 2020: a preview site a person built, one at a time. Right, 2026: the card the factory made from its archive, with the tokens from the Playbook, seven checks on every build, drift named after every deploy, the story on the board. The rest of the deck is how one became the other, and in a few minutes we build one live.')), ('preview-card', '13', '13.1'), ('companion', '17', '17.5')])
-    insert(ROOT + 'case-studies/review/index.html', [
-        ('apple-before-after', '6', '6.2'), ('preview-card', '22', '22.2', dict(eyebrow='Before and after', title='Before and after: a preview by hand, a card from the factory', notes='Before and after, before any backstory. Left, 2020: a preview site a person built, one at a time. Right, 2026: the card the factory made from its archive, with the tokens from the Playbook, seven checks on every build, drift named after every deploy, the story on the board. The rest of the deck is how one became the other, and in a few minutes we build one live.')), ('one-surface', '10', '10.1'), ('ingest-review', '11', '11.1'), ('quarantine', '12', '12.1'),
-        ('composer-room', '17', '17.1'), ('preview-card', '38', '38.1'), ('companion', '40', '40.5')])
+    page = sys.argv[1] if len(sys.argv) > 1 else ''
+    if page == 'about':
+        insert(ROOT + 'about-me/index.html', [
+            ('through-line', '3.5', '3.6', dict(talk=True)), ('decision-cost', '6', '6.02'), ('method-loop', '6.05', '6.08', dict(talk=True))])
+    else:
+        print('usage: wireframes.py about   (the case-study placements were hand-tuned after generation; re-running them would undo David\'s captions and moved beats)')
