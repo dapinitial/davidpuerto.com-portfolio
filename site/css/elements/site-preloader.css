@@ -92,3 +92,16 @@ site-preloader .loading-text {
     margin-right: 32px;
   }
 }
+
+/* the percentage wears the brand sheen: the same coral-to-peach gradient as
+   "before it exists" on About */
+site-preloader .percentage {
+  background: linear-gradient(100deg, #fb836d 0%, #ffd2c4 22%, #fb836d 44%, #e0573f 66%, #ffb39f 88%, #fb836d 100%) 0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #fb836d;
+  animation: preloader-sheen 2.4s ease-in-out infinite;
+}
+@keyframes preloader-sheen { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
+@media (prefers-reduced-motion: reduce) { site-preloader .percentage { animation: none; } }
