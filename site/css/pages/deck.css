@@ -414,6 +414,78 @@
     color: #fff0f4;
   }
 
+  html.deck .deck-beat.ms-read .ms-leverage {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+
+  /* the hard questions: a label column and the answer, one row each */
+  html.deck .deck-beat.ms-qa-beat .ms-qa-eyebrow {
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #9a9499;
+    margin: 0 0 10px;
+  }
+
+  html.deck .deck-beat.ms-qa-beat .ms-qa-lead {
+    color: #fff0f4;
+    max-width: 62ch;
+  }
+
+  html.deck .deck-beat.ms-qa-beat h2 { margin-bottom: 12px; }
+
+  /* one column of copy; the answers make their own two columns */
+  html.deck .deck-beat.ms-qa-beat .deck-copy { columns: auto !important; display: block !important; }
+  html.deck .deck-beat.ms-qa-beat .deck-copy > p.ms-qa-lead { font-size: clamp(17px, 1.2vw, 21px); margin-bottom: 14px; }
+
+  html.deck .deck-beat.ms-qa-beat .ms-qa {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(24px, 3vw, 48px);
+    row-gap: 0;
+    width: 100%;
+  }
+
+  html.deck .deck-beat.ms-qa-beat .ms-qa > div {
+    padding: 10px 0 12px;
+    border-top: 1px solid rgba(255, 240, 244, 0.12);
+  }
+
+  html.deck .deck-beat.ms-qa-beat .ms-qa dt {
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cs-accent, #fb836d);
+    margin: 0 0 4px;
+  }
+
+  html.deck .deck-beat.ms-qa-beat .ms-qa dd {
+    margin: 0;
+    color: #c9c2c6;
+    font-weight: 300;
+    font-size: clamp(14px, 1.02vw, 16.5px);
+    line-height: 1.42;
+  }
+
+  @media (max-width: 700px) {
+    html.deck .deck-beat.ms-qa-beat .ms-qa { grid-template-columns: 1fr; }
+  }
+
+  html.deck .deck-beat.ms-read .ms-leverage li {
+    color: #c9c2c6;
+    font-weight: 300;
+    line-height: 1.5;
+    padding-left: 16px;
+    border-left: 2px solid color-mix(in srgb, var(--cs-accent, #fb836d) 55%, transparent);
+  }
+
   html.deck .deck-beat .ms-lead-top {
     display: grid;
     gap: 28px;
