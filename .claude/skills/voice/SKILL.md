@@ -49,7 +49,7 @@ Say the problem before the solution. A slide that is only a mood or only a metap
 - Captions that read "Left, ... Right, ...". Write the sentence.
 - A paragraph that ends on an aphorism for effect ("Nothing hand-built."). If the point is real, say what it means ("so we don't wait days or weeks").
 - Colon-stacked lists in running copy.
-- Buzzwords and borrowed grandeur: seamless, empower, enable, ecosystem, at scale, north star, journey, unlock, delight, "judgment held in tests" and similar coinages of mine. If David has not said it, it is suspect. ("Leverage", "bootstrap" and "governance" are his words; they stay.)
+- Buzzwords and borrowed grandeur: seamless, empower, enable, ecosystem, at scale, north star, journey, unlock, delight, "judgment held in tests" and similar coinages of mine. If David has not said it, it is suspect. ("Leverage", "bootstrap" and "governance" are his words; they stay. He kept "Design is a decision about someone else's time, made visible early enough to be cheap to change" as the About splash on Oct 13 2026; it stays.)
 - Metaphor said out loud in lines I write. The pawn, the rook, the knight are pictures. David kept one pawn line of his own ("often leads the way with the opening"); his call, not mine to extend.
 - A number buried in a clause. Give it its own sentence.
 - Em-dashes, always. Apple in past tense. No internal codenames or hostnames.
