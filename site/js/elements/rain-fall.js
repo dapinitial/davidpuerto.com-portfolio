@@ -22,6 +22,8 @@ class RainFall extends HTMLElement {
   }
 
   #tick = (timestamp) => {
+    const beat = this.closest('.deck-beat');
+    if (beat && !beat.classList.contains('active')) { this.#raf = requestAnimationFrame(this.#tick); return; }
     const interval = 300 + Math.random() * 300;
     if (this.childElementCount < this.maxDrips && timestamp - this.#lastDrip > interval) {
       const drip = document.createElement('div');

@@ -2117,3 +2117,19 @@ html.deck .deck-beat.cs-splash neon-text .bright {
 @layer page {
   html.deck .deck-beat p.deck-long { text-align: left; max-width: 62ch; margin-inline: auto; }
 }
+
+/* ---------- performance ----------
+   Slides that are not on screen pause their CSS animations (rain, sheens,
+   loops); slides hold their GPU layers only while a scroll is in flight. */
+@layer page {
+  html.deck .deck-beat:not(.active),
+  html.deck .deck-beat:not(.active) * { animation-play-state: paused !important; }
+  html.deck.is-scrolling .deck-beat { will-change: transform, opacity; }
+}
+
+/* the longest paragraphs set a step smaller so a full spoken paragraph fits one screen */
+@layer page {
+  html.deck .deck-beat.deck-beat p.deck-long.deck-long,
+  html.deck .deck-beat.ms-read .deck-copy > p.deck-long.deck-long { font-size: clamp(16px, 1.08vw, 20px) !important; line-height: 1.5; }
+  html.deck .deck-beat:has(p.deck-long) h2 { font-size: clamp(28px, 2.6vw, 44px) !important; }
+}

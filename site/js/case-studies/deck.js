@@ -387,7 +387,7 @@ if (isDeck) {
       const blurEls = b.querySelectorAll(
         isSafari
           ? 'h1, h2, .ms-taught, .ms-close, .ms-stats b, .ms-beat-n'
-          : 'h1, h2, .ms-taught, .ms-close, .ms-stats b, .ms-beat-n, img, video',
+          : 'h1, h2, .ms-taught, .ms-close, .ms-stats b, .ms-beat-n',
       );
       const inTl = gsap.timeline({
         defaults: { ease: EASE },
@@ -406,6 +406,16 @@ if (isDeck) {
       if (arts[i]) outTl.fromTo(arts[i], { autoAlpha: 1 }, { autoAlpha: 0, immediateRender: false }, 0);
       if (blurEls.length) outTl.fromTo(blurEls, { filter: 'blur(0px)' }, { filter: 'blur(32px)', immediateRender: false }, 0);
     });
+
+    // --- steady layers while scrolling (see home.js blink guard) ----------
+    let settleT = 0;
+    const settled = () => root.classList.remove('is-scrolling');
+    window.addEventListener('scroll', () => {
+      if (!root.classList.contains('is-scrolling')) root.classList.add('is-scrolling');
+      clearTimeout(settleT);
+      settleT = setTimeout(settled, 220);
+    }, { passive: true });
+    window.addEventListener('scrollend', () => { clearTimeout(settleT); settleT = setTimeout(settled, 60); });
 
     // --- navigation: only ever a scroll to a slot --------------------------
     const go = (i, instant = false) => {

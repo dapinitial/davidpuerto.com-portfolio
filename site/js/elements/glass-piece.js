@@ -202,6 +202,10 @@ class GlassPiece extends HTMLElement {
           if (skip) return; // 30 fps on Safari is plenty for a slow drift
         }
         if (!visible) return;
+        // in deck mode every slide is a fixed layer that 'intersects' the viewport
+        // even while hidden; only the active slide's piece is worth a frame
+        const beat = this.closest('.deck-beat');
+        if (beat && !beat.classList.contains('active')) return;
         pivot.rotation.y += 0.05 * (target.y - pivot.rotation.y);
         pivot.rotation.x += 0.05 * (target.x - pivot.rotation.x);
         pivot.rotation.z = Math.sin(performance.now() * 0.0003) * 0.03;
