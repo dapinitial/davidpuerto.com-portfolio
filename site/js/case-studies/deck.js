@@ -42,7 +42,8 @@ if (isDeck) {
   ScrollTrigger.getAll().forEach((t) => t.kill());
 
   const main = document.querySelector('main');
-  const all = [...document.querySelectorAll('[data-beat]')].sort(
+  // a beat marked read-only belongs to the long read; the deck skips it
+  const all = [...document.querySelectorAll('[data-beat]')].filter((b) => !b.classList.contains('read-only')).sort(
     (a, b) => Number(a.dataset.beat) - Number(b.dataset.beat),
   );
   const beats = TALK && all.some((b) => b.hasAttribute('data-talk')) ? all.filter((b) => b.hasAttribute('data-talk')) : all;
