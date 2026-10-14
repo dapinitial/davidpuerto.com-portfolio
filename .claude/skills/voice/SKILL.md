@@ -20,6 +20,10 @@ Said in chat on Oct 13 2026, unedited: "I've been building in Flash and now I UX
 
 That is the arc and the vocabulary: Flash, UX Engineer, prototyping, Preview Sites, design systems, factories, cloud services, boilerplate in isolation, component governance, leverage, bootstrap, design language, skills. When a slide needs the big picture, it is this sentence, not a coinage.
 
+A second sample, same night, on the close: "even though I chose to leave Personnel to embrace the growth mindset, I still had the vision, and held it close. I was trying to galvanize support and had hundreds of likes on my hackathon project submission about the creation of a factory like this, but the models had not matured to where they are now back then. But I learned about component governance and what production required and meant at Microsoft: on calls, maintaining and planning, building, supporting, everything, and how hacks and internal infrastructure around JIT and MSAL impacted everything we did as Sovereign Clouds."
+
+Notice the shape: a concession first ("even though I chose"), then the thing he kept ("I still had the vision, and held it close"), then the proof with a number ("hundreds of likes"), then the honest reason it waited ("the models had not matured"), then what the detour taught, as a list of plain nouns. That is how he tells a setback. Write setbacks that way.
+
 ## What every beat must say, in this order
 
 1. **What was going on.** Anchor it in time and in a room: "In 2020", "Back in the day", "Today". Who was stuck and on what.
