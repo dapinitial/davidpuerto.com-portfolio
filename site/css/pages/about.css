@@ -91,8 +91,10 @@
     -webkit-text-fill-color: transparent; color: #fb836d;
     text-shadow: none;
     filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.8));
-    animation: about-mask-sheen 9s ease-in-out infinite;
+    /* one sweep on arrival, then it holds: a looping sheen repainted the text
+       and its shadow on every frame, forever (the page's biggest idle cost) */
+    animation: about-mask-sheen 3.2s ease-in-out 0.4s 1 both;
   }
-  @keyframes about-mask-sheen { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
+  @keyframes about-mask-sheen { from { background-position: 100% 0; } to { background-position: 0% 0; } }
   @media (prefers-reduced-motion: reduce) { .about-hero .text-mask { animation: none; } }
 }
