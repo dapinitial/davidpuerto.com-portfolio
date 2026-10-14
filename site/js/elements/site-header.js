@@ -2,6 +2,8 @@
 // with case-studies submenu, and a Logout button when authenticated.
 // Light DOM, zero dependencies. Pair with css/elements/site-header.css.
 
+import { sprayHover } from './spray-hover.js';
+
 const LOGO_PATH =
   'M17.7762223,0 C22.0993405,1.05095417 26,3.22401634 26,8.83692672 C26,14.4498371 21.4058992,19 15.7387888,19 L0,19 L3.40465506,15.304337 L15.7387888,15.304337 C19.3451318,15.304337 22.2686505,12.4087788 22.2686505,8.83692672 C22.2686505,5.26507465 18.569846,3.41487829 14.963503,3.41487829 L17.7762223,0 Z';
 
@@ -82,6 +84,7 @@ class SiteHeader extends HTMLElement {
 
     on(hamburger, 'click', () => setOpen(!this.classList.contains('open')));
     on(this.querySelector('.submenu-toggle'), 'click', () => showSub(true));
+    sprayHover(this, signal);
     on(logo, 'click', (e) => {
       if (!subMenu.hidden) {
         e.preventDefault();

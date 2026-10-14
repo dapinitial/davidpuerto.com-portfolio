@@ -310,3 +310,32 @@ site-header .logout:hover,
 body.light-content:not(.menu-open) site-header .logout:hover {
   color: #fb836d;
 }
+
+/* spray-paint hover (js/elements/spray-hover.js): the paint lives on the list,
+   behind the rows, so the row's own clip never cuts it; the hover face turns
+   black so the word reads as cut out of the paint */
+site-header .menu { position: relative; }
+site-header .menu li { position: relative; z-index: 1; }
+site-header .menu > .spray {
+  position: absolute;
+  left: 50%;
+  translate: -50% 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+  transition: opacity 0.35s ease;
+}
+site-header .menu > .spray.out { opacity: 0; }
+site-header .menu li a::after,
+site-header .menu li .submenu-toggle::after {
+  background: none;
+  -webkit-text-fill-color: #0b0b0b;
+  color: #0b0b0b;
+  /* Mona-Sans Wide ships only 200 and 900 here, so 400 falls back to 200.
+     A thin stroke thickens the ultralight letters without jumping to black. */
+  -webkit-text-stroke: 0.028em #0b0b0b;
+  /* a soft peach halo lifts the black letters off the paint, and off the black
+     page where a stroke wanders below them */
+  text-shadow: 0 0 10px rgba(255, 214, 200, 0.55), 0 0 2px rgba(255, 214, 200, 0.6);
+}
+@keyframes spray-draw { to { stroke-dashoffset: 0; } }
