@@ -28,12 +28,14 @@ A third sample, on the method: "we're enabling moving fast to make decisions qui
 
 ## What every beat must say, in this order
 
-1. **What was going on.** Anchor it in time and in a room: "In 2020", "Back in the day", "Today". Who was stuck and on what.
-2. **What I actually did.** Verbs with named objects. The real names of the things: Playbook, Preview Sites, tokens, routes, tests, ADO stories, the gate, the Companion. Not "a system", not "a practice".
-3. **What changed.** A number, or the person who moved, or the wait that went away ("so we don't wait days or weeks for decisions that can be made in near real-time").
-4. **What it taught**, only on the beats built for it.
+David's own frame, Oct 13 2026: the story shows "what I was doing, where I was going, the pitfalls and problems encountered, and how I mitigated and provided solutions along the way." Every beat is one turn of that:
 
-Say the problem before the solution. A slide that is only a mood or only a metaphor is not a beat. The chess pieces stay in the pictures; he does not say them aloud.
+1. **What I was doing, and where I was going.** Anchor it in time and in a room: "In 2020", "Back in the day", "Week 40, 2023". The intent matters as much as the activity: scale the Preview Sites, remove the dependence on Tableau.
+2. **The pitfall.** What broke, drifted, got re-orged, took twelve hours, was believed to be rounding errors. Say it plainly; it is the most credible sentence on the slide.
+3. **How I mitigated it, and the solution I provided.** Verbs with named objects. The real names of the things: Playbook, Preview Sites, tokens, routes, tests, ADO stories, Project Studio, the ingestion engine, the forensic agents, the gate, the Companion. Not "a system", not "a practice".
+4. **What changed.** A number, or the person who moved, or the wait that went away, or what it taught, when the beat is built for it.
+
+Say the problem before the solution. A slide that is only a mood or only a metaphor is not a beat. The chess pieces stay in the pictures; he does not say them aloud. Across the whole deck the same four turns repeat at the chapter scale: Flash to the Preview Sites, the re-orgs and the engineering seat, Apple and trust, the factory and unfinished business.
 
 ## How he writes, from his rewrites
 
