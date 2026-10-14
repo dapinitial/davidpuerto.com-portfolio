@@ -428,7 +428,7 @@ def block_end(s, start):
 
 def insert(path, placements):
     s = open(path).read()
-    s = re.sub(r'\n\s*<div class="ms-figure-beat" data-beat="[0-9.]+" data-wf="[^"]+".*?</figure>\s*</div>\n', '\n', s, flags=re.S)
+    s = re.sub(r'\n\s*<div class="ms-figure-beat" data-beat="[0-9.]+"(?: data-talk)? data-wf="(?:%s)".*?</figure>\s*</div>\n' % '|'.join(re.escape(p[0]) for p in placements), '\n', s, flags=re.S)
     for key, anchor, beat, *rest in placements:
         m = re.search(r'<[a-zA-Z0-9-]+[^>]*\sdata-beat="%s"' % re.escape(anchor), s)
         if not m: raise SystemExit(f'{path}: anchor {anchor} not found')
