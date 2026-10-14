@@ -480,6 +480,12 @@
   /* No will-change here on purpose: a persistent layer hint makes the browser
      cache the soft mid-animation raster — edges stay smudgy at rest. Without
      it, everything re-rasterizes crisp the moment motion stops. */
+  /* Layers held steady only while a gesture is in flight (see home.js blink
+     guard). Removed at rest so the image re-rasterizes crisp at scale 1. */
+  html.is-enhanced.is-scrolling .content {
+    will-change: transform, opacity;
+  }
+
   html.is-enhanced .content {
     overflow: hidden;
     position: fixed;
