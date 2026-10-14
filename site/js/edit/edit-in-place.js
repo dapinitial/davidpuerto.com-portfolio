@@ -110,7 +110,8 @@
     }
     const before = edits.get(el)?.before ?? snap.get(el);
     const after = ser(el);
-    if (after === before) { edits.delete(el); el.classList.remove('ed-dirty'); }
+    const norm = (h) => { const t = document.createElement('template'); t.innerHTML = h ?? ''; return t.innerHTML.replace(/\s+/g, ' ').trim(); };
+    if (after === before || norm(after) === norm(snap.get(el))) { edits.delete(el); el.classList.remove('ed-dirty'); }
     else {
       // the ancestors' original markup, nearest first: when the same words sit
       // in two places, the first ancestor that is unique in the file decides
@@ -172,9 +173,10 @@
 
   document.addEventListener('keydown', (e) => {
     if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && !bar.hidden) { e.preventDefault(); commit(); return save(); }
+    if (e.key === 'Escape' && !live && !bar.hidden && !(edits.size + pending.length)) { bar.hidden = true; return; }
     if (!live) return;
     if ((e.metaKey || e.ctrlKey) && ['b', 'i', 'u'].includes(e.key.toLowerCase()) && !live.matches('.deck-notes-body')) { e.preventDefault(); e.stopImmediatePropagation(); fmt({ b: 'strong', i: 'em', u: 'hand-mark' }[e.key.toLowerCase()]); return; }
-    if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); revert(); }
+    if (e.key === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); revert(); if (!(edits.size + pending.length)) { bar.hidden = true; live?.blur(); getSelection().removeAllRanges(); } }
     else if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); e.stopImmediatePropagation(); commit(); }
     else if (e.key === 'Enter' && e.shiftKey && !live.matches('.deck-notes-body')) { e.preventDefault(); document.execCommand('insertHTML', false, '<br>'); }
   }, true);
@@ -293,7 +295,10 @@
   bar.querySelector('.ed-exit').addEventListener('click', () => {
     commit();
     if (edits.size + pending.length) return say('unsaved changes: Save or Discard first');
+    tools.hidden = true;
     bar.hidden = true;
+    document.activeElement?.blur?.();
+    getSelection().removeAllRanges();
   });
   window.addEventListener('beforeunload', (e) => { if (edits.size + pending.length) e.preventDefault(); });
   paint();
