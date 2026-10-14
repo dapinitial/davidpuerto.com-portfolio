@@ -158,3 +158,13 @@ accordion-list dt.active .button-icon i {
   background: rgba(255, 255, 255, 1);
   color: #000;
 }
+
+/* refresh: room to breathe on the big titles, clear of the round button */
+accordion-list[bigger] dt {
+  font-size: clamp(26px, 1rem + 1.6vw, 44px);
+  line-height: 1.12;
+  padding: 28px 84px 28px 0;
+  letter-spacing: -0.01em;
+}
+accordion-list[bigger] dd { font-size: 18px; line-height: 1.6; }
+accordion-list[bigger] dd.show { padding-bottom: 24px; }

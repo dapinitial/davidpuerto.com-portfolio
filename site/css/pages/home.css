@@ -583,3 +583,16 @@
     background: color-mix(in srgb, var(--color-highlight) 18%, transparent);
   }
 }
+
+/* the section images end above the fold: their height is capped at the room
+   left below their top edge, so the bottom of the devices is never clipped */
+@layer page {
+  @media (min-width: 64rem) {
+    .text img {
+      height: min(920px, 94cqh, calc(100cqh - (var(--image-top) - 2 * var(--spacing) + var(--image-nudge)) - 24px));
+    }
+    #apple .text img {
+      height: min(1000px, 104cqh, calc(100cqh - (var(--image-top) - 2 * var(--spacing) + var(--image-nudge) + 60px) - 24px));
+    }
+  }
+}
