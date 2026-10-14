@@ -357,3 +357,11 @@
     position: static;
   }
 }
+
+/* Dry-erase Graffiti: give the sticky photo room to travel. One paragraph of
+   copy is shorter than the photo, so the row sets the travel, not the copy */
+.initial-scribble .row { min-height: 170vh; align-items: stretch; }
+.initial-scribble .pinned-column figure { position: sticky; top: calc(48px + 6vh); }
+.initial-scribble .pinned-column img { max-height: 78vh; width: auto; object-fit: contain; }
+.initial-scribble .scribble-copy { position: sticky; top: calc(48px + 6vh); align-self: flex-start; }
+@media (max-width: 800px) { .initial-scribble .row { min-height: 0; } .initial-scribble .scribble-copy, .initial-scribble .pinned-column figure { position: static; } }
