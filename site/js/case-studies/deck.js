@@ -46,6 +46,8 @@ if (isDeck) {
   const all = [...document.querySelectorAll('[data-beat]')].filter((b) => !b.classList.contains('read-only')).sort(
     (a, b) => Number(a.dataset.beat) - Number(b.dataset.beat),
   );
+  // a long paragraph reads better ragged-right than centered: mark it
+  all.forEach((b) => b.querySelectorAll('p:not(.read-only)').forEach((p) => { if (p.textContent.trim().length > 320) p.classList.add('deck-long'); }));
   const beats = TALK && all.some((b) => b.hasAttribute('data-talk')) ? all.filter((b) => b.hasAttribute('data-talk')) : all;
   if (TALK) root.classList.add('talk');
 

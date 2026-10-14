@@ -2112,3 +2112,8 @@ html.deck .deck-beat.cs-splash neon-text .bright {
 @layer page {
   html.deck .deck-beat .ms-d-n, html.deck .deck-beat .ms-beat-n { display: none; }
 }
+
+/* long paragraphs: a centred column, left-aligned, so the eye has an edge to return to */
+@layer page {
+  html.deck .deck-beat p.deck-long { text-align: left; max-width: 62ch; margin-inline: auto; }
+}
