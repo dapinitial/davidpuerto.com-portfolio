@@ -368,6 +368,10 @@ def method_loop():
     for (x, y) in bot[:-1]: w.line(x, y + 45, x - 20, y + 45)
     w.path('M 290 305 H 145 V 150', 'thin')
     w.t(145, 180, 'the next decision', 's', anchor='middle', size=12)
+    w.st(8)
+    w.t(560, 186, 'At every step, review what we are doing:', 't', anchor='middle', size=14)
+    w.t(560, 208, 'Is this better than what we had before? How is it an improvement?', 's', anchor='middle', size=13)
+    w.t(560, 228, 'What does it let people do that they could not? How will we prove it worked?', 's', anchor='middle', size=13)
     w.t(20, 400, 'The same loop at Microsoft and at Apple; the tools changed, the order did not.', 'cap')
     return w.svg()
 
@@ -380,8 +384,8 @@ FIGS = {
    cap='The cost of changing a decision climbs toward production. A signed-in preview on real data shapes moves the decision to the cheap end, and the argument is had once, against the artifact.',
    notes='The curve every studio knows and few draw. Cost to change rises toward production. A mock sits early but decides little. A signed-in preview on real data shapes lets the room decide at the cheap end, once. The amber dot is the same decision re-made later by whoever is next, which is the Microsoft 2026 problem in one picture.'),
  'method-loop': dict(fn=method_loop, eyebrow='How I work', title='The method, as a loop',
-   cap='Seven steps, in order, and back to the start for the next decision. The two lit boxes are where the work actually happens: the prototype, and writing the judgment down.',
-   notes='How I work, in one picture, so the next seven slides can go fast or be skipped. Who decides. Ask the questions. Prototype in the medium it will ship in. Let the room argue with the thing. Write the judgment down. Hand off a thing, not a recommendation. Leave the route marked. Then the next decision. The two lit steps are where the time goes.'),
+   cap='Seven steps, in order, and back to the start for the next decision. At every step we review what we are doing and ask whether it is better than what we had before, and how we will prove it.',
+   notes='How I work, in one picture, so the next seven slides can go fast or be skipped. Who decides. Ask the questions. Prototype in the medium it will ship in. Let the room argue with the thing. Write the judgment down. Hand off a thing, not a recommendation. Leave the route marked. Then the next decision. The two lit steps are where the time goes. In the middle, the questions I ask at every step: is this better than what we had before, how is it an improvement, what does it let people do that they could not, how will we prove it worked.'),
  'apple-before-after': dict(fn=apple_before_after, eyebrow='Before and after', title='Before and after: fourteen dashboards, one surface',
    cap='Before: fourteen dashboards, each its own log-in, fed by thousands of hand-tuned slides a week. After: one surface every chart rebuilt into, reconciled at the source, that forty-plus teams compose from. Drawn from memory.',
    notes='Before and after, before any backstory. Left: fourteen dashboards, fourteen log-ins, thousands of slides a week assembled by hand, numbers nobody could check. Right: one surface, every chart rebuilt one to one and reconciled at the source. Twelve hours became twenty minutes, every error was caught before it rendered, forty-plus teams run it without me. The rest of the deck is how.'),
