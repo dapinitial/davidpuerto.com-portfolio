@@ -20,6 +20,15 @@ if (clock) {
   setInterval(tick, 1000);
 }
 
+// --- TechWeek LA: link to today's events, by today's date in Pacific time ---
+const techweek = document.querySelector('[data-techweek]');
+if (techweek) {
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const url = new URL(techweek.href);
+  url.searchParams.set('day', day);
+  techweek.href = url.toString();
+}
+
 // --- the coordinates decode in, digit by digit, once ---------------------
 const scramble = document.querySelector('[data-scramble]');
 if (scramble && !reduced) {
