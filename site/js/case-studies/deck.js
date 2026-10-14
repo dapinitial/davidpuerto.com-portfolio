@@ -321,6 +321,14 @@ if (isDeck) {
         </div>
       </div>`;
     document.body.appendChild(toc);
+    // each beat is a named slide for a screen reader (a figure keeps its own role and caption);
+    // a beat that was a list item no longer sits in its list, so it stops claiming to be one
+    beats.forEach((b, i) => {
+      if (b.tagName === 'FIGURE' || b.tagName === 'ARTICLE') return; // these keep their own roles
+      b.setAttribute('role', 'group');
+      b.setAttribute('aria-roledescription', 'slide');
+      b.setAttribute('aria-label', `${i + 1} of ${beats.length}: ${titleOf(b)}`);
+    });
     const donePath = toc.querySelector('.done');
     const doneLen = donePath.getTotalLength();
     donePath.style.strokeDasharray = `${doneLen}`;
