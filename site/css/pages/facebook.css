@@ -365,3 +365,22 @@
 .initial-scribble .pinned-column img { max-height: 78vh; width: auto; object-fit: contain; }
 .initial-scribble .scribble-copy { position: sticky; top: calc(48px + 6vh); align-self: flex-start; }
 @media (max-width: 800px) { .initial-scribble .row { min-height: 0; } .initial-scribble .scribble-copy, .initial-scribble .pinned-column figure { position: static; } }
+
+/* Branding backstory: the swag photo large on the left, the story in body type on the right */
+.back-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 96px);
+  align-items: center;
+  max-width: none;
+  margin: 0;
+  padding-block: clamp(64px, 10vh, 140px);
+  padding-inline: max(clamp(20px, 5vw, 64px), calc((100% - 1280px) / 2));
+}
+.back-story-art { margin: 0; }
+.back-story-art img { width: 100%; height: auto; display: block; border-radius: 6px; aspect-ratio: 4 / 3; object-fit: cover; }
+.back-story-eyebrow { font-family: var(--font-family-monospace, monospace); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.55; margin: 0 0 12px; }
+.back-story-copy h4 { font-size: clamp(36px, 4vw, 64px); line-height: 1.02; margin: 0 0 24px; }
+.back-story-copy h4 em { font-weight: 300; }
+.back-story-copy p:not(.back-story-eyebrow) { font-family: 'Poppins', sans-serif; font-size: clamp(17px, 1.2vw, 20px); line-height: 1.65; max-width: 52ch; margin: 0 0 16px; }
+@media (max-width: 800px) { .back-story { grid-template-columns: 1fr; } }
