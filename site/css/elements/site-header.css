@@ -296,3 +296,17 @@ body.light-content:not(.menu-open) site-header .crumb {
 body.light-content:not(.menu-open) site-header .logout:hover {
   color: #00a3bb;
 }
+
+/* menu hover face: the brand sheen instead of SonoSite's blue */
+site-header .menu li a::after,
+site-header .menu li .submenu-toggle::after {
+  background: linear-gradient(100deg, #fb836d 0%, #ffd2c4 30%, #fb836d 55%, #e0573f 80%, #ffb39f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: #fb836d;
+}
+site-header .logout:hover,
+body.light-content:not(.menu-open) site-header .logout:hover {
+  color: #fb836d;
+}
