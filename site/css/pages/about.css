@@ -74,3 +74,25 @@
     text-shadow: 0 0 0 transparent, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
   }
 }
+
+/* Hero legibility over the video: a soft scrim behind the sentence, a wide
+   low shadow on the thin type, and the mask recoloured to the site's coral
+   so "before it exists" reads as one bright phrase instead of a mottled block */
+@layer page {
+  .about-hero .about-heading { position: relative; z-index: 2; isolation: isolate; }
+  .about-hero .about-heading::before {
+    content: ''; position: absolute; inset: -18% -10%; z-index: -1; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(10, 8, 10, 0.72) 0%, rgba(10, 8, 10, 0.45) 45%, rgba(10, 8, 10, 0) 72%);
+  }
+  .about-hero .about-heading em { text-shadow: 0 2px 18px rgba(0, 0, 0, 0.85), 0 0 2px rgba(0, 0, 0, 0.9); }
+  .about-hero .text-mask {
+    background: linear-gradient(100deg, #fb836d 0%, #ffd2c4 22%, #fb836d 44%, #e0573f 66%, #ffb39f 88%, #fb836d 100%) 0 0 / 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: #fb836d;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.8));
+    animation: about-mask-sheen 9s ease-in-out infinite;
+  }
+  @keyframes about-mask-sheen { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
+  @media (prefers-reduced-motion: reduce) { .about-hero .text-mask { animation: none; } }
+}
