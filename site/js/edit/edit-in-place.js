@@ -21,6 +21,7 @@
   const style = document.createElement('style');
   style.textContent = `
     .ed-bar { position: fixed; right: 16px; bottom: 16px; z-index: 9999; display: flex; gap: 10px; align-items: center; padding: 10px 12px 10px 14px; border-radius: 999px; background: rgba(12,12,16,0.92); color: #eee; font: 12px/1.3 ui-monospace, Menlo, monospace; letter-spacing: 0.04em; box-shadow: 0 8px 30px rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
+    .ed-bar[hidden] { display: none; }
     .ed-bar b { color: var(--cs-accent, #fb836d); font-weight: 600; }
     .ed-bar button { font: inherit; letter-spacing: inherit; padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: inherit; cursor: pointer; }
     .ed-bar button:hover { border-color: rgba(255,255,255,0.5); }
