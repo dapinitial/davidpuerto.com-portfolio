@@ -2133,3 +2133,12 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   html.deck .deck-beat.ms-read .deck-copy > p.deck-long.deck-long { font-size: clamp(16px, 1.08vw, 20px) !important; line-height: 1.5; }
   html.deck .deck-beat:has(p.deck-long) h2 { font-size: clamp(28px, 2.6vw, 44px) !important; }
 }
+
+/* the open menu is its own room: the slide progress line, counter and hint step away */
+@layer page {
+  .deck-bar, .deck-num, .deck-hint, .deck-arc-btn { transition: opacity 0.25s ease; }
+  body.menu-open .deck-bar,
+  body.menu-open .deck-num,
+  body.menu-open .deck-hint,
+  body.menu-open .deck-arc-btn { opacity: 0; pointer-events: none; }
+}
