@@ -25,12 +25,23 @@
 <body>
   <site-header></site-header>
   <main>
-    <section class="dark-section full-screen centered">
+    <section class="login-hero dark-section">
       <form class="login-form">
-        <h2>Login <em>to view</em></h2>
-        <input type="password" name="password" aria-label="Password" placeholder="Enter password" autocomplete="current-password" required>
-        <button type="submit" class="glass-button"><span>Login</span></button>
-        <p class="form-status" role="alert"></p>
+        <p class="lg-eyebrow"><span class="lg-live" aria-hidden="true"></span><span>Case study <span class="lg-sep" aria-hidden="true">//</span> password required</span></p>
+        <h1>Login <em>to view</em>.</h1>
+        <p class="lg-for" data-for hidden></p>
+        <label class="lg-field">
+          <span class="lg-label">Password</span>
+          <span class="lg-input">
+            <input type="password" name="password" placeholder="Enter password" autocomplete="current-password" required>
+            <button type="button" class="lg-show" aria-pressed="false" aria-label="Show password">Show</button>
+          </span>
+        </label>
+        <div class="lg-actions">
+          <button type="submit" class="glass-button"><span>Login</span></button>
+          <p class="form-status" role="alert"></p>
+        </div>
+        <p class="lg-help">Need the password? Ask me: <a href="mailto:me@davidpuerto.com?subject=Password%20for%20davidpuerto.com">me@davidpuerto.com</a></p>
       </form>
     </section>
   </main>

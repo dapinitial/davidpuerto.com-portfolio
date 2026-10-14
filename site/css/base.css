@@ -38,7 +38,7 @@
     --color-silver: #d0d4dc; /* Apple chapter: black glass, silver edge */
 
     --color-link: var(--color-primary);
-    --color-link-hover: var(--color-secondary);
+    --color-link-hover: #ffb39f; /* the light end of the coral, not the old blue */
 
     -webkit-text-size-adjust: 100%;
     box-sizing: border-box;

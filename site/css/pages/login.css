@@ -1,39 +1,194 @@
 @layer page {
-  /* Mirrors the original login.module.css: the form is unconstrained —
-     inputs set the width, the headline rides free on one line. */
-  .login-form {
+  /* Login: the same dossier language as Contact. A card with a coral edge,
+     a glow from below, the headline in the serif with the coral italic. */
+  .login-hero {
+    --lg-accent: var(--color-primary, #fb836d);
+    --lg-line: rgba(255, 240, 244, 0.12);
+    --lg-mute: #9a9499;
+    min-height: 100svh;
     display: grid;
-    gap: 1rem;
-    justify-items: center;
-    text-align: center;
+    place-items: center;
+    padding: calc(var(--spacing, 8px) * 8) 20px calc(var(--spacing, 8px) * 4);
+    position: relative;
+    overflow: hidden;
   }
 
-  .login-form h2 {
-    margin: 0 0 20px;
-    white-space: nowrap;
+  .login-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(70% 55% at 50% 110%, color-mix(in srgb, var(--lg-accent) 22%, transparent), transparent 70%);
   }
 
-  .login-form input {
-    min-width: 320px;
-    padding: 12px;
+  .login-form {
+    position: relative;
+    z-index: 1;
+    width: min(460px, 100%);
+    display: grid;
+    gap: 18px;
+    padding: clamp(24px, 4vw, 40px);
+    border: 1px solid var(--lg-line);
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255, 240, 244, 0.035), rgba(255, 240, 244, 0.01));
+    box-sizing: border-box;
+  }
+
+  .login-form::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, color-mix(in srgb, var(--lg-accent) 70%, transparent), transparent 40%, transparent 70%, color-mix(in srgb, #ffb39f 50%, transparent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .lg-eyebrow,
+  .lg-label,
+  .lg-for {
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--lg-mute);
+    margin: 0;
+  }
+
+  .lg-eyebrow { display: flex; align-items: center; gap: 10px; }
+  .lg-sep { color: var(--lg-accent); }
+
+  .lg-live {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lg-accent);
+    animation: lg-pulse 2.2s ease-out infinite;
+    flex: none;
+  }
+
+  @keyframes lg-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--lg-accent) 55%, transparent); }
+    100% { box-shadow: 0 0 0 10px transparent; }
+  }
+
+  .login-form h1 {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 400;
+    font-size: clamp(40px, 5vw, 60px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    color: #fff0f4;
+    margin: 4px 0 0;
+  }
+
+  .login-form h1 em {
+    color: var(--lg-accent);
+    font-style: italic;
+    font-family: var(--font-family-heading, serif);
+    font-weight: 400;
+  }
+
+  /* which study they asked for */
+  .lg-for { color: #fff0f4; letter-spacing: 0.08em; }
+  .lg-for b { color: var(--lg-accent); font-weight: 400; }
+
+  .lg-field { display: grid; gap: 8px; margin-top: 6px; }
+
+  .lg-input { position: relative; display: block; }
+
+  .lg-input input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--lg-line);
+    border-radius: 10px;
+    color: #fff0f4;
+    font-family: inherit;
     font-size: 1rem;
-    font-family: 'Poppins', var(--font-family-default, sans-serif);
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid #333;
-    border-radius: 6px;
-    color: var(--color-text);
-    text-align: center;
-    transition: border-color 0.187s ease-in-out;
+    line-height: 1.5;
+    padding: 0.75em 4.5em 0.75em 0.95em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
   }
 
-  .login-form input:focus {
-    border-color: var(--color-secondary);
+  .lg-input input::placeholder { color: #7d757a; }
+
+  .lg-input input:focus {
     outline: none;
+    border-color: var(--lg-accent);
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--lg-accent) 22%, transparent), 0 0 24px color-mix(in srgb, var(--lg-accent) 18%, transparent);
   }
+
+  /* a saved password autofills in the browser's pale blue; keep it on the dark ground */
+  .lg-input input:-webkit-autofill,
+  .lg-input input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 100px #0d0b0c inset;
+    -webkit-text-fill-color: #fff0f4;
+    caret-color: #fff0f4;
+  }
+
+  .lg-show {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    translate: 0 -50%;
+    min-height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--lg-mute);
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .lg-show:hover,
+  .lg-show[aria-pressed='true'] { color: var(--lg-accent); border-color: transparent; }
+
+  .lg-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+
+  .login-form .glass-button { width: auto; }
 
   .form-status {
-    color: pink;
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #ffb39f;
     min-height: 1.5em;
     margin: 0;
+  }
+
+  .lg-help {
+    margin: 4px 0 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--lg-line);
+    color: var(--lg-mute);
+    font-size: 14px;
+  }
+
+  .lg-help a {
+    color: var(--lg-accent);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--lg-accent) 40%, transparent);
+  }
+
+  .lg-help a:hover { border-bottom-color: var(--lg-accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lg-live { animation: none; }
   }
 }

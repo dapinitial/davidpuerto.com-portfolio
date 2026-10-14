@@ -207,6 +207,13 @@
     resize: vertical;
   }
 
+  .contact-form input:-webkit-autofill,
+  .contact-form input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 100px #0d0b0c inset;
+    -webkit-text-fill-color: #fff0f4;
+    caret-color: #fff0f4;
+  }
+
   .contact-form input::placeholder,
   .contact-form textarea::placeholder { color: #5f585c; }
 
