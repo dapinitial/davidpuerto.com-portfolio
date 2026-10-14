@@ -320,7 +320,7 @@ def companion_refusal():
 
 # ---------- About: the through-line as a timeline
 def through_line():
-    w = W(1100, 360, 'A timeline from Flash to the factory: five stations, each carrying more of the decision')
+    w = W(1100, 270, 'A timeline from Flash to the factory: five stations, each carrying more of the decision')
     xs = [60, 290, 520, 750, 980]
     labels = [('Flash', '2007', 'designers should code'), ('Preview Sites', '2020', 'a prototype as the first draft'),
               ('Design systems', '2021', 'one language, cleared once'), ('Trust', '2025', 'nothing renders unreconciled'),
@@ -332,12 +332,8 @@ def through_line():
         w.box(x - 95, 60, 190, 62, 'lit' if k == 4 else '', r=10)
         w.t(x, 86, name, 't', anchor='middle'); w.t(x, 108, yr, 's', anchor='middle')
         w.t(x, 190, line, 's', anchor='middle')
-    w.st(6)
-    for k, x in enumerate(xs):
-        w.box(x - 14, 300 - 16 * (k + 1), 28, 16 * (k + 1), 'lit' if k == 4 else 'dim', r=3)
-    w.line(40, 300.5, 1000, 300.5, 'thin')
-    w.t(60, 338, 'how much of the decision the tool carried', 'cap')
-    w.t(980, 338, 'the person decides; the tool holds the standard', 'cap', anchor='end')
+    w.st(6).t(60, 250, 'each one carried more of the decision', 'cap')
+    w.t(980, 250, 'the person decides; the tool holds the standard', 'cap', anchor='end')
     return w.svg()
 
 
