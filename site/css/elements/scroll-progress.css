@@ -48,3 +48,6 @@ scroll-progress .progress-circle path {
   stroke-width: 4;
   stroke-linecap: round;
 }
+
+/* hidden behind the open menu: it measures the page, not the menu */
+body.menu-open scroll-progress .progress-wrap { opacity: 0; visibility: hidden; }
