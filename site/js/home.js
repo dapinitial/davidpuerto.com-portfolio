@@ -142,6 +142,30 @@ mm.add(
       }
     });
 
+    // --- Blink guard -------------------------------------------------------
+    // A trackpad swipe overshoots the snap point and the browser pulls it back,
+    // so the scroll position wobbles around a section boundary for a few
+    // frames. Every wobble flips a scrubbed tween between "at rest" (scale 1,
+    // GSAP drops to a 2D transform, the browser demotes the layer and repaints
+    // the 2880px image) and "moving" (3D transform, layer promoted again).
+    // Each flip is a repaint of a huge image, and a repaint that misses the
+    // frame reads as a blink. So: hold the layers steady for the whole gesture
+    // (will-change on while scrolling), and let them settle once, at rest,
+    // where a single crisp repaint is invisible.
+    let settleT = 0;
+    const settled = () => { root.classList.remove('is-scrolling'); };
+    const onScroll = () => {
+      if (!root.classList.contains('is-scrolling')) root.classList.add('is-scrolling');
+      clearTimeout(settleT);
+      settleT = setTimeout(settled, 220); // fallback where scrollend is missing
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scrollend', () => { clearTimeout(settleT); settleT = setTimeout(settled, 60); });
+
+    // Decode every section image up front, so the first time a slide becomes
+    // visible the browser is not decoding a 20 MB bitmap on that frame.
+    document.querySelectorAll('.section img').forEach((img) => img.decode?.().catch(() => {}));
+
     // Snapping is native CSS scroll-snap (see home.css .is-enhanced) — the
     // pen's exact mechanics, supported everywhere. GSAP does visuals only.
 
