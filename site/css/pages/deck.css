@@ -2090,3 +2090,20 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   html.deck .deck-beat.ms-reel:has(video:buffering) video,
   html.deck .deck-beat.ms-reel:has(video:stalled) video { outline: 1px solid color-mix(in srgb, var(--cs-accent, #fb836d) 50%, transparent); outline-offset: 4px; }
 }
+
+/* the one-minute slide: copy, pipeline figure, three chips and a sign-in line
+   must share one screen, including a 14-inch laptop */
+@layer page {
+  html.deck .deck-beat.ms-plain .ms-copy { font-size: clamp(16px, 1.45vw, 22px); line-height: 1.45; margin-bottom: 8px; }
+  html.deck .deck-beat.ms-plain .ms-figure svg { max-height: 34vh; width: auto; margin: 0 auto; display: block; }
+  html.deck .deck-beat.ms-plain .ms-figure figcaption { margin-top: 6px; }
+  html.deck .deck-beat.ms-plain .ms-links { margin-top: 8px; }
+  html.deck .deck-beat.ms-plain .ms-links + small, html.deck .deck-beat.ms-plain .ms-links + p { margin-top: 4px; }
+}
+@layer page {
+  @media (max-height: 900px) {
+    html.deck .deck-beat.ms-plain .ms-copy { font-size: 15px; line-height: 1.4; }
+    html.deck .deck-beat.ms-plain .ms-figure svg { max-height: 27vh; }
+    html.deck .deck-beat.ms-plain .ms-eyebrow { margin-bottom: 4px; }
+  }
+}
