@@ -7,6 +7,7 @@ import path from 'node:path';
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
+import { contactEmail } from './contact-email.js';
 
 const {
   PORT = 3000,
@@ -168,8 +169,7 @@ const mailer =
     : null;
 
 async function sendContactEmail({ name, from, message }) {
-  const subject = `[davidpuerto.com] ${name || 'Contact form'}`.slice(0, 120);
-  const text = `From: ${name} <${from}>\n\n${message}`;
+  const { subject, text, html } = contactEmail({ name, from, message });
 
   if (RESEND_API_KEY) {
     const res = await fetch('https://api.resend.com/emails', {
@@ -184,6 +184,7 @@ async function sendContactEmail({ name, from, message }) {
         reply_to: from || undefined,
         subject,
         text,
+        html,
       }),
       signal: AbortSignal.timeout(10_000),
     });
@@ -191,7 +192,7 @@ async function sendContactEmail({ name, from, message }) {
     return;
   }
   if (mailer) {
-    await mailer.sendMail({ from: GMAIL_USER, to: CONTACT_TO, replyTo: from || undefined, subject, text });
+    await mailer.sendMail({ from: GMAIL_USER, to: CONTACT_TO, replyTo: from || undefined, subject, text, html });
     return;
   }
   const err = new Error('no email provider configured');

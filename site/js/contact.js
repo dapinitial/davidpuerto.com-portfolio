@@ -1,11 +1,47 @@
-// Contact page: elements + form submission to /api/contact.
+// Contact page: the locator (live Pacific clock, decoded coordinates) and the
+// form submission to /api/contact.
 import './elements/rain-fall.js';
-import './elements/neon-text.js';
 import { track } from './lib/analytics.js';
 
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// --- live local time (Pacific: Seattle and Los Angeles share it), ticking every second ---------
+const clock = document.querySelector('[data-clock]');
+const tzEl = document.querySelector('[data-tz]');
+if (clock) {
+  const time = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  const zone = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', timeZoneName: 'short' });
+  const tick = () => {
+    clock.textContent = time.format(new Date());
+    const tz = zone.formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value;
+    if (tzEl && tz) tzEl.textContent = tz;
+  };
+  tick();
+  setInterval(tick, 1000);
+}
+
+// --- the coordinates decode in, digit by digit, once ---------------------
+const scramble = document.querySelector('[data-scramble]');
+if (scramble && !reduced) {
+  const target = scramble.textContent;
+  const digits = '0123456789';
+  let frame = 0;
+  const total = 26;
+  const step = () => {
+    frame++;
+    const settled = Math.floor((frame / total) * target.length);
+    scramble.textContent = [...target].map((ch, i) => (i < settled || !/\d/.test(ch) ? ch : digits[(Math.random() * 10) | 0])).join('');
+    if (frame < total) setTimeout(step, 45);
+    else scramble.textContent = target;
+  };
+  setTimeout(step, 500);
+}
+
+// --- the transmission ----------------------------------------------------
 const form = document.querySelector('.contact-form');
 const status = form.querySelector('.form-status');
 const button = form.querySelector('button[type="submit"]');
+const say = (text, kind = '') => { status.textContent = text; status.className = `form-status ${kind}`; };
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -13,7 +49,7 @@ form.addEventListener('submit', async (e) => {
 
   const data = Object.fromEntries(new FormData(form));
   button.disabled = true;
-  status.textContent = 'Sending…';
+  say('Transmitting…');
 
   try {
     const res = await fetch('/api/contact', {
@@ -23,15 +59,15 @@ form.addEventListener('submit', async (e) => {
     });
     if (res.ok) {
       form.reset();
-      status.textContent = 'Sent — talk soon. ✌️';
+      say('Received. Talk soon.', 'ok');
       track('contact_submit');
     } else if (res.status === 429) {
-      status.textContent = 'Easy there — try again in a bit.';
+      say('Easy there. Try again in a bit.', 'err');
     } else {
-      status.textContent = 'Something hiccuped. Email me directly: me@davidpuerto.com';
+      say('Something hiccuped. Email me directly: me@davidpuerto.com', 'err');
     }
   } catch {
-    status.textContent = 'Network trouble. Email me directly: me@davidpuerto.com';
+    say('Network trouble. Email me directly: me@davidpuerto.com', 'err');
   } finally {
     button.disabled = false;
   }

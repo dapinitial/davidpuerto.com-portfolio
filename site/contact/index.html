@@ -8,7 +8,7 @@
   <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <title>Contact — David Puerto</title>
-  <meta name="description" content="Get in touch with David Puerto — design engineer. Response in 2-3 business days.">
+  <meta name="description" content="Get in touch with David Puerto, UX engineer in Seattle. Reply in 2 to 3 business days.">
   <meta name="ga-id" content="G-5GZRVPT875">
   <script src="/boot/arriving.js"></script>
   <link rel="stylesheet" href="/css/main.css">
@@ -17,7 +17,6 @@
   <link rel="stylesheet" href="/css/elements/scroll-progress.css">
   <link rel="stylesheet" href="/css/elements/infinity-loader.css">
   <link rel="stylesheet" href="/css/elements/rain-fall.css">
-  <link rel="stylesheet" href="/css/elements/neon-text.css">
   <link rel="stylesheet" href="/css/elements/glass-button.css">
   <link rel="stylesheet" href="/css/pages/contact.css">
   <script type="module" src="/js/main.js"></script>
@@ -27,31 +26,61 @@
 <body>
   <site-header></site-header>
   <main>
-    <section class="dark-section full-screen centered contact-hero">
-      <rain-fall fullpage></rain-fall>
-      <neon-text dim="contact me@davidpuerto.com" bright="Response in <br />2-3 business days."></neon-text>
+    <section class="dark-section full-screen contact-hero">
+      <rain-fall fullpage max-drips="12"></rain-fall>
+      <div class="dossier">
+        <div class="locator">
+          <p class="ct-eyebrow"><span class="ct-live"></span>Contact <span class="ct-sep">//</span> secure channel open</p>
+          <h1 class="ct-title">Let's build the thing <em>before it exists</em>.</h1>
+          <div class="locate">
+            <div class="radar" aria-hidden="true">
+              <svg viewBox="0 0 200 200">
+                <circle class="ring" cx="100" cy="100" r="96"/>
+                <circle class="ring" cx="100" cy="100" r="64"/>
+                <circle class="ring" cx="100" cy="100" r="32"/>
+                <line class="axis" x1="100" y1="2" x2="100" y2="198"/>
+                <line class="axis" x1="2" y1="100" x2="198" y2="100"/>
+                <path class="tick" d="M100 4v8M100 188v8M4 100h8M188 100h8"/>
+                <circle class="ping" cx="100" cy="100" r="4"/>
+                <circle class="ping-ring" cx="100" cy="100" r="4"/>
+              </svg>
+              <span class="sweep"></span>
+            </div>
+            <dl class="readout">
+            <div><dt>Location</dt><dd>Los Angeles <span class="ct-dim">&middot; Tech Week</span></dd></div>
+            <div><dt>Coordinates</dt><dd data-scramble>34.0522° N &middot; 118.2437° W</dd></div>
+            <div><dt>Local time</dt><dd><time data-clock>--:--:--</time> <span class="ct-dim" data-tz>PT</span></dd></div>
+            <div><dt>Status</dt><dd><span class="ct-dot"></span>Available &middot; 2&ndash;3 day reply</dd></div>
+            <div><dt>Direct line</dt><dd><a href="mailto:me@davidpuerto.com">me@davidpuerto.com</a></dd></div>
+          </dl>
+          </div>
+        </div>
 
-      <form class="contact-form" novalidate>
-        <label>
-          <span>Name</span>
-          <input type="text" name="name" autocomplete="name" maxlength="200" required>
-        </label>
-        <label>
-          <span>Email</span>
-          <input type="email" name="from" autocomplete="email" maxlength="200" required>
-        </label>
-        <label>
-          <span>Message</span>
-          <textarea name="message" rows="5" maxlength="5000" required></textarea>
-        </label>
-        <!-- honeypot: humans never see or fill this -->
-        <label class="hp" aria-hidden="true">
-          <span>Company</span>
-          <input type="text" name="company" tabindex="-1" autocomplete="off">
-        </label>
-        <button type="submit" class="glass-button"><span>Send it</span></button>
-        <p class="form-status" role="status"></p>
-      </form>
+        <form class="contact-form" novalidate>
+          <p class="ct-eyebrow">Transmission</p>
+          <label>
+            <span>Name</span>
+            <input type="text" name="name" autocomplete="name" maxlength="200" required placeholder="Who's reaching out">
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" name="from" autocomplete="email" maxlength="200" required placeholder="Where I reply">
+          </label>
+          <label>
+            <span>Message</span>
+            <textarea name="message" rows="6" maxlength="5000" required placeholder="What are we building?"></textarea>
+          </label>
+          <!-- honeypot: humans never see or fill this -->
+          <label class="hp" aria-hidden="true">
+            <span>Company</span>
+            <input type="text" name="company" tabindex="-1" autocomplete="off">
+          </label>
+          <div class="ct-actions">
+            <button type="submit" class="glass-button"><span>Send it</span></button>
+            <p class="form-status" role="status"></p>
+          </div>
+        </form>
+      </div>
     </section>
   </main>
 </body>

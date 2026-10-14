@@ -1,59 +1,237 @@
 @layer page {
+  /* Contact: a dossier. The locator on the left (where I am, my time, my
+     status), the transmission on the right. One coral language for both. */
   .contact-hero {
-    padding-block: calc(var(--spacing) * 3);
-  }
-
-  .contact-hero neon-text {
-    min-height: 30vh;
-  }
-
-  .contact-form {
-    width: min(80vw, 420px);
-    margin: calc(var(--spacing) * 2) auto 0;
+    --ct-accent: var(--color-primary, #fb836d);
+    --ct-line: rgba(255, 240, 244, 0.12);
+    --ct-mute: #9a9499;
+    min-height: 100svh;
     display: grid;
-    gap: var(--spacing);
+    align-items: center;
+    padding-block: calc(var(--spacing) * 5) calc(var(--spacing) * 3);
     position: relative;
-    z-index: 10;
+    overflow: hidden;
   }
 
-  .contact-form label {
-    display: grid;
-    gap: 6px;
+  .contact-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(70% 55% at 50% 110%, color-mix(in srgb, var(--ct-accent) 22%, transparent), transparent 70%);
   }
+
+  .dossier {
+    position: relative;
+    z-index: 120; /* above the rain, which falls over the whole page */
+    width: min(1160px, calc(100% - 2 * clamp(20px, 5vw, 64px)));
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+
+  .ct-eyebrow {
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ct-mute);
+    margin: 0 0 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ct-sep { color: var(--ct-accent); }
+
+  .ct-live,
+  .ct-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ct-accent);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--ct-accent) 60%, transparent);
+    animation: ct-pulse 2.2s ease-out infinite;
+    flex: none;
+    display: inline-block;
+  }
+
+  .ct-dot { margin-right: 10px; vertical-align: middle; }
+
+  @keyframes ct-pulse {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ct-accent) 55%, transparent); }
+    100% { box-shadow: 0 0 0 10px transparent; }
+  }
+
+  .ct-title {
+    font-family: var(--font-family-heading, serif);
+    font-weight: 400;
+    font-size: clamp(38px, 4.4vw, 68px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    color: #fff0f4;
+    margin: 0 0 clamp(24px, 4vh, 44px);
+    text-wrap: balance;
+  }
+
+  .ct-title em { color: var(--ct-accent); font-style: italic; font-family: var(--font-family-heading, serif); font-weight: 400; letter-spacing: -0.01em; }
+
+  /* the locator: a slow radar sweep over wherever I am */
+  .radar {
+    position: relative;
+    width: clamp(110px, 10vw, 150px);
+    aspect-ratio: 1;
+    margin: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .radar svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .radar .ring, .radar .axis, .radar .tick { fill: none; stroke: var(--ct-line); stroke-width: 1; }
+  .radar .tick { stroke: color-mix(in srgb, var(--ct-accent) 60%, transparent); }
+  .radar .ping { fill: var(--ct-accent); }
+  .radar .ping-ring { fill: none; stroke: var(--ct-accent); stroke-width: 1.5; transform-origin: 100px 100px; animation: ct-ping 2.4s ease-out infinite; }
+
+  @keyframes ct-ping {
+    from { transform: scale(1); opacity: 0.9; }
+    to { transform: scale(7); opacity: 0; }
+  }
+
+  .radar .sweep {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, color-mix(in srgb, var(--ct-accent) 38%, transparent), transparent 70deg, transparent);
+    animation: ct-sweep 4.2s linear infinite;
+    mix-blend-mode: screen;
+  }
+
+  @keyframes ct-sweep { to { rotate: 360deg; } }
+
+  /* the radar sits beside the readout, the coordinates it is pointing at */
+  .locate {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: clamp(18px, 2.4vw, 32px);
+    align-items: center;
+  }
+
+  .readout {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    border-top: 1px solid var(--ct-line);
+  }
+
+  .readout > div {
+    display: grid;
+    grid-template-columns: 7.5em minmax(0, 1fr);
+    gap: 16px;
+    align-items: baseline;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--ct-line);
+  }
+
+  .readout dt {
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ct-mute);
+  }
+
+  .readout dd {
+    margin: 0;
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: clamp(13px, 0.95vw, 15px);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    color: #fff0f4;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .readout a { color: var(--ct-accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--ct-accent) 40%, transparent); }
+  .readout a:hover { border-bottom-color: var(--ct-accent); }
+  .ct-dim { color: var(--ct-mute); }
+
+  /* the transmission */
+  .contact-form {
+    display: grid;
+    gap: 18px;
+    padding: clamp(24px, 3vw, 36px);
+    border: 1px solid var(--ct-line);
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255, 240, 244, 0.035), rgba(255, 240, 244, 0.01));
+    position: relative;
+  }
+
+  .contact-form::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, color-mix(in srgb, var(--ct-accent) 70%, transparent), transparent 40%, transparent 70%, color-mix(in srgb, #ffb39f 50%, transparent));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .contact-form .ct-eyebrow { margin-bottom: 0; }
+
+  .contact-form label { display: grid; gap: 8px; }
 
   .contact-form label span {
-    --font-size-min: 12;
-    --font-size-max: 14;
-
-    color: #aaa;
-    font-size: var(--font-size);
-    letter-spacing: 0.04em;
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
+    color: var(--ct-mute);
   }
 
   .contact-form input,
   .contact-form textarea {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid #333;
-    border-radius: 6px;
-    color: var(--color-text);
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--ct-line);
+    border-radius: 10px;
+    color: #fff0f4;
     font-family: inherit;
     font-size: 1rem;
-    padding: 0.65em 0.85em;
-    transition: border-color 0.187s ease-in-out;
+    line-height: 1.5;
+    padding: 0.75em 0.95em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    resize: vertical;
   }
 
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder { color: #5f585c; }
+
+  /* coral, not the old blue */
   .contact-form input:focus,
-  .contact-form textarea:focus {
-    border-color: var(--color-secondary);
+  .contact-form textarea:focus,
+  .contact-form input:focus-visible,
+  .contact-form textarea:focus-visible {
     outline: none;
+    border-color: var(--ct-accent);
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ct-accent) 22%, transparent), 0 0 24px color-mix(in srgb, var(--ct-accent) 18%, transparent);
   }
 
-  .contact-form .glass-button {
-    justify-self: start;
+  .ct-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 4px;
   }
 
-  /* honeypot — visually gone, still in the form data */
+  /* the button sizes to its label: a full-width bar read like a sign-in form */
+  .contact-form .glass-button { justify-self: start; width: auto; }
+
   .contact-form .hp {
     position: absolute;
     left: -9999px;
@@ -63,8 +241,26 @@
   }
 
   .form-status {
-    color: #aaa;
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ct-mute);
     min-height: 1.5em;
     margin: 0;
+  }
+
+  .form-status.ok { color: var(--ct-accent); }
+  .form-status.err { color: #ffb39f; }
+
+  @media (max-width: 860px) {
+    .dossier { grid-template-columns: 1fr; }
+    .locate { grid-template-columns: 1fr; justify-items: start; }
+    .radar { width: 120px; }
+    .readout > div { grid-template-columns: 8em minmax(0, 1fr); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .radar .sweep, .radar .ping-ring, .ct-live, .ct-dot { animation: none; }
   }
 }
