@@ -2290,3 +2290,13 @@ html.deck .deck-beat.cs-splash neon-text .bright {
     html.deck .deck-beat.ms-chapter-open .ms-piece { display: none; }
   }
 }
+
+/* list slides (Where the leverage is, How I would finish it) speak at the same
+   size as every other slide's copy */
+@layer page {
+  html.deck .deck-beat.ms-read .ms-leverage li {
+    font-size: clamp(17px, min(1.45vw, 2.5vh), 25px);
+    line-height: 1.5;
+  }
+  html.deck .deck-beat.ms-read .ms-leverage { gap: 14px; max-width: 66ch; }
+}
