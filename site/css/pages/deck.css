@@ -597,7 +597,7 @@
 
     html.deck .deck-beat.ms-read .deck-copy p {
       max-width: none;
-      font-size: clamp(17px, 1.15vw, 21px);
+      font-size: clamp(18px, 1.3vw, 24px);
     }
 
     html.deck .deck-beat.ms-read .deck-copy > p:first-child {
@@ -1703,7 +1703,8 @@
 
   html.deck .deck-beat.ms-figure-beat > .ms-figure figcaption {
     margin-top: 16px;
-    font-size: clamp(15px, 1.1vw, 20px);
+    font-size: clamp(17px, 1.2vw, 22px);
+    line-height: 1.45;
     color: #c9c2c6;
     max-width: 70ch;
   }
@@ -1744,7 +1745,8 @@
 
   html.deck .deck-beat.ms-figure-beat > .ms-figure figcaption {
     margin-top: 16px;
-    font-size: clamp(15px, 1.1vw, 20px);
+    font-size: clamp(17px, 1.2vw, 22px);
+    line-height: 1.45;
     color: #c9c2c6;
     max-width: 70ch;
   }
@@ -2204,8 +2206,8 @@ html.deck .deck-beat.cs-splash neon-text .bright {
 /* the longest paragraphs set a step smaller so a full spoken paragraph fits one screen */
 @layer page {
   html.deck .deck-beat.deck-beat p.deck-long.deck-long,
-  html.deck .deck-beat.ms-read .deck-copy > p.deck-long.deck-long { font-size: clamp(16px, 1.08vw, 20px) !important; line-height: 1.5; }
-  html.deck .deck-beat:has(p.deck-long) h2 { font-size: clamp(28px, 2.6vw, 44px) !important; }
+  html.deck .deck-beat.ms-read .deck-copy > p.deck-long.deck-long { font-size: clamp(18px, 1.45vw, 25px) !important; line-height: 1.52; } /* the same size as a short slide's copy (#b8), so long and short slides speak in one voice */
+  html.deck .deck-beat:has(p.deck-long) h2 { font-size: clamp(32px, 3vw, 52px) !important; }
 }
 
 /* the open menu is its own room: the slide progress line, counter and hint step away */
@@ -2215,4 +2217,52 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   body.menu-open .deck-num,
   body.menu-open .deck-hint,
   body.menu-open .deck-arc-btn { opacity: 0; pointer-events: none; }
+}
+
+/* one rhythm for every deck (Apple, Microsoft, About): a slide title, then
+   body copy at one size whether the slide is short or long. Each size is the
+   smaller of a width step and a height step, so a short screen never gets
+   type it cannot fit. Statement slides and the About specials keep their own. */
+@layer page {
+  html.deck .deck-beat.ms-read:not(.ms-statement) > h2 {
+    font-size: clamp(34px, min(4.2vw, 7.4vh), 64px) !important;
+    line-height: 1.08;
+  }
+  html.deck .deck-beat.ms-read:has(p.deck-long) > h2 {
+    font-size: clamp(32px, min(3.6vw, 6.4vh), 56px) !important;
+  }
+  html.deck .deck-beat.ms-read:not(.ms-statement) .deck-copy > p,
+  html.deck .deck-beat.deck-beat p.deck-long.deck-long,
+  html.deck .deck-beat.ms-read .deck-copy > p.deck-long.deck-long {
+    font-size: clamp(17px, min(1.45vw, 2.5vh), 25px) !important;
+    line-height: 1.55;
+  }
+
+  /* long paragraphs get a wider column (about 74 characters, still a
+     comfortable line) so they sit under the title's width and stay short */
+  html.deck .deck-beat.ms-read:has(p.deck-long) .deck-copy { max-width: min(74ch, 100%); width: 100%; margin-inline: auto; }
+  html.deck .deck-beat p.deck-long { max-width: 74ch; }
+  html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement).deck-text-only:has(p.deck-long) .deck-copy { max-width: min(74ch, 100%); }
+
+  /* a long paragraph that shares its slide with a figure steps down one notch */
+  html.deck .deck-beat .ms-d-body p.deck-long.deck-long {
+    font-size: clamp(16px, min(1.3vw, 2.2vh), 22px) !important;
+    line-height: 1.5;
+  }
+}
+
+/* short screens (a 720p screen share): the bigger type still has to fit, so
+   figures give up a little height and the longest copy steps down one notch.
+   Taller screens, like the MacBook, keep the full sizes. */
+@layer page {
+  @media (max-height: 780px) {
+    html.deck .deck-beat.ms-figure-beat > .ms-figure svg,
+    html.deck .deck-beat.ms-figure-beat > .ms-figure img { max-height: 58vh; }
+    html.deck .deck-beat.ms-figure-beat > .ms-figure figcaption { font-size: 16px; margin-top: 10px; }
+    html.deck .deck-beat.deck-beat p.deck-long.deck-long,
+    html.deck .deck-beat.ms-read .deck-copy > p.deck-long.deck-long { font-size: 17px !important; }
+    html.deck .deck-beat .ms-d-body p { font-size: 17px; }
+    html.deck .deck-beat .ms-d-body p.deck-long.deck-long { line-height: 1.42; }
+    html.deck .deck-beat.ms-plain .ms-figure svg { max-height: 24vh; }
+  }
 }
