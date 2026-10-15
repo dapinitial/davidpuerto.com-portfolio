@@ -38,18 +38,22 @@ function measure(link) {
   return ctx.measureText(text).width + ls * text.length;
 }
 
-// one pass: a cubic wave across the word, entering and leaving off-axis
+// one pass: a looser, squigglier wave across the word, four smooth bends
+// entering and leaving off-axis, so it reads as a hand-sprayed line
 function passPath(w, h, x0) {
-  const y = (f) => h / 2 + rand(-f, f) * h * 0.6;
+  const y = (f) => h / 2 + rand(-f, f) * h * 0.75;
   const x1 = x0 + w;
-  const c = [
-    [x0 - rand(0.02, 0.08) * w, y(0.18)],
-    [x0 + w * rand(0.18, 0.32), y(0.34)],
-    [x0 + w * rand(0.42, 0.58), y(0.34)],
-    [x0 + w * rand(0.68, 0.82), y(0.34)],
-    [x1 + rand(0.02, 0.1) * w, y(0.2)],
-  ];
-  return `M${c[0][0]},${c[0][1]} C${c[1][0]},${c[1][1]} ${c[2][0]},${c[2][1]} ${c[2][0]},${c[2][1]} S${c[3][0]},${c[3][1]} ${c[4][0]},${c[4][1]}`;
+  const bends = 4;
+  const pts = [[x0 - rand(0.02, 0.08) * w, y(0.2)]];
+  for (let k = 1; k < bends; k++) pts.push([x0 + w * (k / bends) + rand(-0.05, 0.05) * w, y(0.42)]);
+  pts.push([x1 + rand(0.02, 0.1) * w, y(0.22)]);
+  // smooth through the points: each bend's handles run along the line
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let k = 1; k < pts.length; k++) {
+    const [ax, ay] = pts[k - 1], [bx, by] = pts[k], dx = (bx - ax) / 2.4;
+    d += ` C${ax + dx},${ay + rand(-0.25, 0.25) * h} ${bx - dx},${by + rand(-0.25, 0.25) * h} ${bx},${by}`;
+  }
+  return d;
 }
 
 function spray(li, link) {
@@ -104,7 +108,7 @@ function spray(li, link) {
       p.setAttribute('stroke-linecap', 'round');
       p.setAttribute('opacity', opacity);
       if (!reduced) {
-        p.style.strokeDasharray = '1 1';
+        p.style.strokeDasharray = '1 2';
         p.style.strokeDashoffset = '1';
         p.style.animation = `spray-draw ${dur}s cubic-bezier(.3,.6,.2,1) ${delay}s forwards`;
       }
