@@ -379,9 +379,11 @@ site-header .menu li .submenu-toggle::after {
   background: none;
   -webkit-text-fill-color: #0b0b0b;
   color: #0b0b0b;
-  /* Mona-Sans Wide ships only 200 and 900 here, so 400 falls back to 200.
-     A thin stroke thickens the ultralight letters without jumping to black. */
-  -webkit-text-stroke: 0.028em #0b0b0b;
+  /* the hover face is a stencil on the paint: the same heavy cut as the
+     resting words, solid dark, no outline (Mona-Sans Wide ships 200 and 900) */
+  font-weight: 900;
+  letter-spacing: 0;
+  -webkit-text-stroke: 0;
   /* a soft peach halo lifts the black letters off the paint, and off the black
      page where a stroke wanders below them */
   text-shadow: 0 0 2px rgba(255, 224, 212, 0.95), 0 0 8px rgba(255, 214, 200, 0.8), 0 0 18px rgba(255, 196, 176, 0.55);
@@ -390,7 +392,7 @@ site-header .menu li .submenu-toggle::after {
 
 /* the open menu: near-black with a faint coral glow */
 site-header .overlay {
-  background: radial-gradient(ellipse 90% 80% at 70% 30%, #26120f 0%, #0a0606 60%, #000 100%), #000;
+  background: radial-gradient(ellipse 90% 80% at 70% 30%, #1a0c0a 0%, #070404 60%, #000 100%), #000;
 }
 
 
@@ -402,9 +404,22 @@ html.with-climbs site-header .overlay::before {
   z-index: -1;
   background: url('/images/climbs/menu-ridge-1920.jpg') 70% 35% / cover no-repeat;
   mix-blend-mode: luminosity;
-  opacity: 0.22;
+  opacity: 0.13;
   pointer-events: none;
 }
 @media (max-width: 900px) {
   html.with-climbs site-header .overlay::before { background-image: url('/images/climbs/menu-ridge-960.jpg'); }
 }
+
+/* Menu contrast: the resting words a step brighter; the thin hover face gets
+   a soft light glow and, under it, a tight dark shadow plus a wider dark halo,
+   so it reads over the coral spray and the photo. A filter, not text-shadow,
+   because the face is a gradient clipped to the text. */
+site-header .menu li a::before,
+site-header .menu li .submenu-toggle::before {
+  color: #ece6e8;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+
+html.with-climbs site-header .overlay::before { opacity: 0.09; }
