@@ -1,5 +1,6 @@
 // Login page: POST /api/login, then hard-redirect to the gated destination.
 import { track } from './lib/analytics.js';
+import { InfinityLoader } from './elements/infinity-loader.js';
 
 const form = document.querySelector('.login-form');
 const status = form.querySelector('.form-status');
@@ -49,7 +50,15 @@ form.addEventListener('submit', async (e) => {
       const data = await res.json();
       const dest = data.redirectTo || '/case-studies/microsoft/';
       track('case_study_unlock', { study: dest });
-      location.assign(dest);
+      // the same page change as every other link: the loop comes up over Login,
+      // and the study arrives behind the same cover (js/main.js, boot/arriving.js)
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return location.assign(dest);
+      try {
+        sessionStorage.setItem('dp-arriving', '1');
+        sessionStorage.setItem('dp-loop-t0', String(Date.now()));
+      } catch { /* private mode: the loader still shows */ }
+      InfinityLoader.show();
+      setTimeout(() => location.assign(dest), 420);
     } else if (res.status === 429) {
       status.textContent = 'Too many tries. Wait fifteen minutes, or ask me for it.';
     } else {
