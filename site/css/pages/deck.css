@@ -2240,7 +2240,7 @@ html.deck .deck-beat.cs-splash neon-text .bright {
 
   /* long paragraphs get a wider column (about 74 characters, still a
      comfortable line) so they sit under the title's width and stay short */
-  html.deck .deck-beat.ms-read:has(p.deck-long) .deck-copy { max-width: min(74ch, 100%); width: 100%; margin-inline: auto; }
+  html.deck .deck-beat.ms-read:has(p.deck-long) .deck-copy { max-width: min(74ch, 100%); }
   html.deck .deck-beat p.deck-long { max-width: 74ch; }
   html.deck .deck-beat.ms-read:not(.has-art):not(.ms-statement).deck-text-only:has(p.deck-long) .deck-copy { max-width: min(74ch, 100%); }
 
