@@ -4,7 +4,25 @@
 // grained like aerosol. Every hover paints a new one. Light DOM, no deps.
 
 const NS = 'http://www.w3.org/2000/svg';
-const COLORS = ['#fb836d', '#e0573f', '#ff9f8a', '#c94a6a'];
+const CORAL = ['#fb836d', '#e0573f', '#ff9f8a', '#c94a6a'];
+
+// On a case study the paint takes that study's colour (its --cs-glow, set in
+// css/pages/case-study.css): Apple purple, Microsoft coral, Meta gold, and so
+// on. Four tones mixed from it: the colour, a lighter, a deeper, a softer.
+// Everywhere else, and on the review deck that spans studies, it stays coral.
+function palette() {
+  try {
+    if (location.pathname.startsWith('/case-studies/review')) return CORAL;
+    const raw = getComputedStyle(document.body).getPropertyValue('--cs-glow').trim();
+    const rgb = raw.split(/[\s,]+/).map(Number);
+    if (rgb.length !== 3 || rgb.some(Number.isNaN)) return CORAL;
+    const mix = (t, k) => '#' + rgb.map((c) => Math.round(c + (t - c) * k).toString(16).padStart(2, '0')).join('');
+    return [mix(0, 0), mix(255, 0.35), mix(0, 0.25), mix(255, 0.15)];
+  } catch {
+    return CORAL;
+  }
+}
+let COLORS = CORAL;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const rand = (a, b) => a + Math.random() * (b - a);
 let uid = 0;
@@ -120,6 +138,7 @@ export function clearSprays(root) {
 }
 
 export function sprayHover(root, signal) {
+  COLORS = palette();
   // the first real movement ends the quiet (capture, so it lands before a link's own pointermove)
   root.addEventListener('pointermove', () => root.classList.remove('hover-quiet'), { signal, capture: true });
   root.querySelectorAll('.menu li > a, .menu li > .submenu-toggle').forEach((link) => {

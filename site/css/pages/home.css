@@ -602,3 +602,8 @@
     }
   }
 }
+
+/* a study that ends on a list of links (SonoSite, Zillow) gets the same air
+   above its button as one that ends on a paragraph */
+#sonosite .text ul + .cta,
+#zillow .text ul + .cta { margin-top: 37px; }
