@@ -46,7 +46,7 @@
   font-weight: 400;
   font-size: 12px;
   text-align: center;
-  color: #555;
+  color: #8f898c; /* muted, but 4.5:1+ on the dark ground (was #555, 2.6:1) */
 }
 
 @keyframes scroll-down-mouse {

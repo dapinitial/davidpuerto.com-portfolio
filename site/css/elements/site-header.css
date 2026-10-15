@@ -402,7 +402,7 @@ site-header .overlay::before {
   z-index: -1;
   background: url('/images/climbs/menu-ridge-1920.jpg') 70% 35% / cover no-repeat;
   mix-blend-mode: luminosity;
-  opacity: 0.3;
+  opacity: 0.22;
   pointer-events: none;
 }
 
