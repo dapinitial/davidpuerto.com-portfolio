@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: 'NeonTubes';
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/neontubes.woff2') format('woff2');
 }
 
@@ -98,4 +98,17 @@ neon-text .short-out {
 /* reduced motion: the sign stays lit, no flicker or hum */
 @media (prefers-reduced-motion: reduce) {
   neon-text, neon-text * { animation: none !important; }
+}
+
+/* The Apple and Microsoft openers are short words, so at the shared size
+   they read smaller than the chapter signs (PROJECT STUDIO, SUPER COMPOSER).
+   The opening signs get a bigger tube so the title carries the room. */
+#apple > neon-text .bright,
+#microsoft > neon-text .bright {
+  font-size: clamp(38px, 8.5vw, 136px);
+}
+
+#apple > neon-text .dim,
+#microsoft > neon-text .dim {
+  font-size: clamp(11px, 1.4vw, 24px);
 }

@@ -99,3 +99,133 @@
   @keyframes about-mask-sheen { from { background-position: 100% 0; } to { background-position: 0% 0; } }
   @media (prefers-reduced-motion: reduce) { .about-hero .text-mask { animation: none; } }
 }
+
+@layer page {
+  /* The guide: the words beside a Live Photo of me coiling the rope at the
+     anchor before the rappel. Natural colour, a rounded card, looping. */
+  .ms-guide .guide-live {
+    margin: 0;
+    border-radius: 18px;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    max-width: 360px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 240, 244, 0.08);
+  }
+
+  .ms-guide .guide-live video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* on the slide: bigger words on the left, a big card on the right,
+     filling the spread instead of leaving the right third empty */
+  html.deck .deck-beat.ms-guide .deck-copy,
+  html.deck .deck-beat.ms-guide .deck-copy.deck-two-up {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: clamp(40px, 6vw, 96px);
+    align-items: center;
+    columns: auto;
+    max-width: 1100px;
+  }
+
+  html.deck .deck-beat.ms-guide .deck-copy > p {
+    grid-column: 1;
+    margin: 0 0 20px;
+    max-width: 34ch;
+    /* the same size as the slide-two copy (Since Flash) */
+    font-size: clamp(19px, 1.45vw, 25px) !important;
+    line-height: 1.55;
+  }
+
+  html.deck .deck-beat.ms-guide .deck-copy > p:first-child { color: #fff0f4; }
+
+  html.deck .deck-beat.ms-guide .guide-live {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    height: min(66svh, 680px);
+    width: auto;
+    max-width: none;
+    aspect-ratio: 3 / 4;
+  }
+
+  @media (max-width: 760px) {
+    html.deck .deck-beat.ms-guide .deck-copy,
+    html.deck .deck-beat.ms-guide .deck-copy.deck-two-up { grid-template-columns: 1fr; }
+    html.deck .deck-beat.ms-guide .guide-live { grid-column: 1; grid-row: auto; max-width: 260px; }
+  }
+}
+
+@layer page {
+  /* The hero video, creamier: softer contrast, a little less saturation, and
+     a coral soft-light wash so the rock picks up the site's warmth instead of
+     reading as raw phone colour. Same family as the photos on the loader. */
+  .about-hero clipped-image .ci-video video {
+    filter: saturate(0.78) contrast(0.9) brightness(0.96);
+  }
+
+  .about-hero clipped-image .ci-video::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 90% 80% at 50% 60%, rgba(251, 131, 109, 0.55), rgba(224, 87, 63, 0.25) 60%, rgba(20, 10, 9, 0.4) 100%);
+    mix-blend-mode: soft-light;
+  }
+}
+
+@layer page {
+  /* the guide's heading at the same size as slide two's, so the two read as a pair */
+  html.deck .deck-beat.ms-read.ms-guide h2 {
+    font-size: clamp(34px, 4.2vw, 72px) !important;
+    line-height: 1.08;
+  }
+}
+
+@layer page {
+  /* balance: the heading and the words are one column, centred top to bottom
+     against the card, instead of the heading riding above everything */
+  html.deck .deck-beat.ms-read.ms-guide {
+    grid-template-columns: minmax(0, 560px) auto;
+    /* empty flexible rows above and below the words centre them on the card */
+    grid-template-rows: 1fr auto auto auto 1fr;
+    column-gap: clamp(48px, 6vw, 112px);
+    row-gap: 0;
+    justify-content: center;
+    align-content: center;
+  }
+
+  html.deck .deck-beat.ms-read.ms-guide .deck-copy,
+  html.deck .deck-beat.ms-read.ms-guide .deck-copy.deck-two-up {
+    display: contents !important;
+  }
+
+  html.deck .deck-beat.ms-read.ms-guide h2 { grid-column: 1; grid-row: 2; margin: 0 0 24px; }
+  html.deck .deck-beat.ms-read.ms-guide .deck-copy > p { grid-column: 1; }
+  html.deck .deck-beat.ms-read.ms-guide .deck-copy > p:first-of-type { grid-row: 3; }
+  html.deck .deck-beat.ms-read.ms-guide .deck-copy > p:last-of-type { grid-row: 4; }
+  html.deck .deck-beat.ms-read.ms-guide .guide-live { grid-column: 2; grid-row: 1 / -1; align-self: center; }
+
+  @media (max-width: 760px) {
+    html.deck .deck-beat.ms-read.ms-guide { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
+    html.deck .deck-beat.ms-read.ms-guide h2, html.deck .deck-beat.ms-read.ms-guide .deck-copy > p { grid-row: auto !important; }
+    html.deck .deck-beat.ms-read.ms-guide .guide-live { grid-column: 1; grid-row: auto; height: auto; width: min(260px, 70vw); margin-top: 16px; }
+  }
+}
+
+@layer page {
+  /* the through-line is the sentence the whole About turns on: statement size,
+     a little larger than slide two's copy, in a measure that still reads */
+  /* (deck.js marks long paragraphs .deck-long and shrinks them; this one is
+     long on purpose and stays at statement size) */
+  html.deck .deck-beat.ms-read.ms-statement[data-beat="3.5"] .deck-copy > p,
+  html.deck .deck-beat.ms-read.ms-statement[data-beat="3.5"] .deck-copy > p.deck-long.deck-long,
+  html.deck .deck-beat.ms-read.ms-statement[data-beat="3.5"] > p {
+    font-size: clamp(21px, 1.75vw, 30px) !important;
+    line-height: 1.5;
+    max-width: 44ch;
+  }
+}

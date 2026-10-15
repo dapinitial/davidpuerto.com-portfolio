@@ -109,12 +109,26 @@ function fade(li) {
   setTimeout(() => s.remove(), 360);
 }
 
+// wipe every stroke: a list that is hidden or swapped never gets its
+// pointerleave, so its paint would wait there for the next time it shows
+export function clearSprays(root) {
+  root.querySelectorAll('.menu li').forEach(fade);
+  // a list swapped in under a still cursor reports a hover; nothing reacts
+  // (no paint, no flip) until the mouse actually moves. site-header.css keys
+  // its hover flip off this class too.
+  root.classList.add('hover-quiet');
+}
+
 export function sprayHover(root, signal) {
+  // the first real movement ends the quiet (capture, so it lands before a link's own pointermove)
+  root.addEventListener('pointermove', () => root.classList.remove('hover-quiet'), { signal, capture: true });
   root.querySelectorAll('.menu li > a, .menu li > .submenu-toggle').forEach((link) => {
     const li = link.parentElement;
-    link.addEventListener('pointerenter', () => spray(li, link), { signal });
-    link.addEventListener('focus', () => spray(li, link), { signal });
+    // hover only: opening the case-studies list moves focus to its first
+    // link for keyboard users, and that must not leave a stroke sprayed on it.
+    // Keyboard focus already shows the coral ring.
+    link.addEventListener('pointerenter', () => { if (!root.classList.contains('hover-quiet')) spray(li, link); }, { signal });
+    link.addEventListener('pointermove', () => { if (!li._spray) spray(li, link); }, { signal });
     link.addEventListener('pointerleave', () => fade(li), { signal });
-    link.addEventListener('blur', () => fade(li), { signal });
   });
 }

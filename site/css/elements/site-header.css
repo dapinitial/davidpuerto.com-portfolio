@@ -285,17 +285,17 @@ site-header .menu li .submenu-toggle::after {
   opacity: 0;
 }
 
-site-header .menu li a:hover::before,
+site-header:not(.hover-quiet) .menu li a:hover::before,
 site-header .menu li a:focus-visible::before,
-site-header .menu li .submenu-toggle:hover::before,
+site-header:not(.hover-quiet) .menu li .submenu-toggle:hover::before,
 site-header .menu li .submenu-toggle:focus-visible::before {
   transform: rotateX(90deg) translateZ(calc(var(--nav-item) / 2));
   opacity: 0;
 }
 
-site-header .menu li a:hover::after,
+site-header:not(.hover-quiet) .menu li a:hover::after,
 site-header .menu li a:focus-visible::after,
-site-header .menu li .submenu-toggle:hover::after,
+site-header:not(.hover-quiet) .menu li .submenu-toggle:hover::after,
 site-header .menu li .submenu-toggle:focus-visible::after {
   transform: rotateX(0deg) translateZ(calc(var(--nav-item) / 2));
   opacity: 1;
@@ -387,3 +387,27 @@ site-header .menu li .submenu-toggle::after {
   text-shadow: 0 0 2px rgba(255, 224, 212, 0.95), 0 0 8px rgba(255, 214, 200, 0.8), 0 0 18px rgba(255, 196, 176, 0.55);
 }
 @keyframes spray-draw { to { stroke-dashoffset: 0; } }
+
+/* Behind the open menu: the ridge, a climber on the lead with the rope
+   trailing. Black and white, luminosity-blended over a faint coral glow and
+   kept dim so the menu words and their spray stay in front. */
+site-header .overlay {
+  background: radial-gradient(ellipse 90% 80% at 70% 30%, #26120f 0%, #0a0606 60%, #000 100%);
+}
+
+site-header .overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('/images/climbs/menu-ridge-1920.jpg') 70% 35% / cover no-repeat;
+  mix-blend-mode: luminosity;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  site-header .overlay::before {
+    background-image: url('/images/climbs/menu-ridge-960.jpg');
+  }
+}

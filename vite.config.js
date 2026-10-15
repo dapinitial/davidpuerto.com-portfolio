@@ -39,11 +39,23 @@ const devAuthGate = () => ({
   },
 });
 
+// Every page preloads the two faces nearly all of its text is set in, so the
+// font-display: block wait is a few milliseconds, not a flash (see fonts.css).
+const PRELOAD_FONTS = ['/fonts/noto-sans-display.woff2', '/fonts/fraunces.woff2', '/fonts/fraunces-italic.woff2'];
+const preloadFonts = () => ({
+  name: 'preload-fonts',
+  transformIndexHtml(html) {
+    if (html.includes('rel="preload" as="font"')) return html;
+    const tags = PRELOAD_FONTS.map((href) => `<link rel="preload" as="font" type="font/woff2" href="${href}" crossorigin>`).join('\n  ');
+    return html.replace(/<meta charset[^>]*>/i, (m) => `${m}\n  ${tags}`);
+  },
+});
+
 export default defineConfig({
   root: 'site',
   appType: 'mpa',
   publicDir: 'public',
-  plugins: [devAuthGate(), editInPlace()],
+  plugins: [devAuthGate(), editInPlace(), preloadFonts()],
   build: {
     outDir: '../dist',
     emptyOutDir: true,

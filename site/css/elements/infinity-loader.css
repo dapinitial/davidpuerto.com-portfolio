@@ -3,7 +3,13 @@
 infinity-loader {
   position: fixed;
   inset: 0;
-  background-color: #0e0e0e;
+  /* the range from Shuksan, as on the homepage loader: black and white,
+     luminosity-blended over the coral glow, held dim under a dark veil */
+  background:
+    linear-gradient(rgba(8, 5, 5, 0.74), rgba(8, 5, 5, 0.74)),
+    url('/images/climbs/loader-range-1920.jpg') center 70% / cover no-repeat,
+    radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%);
+  background-blend-mode: normal, luminosity, normal;
   display: grid;
   place-content: center;
   z-index: 99999;
