@@ -6,23 +6,25 @@
 const NS = 'http://www.w3.org/2000/svg';
 const CORAL = ['#fb836d', '#e0573f', '#ff9f8a', '#c94a6a'];
 
-// On a case study the paint takes that study's colour (its --cs-glow, set in
-// css/pages/case-study.css): Apple purple, Microsoft coral, Meta gold, and so
-// on. Four tones mixed from it: the colour, a lighter, a deeper, a softer.
-// Everywhere else, and on the review deck that spans studies, it stays coral.
-function palette() {
-  try {
-    if (location.pathname.startsWith('/case-studies/review')) return CORAL;
-    const raw = getComputedStyle(document.body).getPropertyValue('--cs-glow').trim();
-    const rgb = raw.split(/[\s,]+/).map(Number);
-    if (rgb.length !== 3 || rgb.some(Number.isNaN)) return CORAL;
-    const mix = (t, k) => '#' + rgb.map((c) => Math.round(c + (t - c) * k).toString(16).padStart(2, '0')).join('');
-    return [mix(0, 0), mix(255, 0.35), mix(0, 0.25), mix(255, 0.15)];
-  } catch {
-    return CORAL;
-  }
+// The paint is coral everywhere, except the case-study links in the menu's
+// Case Studies list: each one sprays in its study's colour (the same colours
+// as css/pages/case-study.css), so the list doubles as a key to the studies.
+const STUDY_RGB = {
+  apple: [171, 101, 192],
+  microsoft: [251, 131, 109],
+  facebook: [237, 180, 23],
+  nordstrom: [208, 212, 220],
+  sonosite: [0, 163, 187],
+  zillow: [18, 119, 225],
+};
+function paletteFor(link) {
+  const slug = (link.getAttribute?.('href') || '').match(/\/case-studies\/([a-z]+)/)?.[1];
+  const rgb = link.closest?.('.menu-sub') && STUDY_RGB[slug];
+  if (!rgb) return CORAL;
+  const mix = (t, k) => '#' + rgb.map((c) => Math.round(c + (t - c) * k).toString(16).padStart(2, '0')).join('');
+  return [mix(0, 0), mix(255, 0.35), mix(0, 0.25), mix(255, 0.15)];
 }
-let COLORS = CORAL;
+
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const rand = (a, b) => a + Math.random() * (b - a);
 let uid = 0;
@@ -89,7 +91,8 @@ function spray(li, link) {
   const passes = Math.random() < 0.55 ? 2 : 3;
   for (let k = 0; k < passes; k++) {
     const d = passPath(tw, h, (W - tw) / 2);
-    const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    const colors = paletteFor(link);
+    const color = colors[Math.floor(Math.random() * colors.length)];
     const dur = rand(0.34, 0.52).toFixed(2), delay = (k * rand(0.06, 0.14)).toFixed(2);
     const mk = (width, opacity) => {
       const p = document.createElementNS(NS, 'path');
@@ -138,7 +141,6 @@ export function clearSprays(root) {
 }
 
 export function sprayHover(root, signal) {
-  COLORS = palette();
   // the first real movement ends the quiet (capture, so it lands before a link's own pointermove)
   root.addEventListener('pointermove', () => root.classList.remove('hover-quiet'), { signal, capture: true });
   root.querySelectorAll('.menu li > a, .menu li > .submenu-toggle').forEach((link) => {
