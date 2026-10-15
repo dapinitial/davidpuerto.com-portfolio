@@ -12,13 +12,17 @@ site-preloader .preloader-wrap {
 }
 
 site-preloader .outer {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 site-preloader .percentage-wrapper {
-  background-color: black;
+  z-index: 2;
+  /* transparent: a black box here would cut the overspray off square */
+  background-color: transparent;
   display: grid;
   place-content: center;
   position: relative;
@@ -61,8 +65,10 @@ site-preloader .preloader-intro {
   position: relative;
   display: inline-flex;
   color: #777;
-  overflow: hidden;
-  z-index: 0;
+  /* visible, so the word's shadow is not cut square; the exit collapses the
+     word with a clip-path instead */
+  overflow: visible;
+  z-index: 2;
 }
 
 site-preloader .loading-text {
@@ -72,7 +78,8 @@ site-preloader .loading-text {
   font-size: calc(1rem + 2vw);
   line-height: calc(1rem + 2.5vw);
   position: relative;
-  background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.25) 50%);
+  /* opaque at both ends, so the paint never shows through the letters */
+  background: linear-gradient(90deg, #fff 0%, #4a4446 50%);
   background-size: 200% 100%;
   background-position: 100% 0;
   -webkit-background-clip: text;
@@ -105,3 +112,106 @@ site-preloader .percentage {
 }
 @keyframes preloader-sheen { 0%, 100% { background-position: 0% 0; } 50% { background-position: 100% 0; } }
 @media (prefers-reduced-motion: reduce) { site-preloader .percentage { animation: none; } }
+
+/* the spray behind the wordmark: painted on .outer so its overspray is not
+   clipped by the word's own box */
+site-preloader .preloader-spray {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* the digits glow, so they read over the paint. A drop-shadow filter, not
+   text-shadow: with a gradient clipped to the text, text-shadow would show
+   through the transparent fill */
+site-preloader .percentage {
+  filter: drop-shadow(0 0 4px rgba(255, 210, 196, 0.75)) drop-shadow(0 0 14px rgba(251, 131, 109, 0.7));
+}
+
+/* depth: a dark copy of the digits sits under the glowing ones, nudged down
+   and right, so they lift off the paint. Same grid cell, same type. */
+site-preloader .percentage-wrapper::before {
+  content: attr(data-pct);
+  grid-area: 1 / 1;
+  justify-self: end;
+  font-family: 'Mona-Sans', sans-serif;
+  font-weight: 200;
+  font-size: calc(1rem + 2vw);
+  line-height: calc(1rem + 2.5vw);
+  margin: 1px 20px 0 auto;
+  color: #140e0f;
+  transform: translate(2px, 3px);
+  text-shadow: 0 0 2px #000, 0 2px 12px rgba(0, 0, 0, 0.9);
+}
+
+site-preloader .percentage {
+  grid-area: 1 / 1;
+  justify-self: end;
+  position: relative;
+}
+
+@media only screen and (max-width: 600px) {
+  site-preloader .percentage-wrapper::before { margin-right: 32px; }
+}
+
+/* LOADING gets the same depth as the digits: a hard dark offset and a soft
+   dark blur. A filter, so it rides the gradient-clipped letters and
+   collapses with them on exit. */
+site-preloader .loading-text {
+  clip-path: inset(-40% -12% -40% -6%);
+  filter: drop-shadow(2px 3px 0 rgba(20, 14, 15, 0.95)) drop-shadow(0 2px 10px rgba(0, 0, 0, 0.85));
+}
+
+/* the wordmark is a cube: LOADING on the front face, LOADED on the face
+   underneath. At 100 the cube turns over (js), then collapses. */
+site-preloader .preloader-intro {
+  perspective: 700px;
+}
+
+site-preloader .lt-cube {
+  position: relative;
+  display: flex;
+  transform-style: preserve-3d;
+}
+
+site-preloader .lt-cube .loading-text {
+  backface-visibility: hidden;
+}
+
+site-preloader .loaded-text {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  transform-origin: 50% 0;
+  transform: rotateX(-90deg);
+  /* fully lit: the sweep has already finished when this face shows */
+  background-image: linear-gradient(#fff, #fff);
+}
+
+/* Behind it all, the range from Shuksan: black and white, laid over a faint
+   coral glow with a luminosity blend so the ridges pick up the brand warmth.
+   It rises with the percentage (--p, set by the js). */
+site-preloader .preloader-wrap {
+  background: radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%);
+}
+
+site-preloader .preloader-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url('/images/climbs/loader-range-1920.jpg') center 70% / cover no-repeat;
+  mix-blend-mode: luminosity;
+  opacity: calc(0.1 + var(--p, 0) * 0.26);
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  site-preloader .preloader-wrap::before {
+    background-image: url('/images/climbs/loader-range-960.jpg');
+  }
+}
+
+/* in front of the photo; the line stays where it was, pinned near the bottom */
+site-preloader .outer { position: relative; z-index: 1; }
+site-preloader .percentage-intro { z-index: 1; }

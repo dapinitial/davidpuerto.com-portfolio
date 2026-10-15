@@ -10,8 +10,13 @@ const STUDIES = {
   '/case-studies/microsoft/': 'Microsoft · Preview Sites',
   '/case-studies/apple/': 'Apple · Project Studio',
   '/case-studies/review/': 'The review deck',
+  '/case-studies/facebook/': 'Facebook',
+  '/case-studies/nordstrom/': 'Nordstrom',
+  '/case-studies/sonosite/': 'SonoSite',
+  '/case-studies/zillow/': 'Zillow',
 };
-const wanted = (new URLSearchParams(location.search).get('redirectTo') || '').split(/[?#]/)[0];
+// a path without its trailing slash still names the study
+const wanted = (new URLSearchParams(location.search).get('redirectTo') || '').split(/[?#]/)[0].replace(/([^/])$/, '$1/');
 const forEl = form.querySelector('[data-for]');
 if (STUDIES[wanted] && forEl) {
   forEl.innerHTML = `Requested <b>${STUDIES[wanted]}</b>`;

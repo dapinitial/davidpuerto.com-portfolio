@@ -2,7 +2,7 @@
 // with case-studies submenu, and a Logout button when authenticated.
 // Light DOM, zero dependencies. Pair with css/elements/site-header.css.
 
-import { sprayHover } from './spray-hover.js';
+import { sprayHover, clearSprays } from './spray-hover.js';
 
 const LOGO_PATH =
   'M17.7762223,0 C22.0993405,1.05095417 26,3.22401634 26,8.83692672 C26,14.4498371 21.4058992,19 15.7387888,19 L0,19 L3.40465506,15.304337 L15.7387888,15.304337 C19.3451318,15.304337 22.2686505,12.4087788 22.2686505,8.83692672 C22.2686505,5.26507465 18.569846,3.41487829 14.963503,3.41487829 L17.7762223,0 Z';
@@ -71,6 +71,7 @@ class SiteHeader extends HTMLElement {
     const toggle = this.querySelector('.submenu-toggle');
     const showSub = (sub) => {
       const hadFocus = this.contains(document.activeElement) && document.activeElement !== hamburger;
+      clearSprays(this);
       mainMenu.hidden = sub;
       subMenu.hidden = !sub;
       crumb.hidden = !sub;
@@ -103,7 +104,10 @@ class SiteHeader extends HTMLElement {
       document.body.classList.toggle('menu-open', open);
       hamburger.setAttribute('aria-expanded', String(open));
       hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-      if (!open) showSub(false);
+      if (!open) {
+        showSub(false);
+        clearSprays(this);
+      }
       setInert(open);
       skip.tabIndex = open ? -1 : 0; // nothing to skip to while the menu covers the page
       if (open && !wasOpen && keyboard) mainMenu.querySelector('a, button')?.focus({ preventScroll: true });

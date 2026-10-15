@@ -1,9 +1,12 @@
+/* font-display: block on every face: text waits (briefly; the core faces are
+   preloaded in every page head) rather than flashing in a fallback face and
+   swapping. No fallback face ever paints first. */
 /* Self-hosted variable fonts (latin subsets) — no Google Fonts runtime dependency */
 @font-face {
   font-family: 'Fraunces';
   font-style: normal;
   font-weight: 100 900;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/fraunces.woff2') format('woff2');
 }
 
@@ -11,7 +14,7 @@
   font-family: 'Fraunces';
   font-style: italic;
   font-weight: 100 900;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/fraunces-italic.woff2') format('woff2');
 }
 
@@ -19,7 +22,7 @@
   font-family: 'Noto Sans Display';
   font-style: normal;
   font-weight: 100 900;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/noto-sans-display.woff2') format('woff2');
 }
 
@@ -27,7 +30,7 @@
   font-family: 'Noto Sans Display';
   font-style: italic;
   font-weight: 100 900;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/noto-sans-display-italic.woff2') format('woff2');
 }
 
@@ -37,7 +40,7 @@
   font-family: 'Mona-Sans';
   font-style: normal;
   font-weight: 900;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/mona-sans-black-wide.woff') format('woff');
 }
 
@@ -45,14 +48,14 @@
   font-family: 'Mona-Sans';
   font-style: normal;
   font-weight: 200;
-  font-display: swap;
+  font-display: block;
   src: url('/fonts/mona-sans-ultralight-wide.woff') format('woff');
 }
 
 /* Poppins — case-study article face (latin, static weights) */
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 100; font-display: swap; src: url('/fonts/poppins-100.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 300; font-display: swap; src: url('/fonts/poppins-300.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 400; font-display: swap; src: url('/fonts/poppins-400.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/poppins-700.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 800; font-display: swap; src: url('/fonts/poppins-800.woff2') format('woff2'); }
-@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 900; font-display: swap; src: url('/fonts/poppins-900.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 100; font-display: block; src: url('/fonts/poppins-100.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 300; font-display: block; src: url('/fonts/poppins-300.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 400; font-display: block; src: url('/fonts/poppins-400.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 700; font-display: block; src: url('/fonts/poppins-700.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 800; font-display: block; src: url('/fonts/poppins-800.woff2') format('woff2'); }
+@font-face { font-family: 'Poppins'; font-style: normal; font-weight: 900; font-display: block; src: url('/fonts/poppins-900.woff2') format('woff2'); }

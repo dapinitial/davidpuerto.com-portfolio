@@ -31,6 +31,10 @@ export const isDeck =
   params.get('deck') === '1' || TALK ||
   (params.get('read') !== '1' && STAGE && !!document.querySelector('[data-beat]'));
 
+// the page was held pre-paint (boot/arriving.js) until the deck is laid out;
+// a frame after this module's setup, it shows
+requestAnimationFrame(() => document.documentElement.classList.remove('deck-pending'));
+
 if (isDeck) {
   const root = document.documentElement;
   root.classList.add('deck');

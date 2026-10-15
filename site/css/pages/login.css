@@ -21,6 +21,22 @@
     background: radial-gradient(70% 55% at 50% 110%, color-mix(in srgb, var(--lg-accent) 22%, transparent), transparent 70%);
   }
 
+  /* behind the gate: Forbidden Peak, the same photo and treatment as Contact
+     (black and white, luminosity-blended over the coral glow, held at 10%) */
+  .login-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: url('/images/climbs/contact-arete-1920.jpg') 50% 30% / cover no-repeat;
+    mix-blend-mode: luminosity;
+    opacity: 0.1;
+  }
+
+  @media (max-width: 900px) {
+    .login-hero::after { background-image: url('/images/climbs/contact-arete-960.jpg'); }
+  }
+
   .login-form {
     position: relative;
     z-index: 1;

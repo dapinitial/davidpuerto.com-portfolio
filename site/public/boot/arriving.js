@@ -19,3 +19,20 @@
     }
   } catch (e) {}
 })();
+
+// Deck pages: the deck lays itself out from a module, after the parser could
+// already have painted the long read. Predict the deck the way deck.js
+// decides it and hold the page (the dark ground shows) until it has; deck.js
+// lifts .deck-pending. Failsafe: never hold longer than 2.5s.
+(function () {
+  try {
+    var q = new URLSearchParams(location.search);
+    var deckPage = /^\/(about-me|case-studies\/(apple|microsoft|review))\/?$/.test(location.pathname);
+    var stage = matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+    if (deckPage && (q.get('deck') === '1' || q.get('talk') === '1' || (q.get('read') !== '1' && stage))) {
+      var html = document.documentElement;
+      html.classList.add('deck-pending');
+      setTimeout(function () { html.classList.remove('deck-pending'); }, 2500);
+    }
+  } catch (e) {}
+})();

@@ -29,3 +29,11 @@ if (piece) {
     io.observe(piece);
   }
 }
+
+// --- The guide's Live Photo: it autoplays and loops like the hero video;
+// anyone who asked for less motion gets the poster frame instead -----------
+const live = document.querySelector('.guide-live video');
+if (live && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  live.removeAttribute('autoplay');
+  live.pause();
+}

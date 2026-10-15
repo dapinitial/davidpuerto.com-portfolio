@@ -130,8 +130,20 @@
     content: '';
     position: fixed;
     inset: 0;
-    background: var(--color-background, #0e0e0e);
+    /* the same backdrop as <infinity-loader>, so leaving and arriving match */
+    background:
+    linear-gradient(rgba(8, 5, 5, 0.74), rgba(8, 5, 5, 0.74)),
+    url('/images/climbs/loader-range-1920.jpg') center 70% / cover no-repeat,
+    radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%);
+    background-blend-mode: normal, luminosity, normal;
     z-index: 99998; /* just under infinity-loader's 99999 */
+  }
+
+  /* Deck pending: boot/arriving.js predicts deck mode pre-paint; the page
+     holds on its dark ground until js/case-studies/deck.js has laid out the
+     slides, so the long read never flashes first. */
+  html.deck-pending body {
+    visibility: hidden;
   }
 
   /* Resize lid: while the window is actively resizing, pause every
