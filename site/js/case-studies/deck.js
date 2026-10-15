@@ -28,6 +28,8 @@ const STAGE = matchMedia('(min-width: 900px) and (pointer: fine), (min-width: 74
 // ?talk=1 plays the route marked for the room: only beats with data-talk, the
 // same deck otherwise. A opens the full deck at the same slide.
 const TALK = params.get('talk') === '1';
+// Talking points are for the presenter: the talk route, or localhost. Visitors with the password never see them.
+const PRESENTER = TALK || ['localhost', '127.0.0.1'].includes(location.hostname);
 export const isDeck =
   params.get('deck') === '1' || TALK ||
   (params.get('read') !== '1' && STAGE && !!document.querySelector('[data-beat]'));
@@ -57,6 +59,7 @@ if (isDeck) {
   document.querySelectorAll('a.deck-next').forEach((a) => { a.href = a.getAttribute('href') + location.search; });
   const beats = TALK && all.some((b) => b.hasAttribute('data-talk')) ? all.filter((b) => b.hasAttribute('data-talk')) : all;
   if (TALK) root.classList.add('talk');
+  if (!PRESENTER) all.forEach((b) => b.removeAttribute('data-notes'));
 
   if (main && beats.length) {
     // One slot per beat in document flow (the thing that snaps); the beat
@@ -126,7 +129,7 @@ if (isDeck) {
       <div class="deck-num" aria-hidden="true"></div>
       <button type="button" class="deck-arc-btn" aria-label="Open the story arc" aria-expanded="false" aria-controls="deck-arc"><svg viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="20"></circle><circle class="prog" cx="24" cy="24" r="20"></circle></svg><span class="deck-arc-n"></span></button>
       <p class="deck-gen" aria-hidden="true"><span class="deck-gen-ticks"><i></i><i></i><i></i><i></i></span><span class="deck-gen-label"></span></p>
-      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · N notes · T story arc · F fullscreen${TALK ? ' · A every slide' : ''}</p>
+      <p class="deck-hint" aria-hidden="true">scroll or → next · ← back · ${PRESENTER ? 'N notes · ' : ''}T story arc · F fullscreen${TALK ? ' · A every slide' : ''}</p>
       <p class="sr-only deck-live" aria-live="polite" aria-atomic="true"></p>
       <aside class="deck-notes" hidden><p class="deck-eyebrow">Talking points · N to hide</p><div class="deck-notes-body"></div></aside>`;
     document.body.appendChild(ui);
@@ -350,7 +353,7 @@ if (isDeck) {
       num.classList.add('show');
       clearTimeout(numT);
       numT = setTimeout(() => num.classList.remove('show'), 2000);
-      notesBody.textContent = beats[i].dataset.notes ?? '(no notes for this beat)';
+      if (PRESENTER) notesBody.textContent = beats[i].dataset.notes ?? '(no notes for this beat)';
       hint.style.opacity = i >= beats.length - 1 ? '0' : '';
       const chromeOff = beats[i].matches('.cs-hero, .page-hero, .ms-chapter-open');
       const g = chromeOff ? null : genOf[i];
@@ -463,7 +466,7 @@ if (isDeck) {
       else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
       else if (e.key === 'Home') { e.preventDefault(); go(0); }
       else if (e.key === 'End') { e.preventDefault(); go(beats.length - 1); }
-      else if (k === 'n') notes.hidden = !notes.hidden;
+      else if (k === 'n' && PRESENTER) notes.hidden = !notes.hidden;
       else if (k === 't') { if (toc.classList.contains('open')) closeToc(); else openToc(); }
       else if (k === 'f') { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen?.(); }
       else if (k === 'a' && TALK) { location.href = `${location.pathname}?deck=1#b${all.indexOf(beats[cur]) + 1}`; } // the whole deck, same slide

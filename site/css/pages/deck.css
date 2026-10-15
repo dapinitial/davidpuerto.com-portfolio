@@ -1706,7 +1706,7 @@
     font-size: clamp(17px, 1.2vw, 22px);
     line-height: 1.45;
     color: #c9c2c6;
-    max-width: 70ch;
+    max-width: 80ch;
   }
 
   /* in the long read the split figure follows its section as before */
@@ -1748,7 +1748,7 @@
     font-size: clamp(17px, 1.2vw, 22px);
     line-height: 1.45;
     color: #c9c2c6;
-    max-width: 70ch;
+    max-width: 80ch;
   }
 
   html:not(.deck) .ms-figure-beat {
