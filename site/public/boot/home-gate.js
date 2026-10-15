@@ -13,3 +13,19 @@
     }, 3000);
   }
 })();
+
+// Climbs: the mountain photos behind the loader, page changes, menu, Contact
+// and Login. On by default; ?climbs=0 turns them off on this browser
+// (remembered), ?climbs=1 turns them back on.
+(function () {
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.has('climbs')) {
+      if (q.get('climbs') === '0') localStorage.setItem('dp-climbs', 'off');
+      else localStorage.removeItem('dp-climbs');
+    }
+    if (localStorage.getItem('dp-climbs') !== 'off') document.documentElement.classList.add('with-climbs');
+  } catch (e) {
+    document.documentElement.classList.add('with-climbs');
+  }
+})();

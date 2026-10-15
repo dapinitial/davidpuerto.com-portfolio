@@ -3,13 +3,8 @@
 infinity-loader {
   position: fixed;
   inset: 0;
-  /* the range from Shuksan, as on the homepage loader: black and white,
-     luminosity-blended over the coral glow, held dim under a dark veil */
-  background:
-    linear-gradient(rgba(8, 5, 5, 0.74), rgba(8, 5, 5, 0.74)),
-    url('/images/climbs/loader-range-1920.jpg') center 70% / cover no-repeat,
-    radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%);
-  background-blend-mode: normal, luminosity, normal;
+  /* the same dark coral-glow ground as the homepage loader */
+  background: radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%), #000;
   display: grid;
   place-content: center;
   z-index: 99999;
@@ -104,4 +99,15 @@ html.is-arriving.is-departing::after {
   to {
     opacity: 0;
   }
+}
+
+/* Climbs (private switch): Shuksan behind every page change, held dim */
+html.with-climbs infinity-loader,
+html.with-climbs.is-arriving::before {
+  background:
+    linear-gradient(rgba(8, 5, 5, 0.74), rgba(8, 5, 5, 0.74)),
+    url('/images/climbs/loader-range-1920.jpg') center 70% / cover no-repeat,
+    radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%),
+    #000;
+  background-blend-mode: normal, luminosity, normal, normal;
 }

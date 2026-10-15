@@ -31,11 +31,27 @@
   try {
     var q = new URLSearchParams(location.search);
     var deckPage = /^\/(about-me|case-studies\/(apple|microsoft|review))\/?$/.test(location.pathname);
-    var stage = matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+    var stage = matchMedia('(min-width: 900px) and (pointer: fine), (min-width: 744px) and (min-height: 600px) and (pointer: coarse)').matches;
     if (deckPage && (q.get('deck') === '1' || q.get('talk') === '1' || (q.get('read') !== '1' && stage))) {
       var html = document.documentElement;
       html.classList.add('deck-pending');
       setTimeout(function () { html.classList.remove('deck-pending'); }, 2500);
     }
   } catch (e) {}
+})();
+
+// Climbs: the mountain photos behind the loader, page changes, menu, Contact
+// and Login. On by default; ?climbs=0 turns them off on this browser
+// (remembered), ?climbs=1 turns them back on.
+(function () {
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.has('climbs')) {
+      if (q.get('climbs') === '0') localStorage.setItem('dp-climbs', 'off');
+      else localStorage.removeItem('dp-climbs');
+    }
+    if (localStorage.getItem('dp-climbs') !== 'off') document.documentElement.classList.add('with-climbs');
+  } catch (e) {
+    document.documentElement.classList.add('with-climbs');
+  }
 })();

@@ -189,14 +189,19 @@ site-preloader .loaded-text {
   background-image: linear-gradient(#fff, #fff);
 }
 
-/* Behind it all, the range from Shuksan: black and white, laid over a faint
-   coral glow with a luminosity blend so the ridges pick up the brand warmth.
-   It rises with the percentage (--p, set by the js). */
+/* the ground: black with a faint coral glow under the word */
 site-preloader .preloader-wrap {
-  background: radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%);
+  background: radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%), #000;
 }
 
-site-preloader .preloader-wrap::before {
+
+/* in front of the photo; the line stays where it was, pinned near the bottom */
+site-preloader .outer { position: relative; z-index: 1; }
+site-preloader .percentage-intro { z-index: 1; }
+
+/* Climbs (private switch, see boot/arriving.js): the range from Shuksan behind
+   the loader, luminosity-blended over the glow, rising with the percentage */
+html.with-climbs site-preloader .preloader-wrap::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -205,13 +210,6 @@ site-preloader .preloader-wrap::before {
   opacity: calc(0.1 + var(--p, 0) * 0.26);
   pointer-events: none;
 }
-
 @media (max-width: 900px) {
-  site-preloader .preloader-wrap::before {
-    background-image: url('/images/climbs/loader-range-960.jpg');
-  }
+  html.with-climbs site-preloader .preloader-wrap::before { background-image: url('/images/climbs/loader-range-960.jpg'); }
 }
-
-/* in front of the photo; the line stays where it was, pinned near the bottom */
-site-preloader .outer { position: relative; z-index: 1; }
-site-preloader .percentage-intro { z-index: 1; }
