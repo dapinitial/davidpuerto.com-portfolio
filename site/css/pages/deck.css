@@ -2266,3 +2266,27 @@ html.deck .deck-beat.cs-splash neon-text .bright {
     html.deck .deck-beat.ms-plain .ms-figure svg { max-height: 24vh; }
   }
 }
+
+/* tablets in portrait: a slide's screenshots stack, so each one gives up height */
+@layer page {
+  @media (max-width: 900px) and (orientation: portrait) {
+    html.deck .deck-beat .ms-d-body .ms-shot img,
+    html.deck .deck-beat .ms-d-body figure img {
+      max-height: 24svh;
+      width: auto;
+      max-width: 100%;
+      margin-inline: auto;
+      display: block;
+      object-fit: contain;
+    }
+  }
+}
+
+/* small tablets in portrait: the decorative chess piece steps aside so a
+   chapter opener's words fit (it is aria-hidden; nothing is lost to a reader) */
+@layer page {
+  @media (max-width: 800px) and (orientation: portrait) {
+    html.deck .deck-beat .ms-chapter-open .ms-piece,
+    html.deck .deck-beat.ms-chapter-open .ms-piece { display: none; }
+  }
+}

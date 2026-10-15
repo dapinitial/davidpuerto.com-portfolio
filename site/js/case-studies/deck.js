@@ -23,7 +23,8 @@ import '../elements/hand-mark.js';
 const params = new URLSearchParams(location.search);
 // The deck is the default on a desktop (a fine pointer and room for the
 // spread); ?read=1 asks for the long read, ?deck=1 forces the deck anywhere.
-const STAGE = matchMedia('(min-width: 900px) and (pointer: fine)').matches;
+// a tablet is a stage too: an iPad swipes slide to slide on the same snap
+const STAGE = matchMedia('(min-width: 900px) and (pointer: fine), (min-width: 744px) and (min-height: 600px) and (pointer: coarse)').matches;
 // ?talk=1 plays the route marked for the room: only beats with data-talk, the
 // same deck otherwise. A opens the full deck at the same slide.
 const TALK = params.get('talk') === '1';

@@ -130,12 +130,8 @@
     content: '';
     position: fixed;
     inset: 0;
-    /* the same backdrop as <infinity-loader>, so leaving and arriving match */
-    background:
-    linear-gradient(rgba(8, 5, 5, 0.74), rgba(8, 5, 5, 0.74)),
-    url('/images/climbs/loader-range-1920.jpg') center 70% / cover no-repeat,
-    radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%);
-    background-blend-mode: normal, luminosity, normal;
+    /* the same ground as <infinity-loader>, so leaving and arriving match */
+    background: radial-gradient(ellipse 80% 70% at 50% 62%, #2b1411 0%, #0b0606 55%, #000 100%), #000;
     z-index: 99998; /* just under infinity-loader's 99999 */
   }
 

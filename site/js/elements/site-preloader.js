@@ -154,7 +154,7 @@ class SitePreloader extends HTMLElement {
       bar.style.width = `${state.p}%`;
       text.style.backgroundPosition = `${100 - state.p}% 0`;
       spray.paint(state.p);
-      wrap.style.setProperty('--p', (state.p / 100).toFixed(3)); // the photo rises with it
+      wrap.style.setProperty('--p', (state.p / 100).toFixed(3)); // the climbs photo, when on, rises with it
     };
 
     this.#tl = gsap
