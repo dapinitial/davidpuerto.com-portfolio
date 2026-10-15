@@ -15,7 +15,7 @@ if (!isHomepage && !document.querySelector('scroll-progress')) {
 // Page-transition loader: cover internal navigations with the infinity loader
 // (the old SPA's transition feel). Browsers don't repaint between click and
 // navigation, so we hold the nav briefly — otherwise the loader never shows.
-const TRANSITION_HOLD = 600; // one beat of the infinity loop
+const TRANSITION_HOLD = 420; // long enough for the loader to paint and turn
 
 document.addEventListener('click', (e) => {
   const link = e.target.closest('a[href]');
@@ -30,6 +30,8 @@ document.addEventListener('click', (e) => {
   // snippet covers it pre-paint (no flash before the loader appears there).
   try {
     sessionStorage.setItem('dp-arriving', '1');
+    // when the loop started, so the next page can pick it up where it is
+    sessionStorage.setItem('dp-loop-t0', String(Date.now()));
   } catch {
     /* private mode etc. — transition still works, just without the cover */
   }
@@ -52,7 +54,7 @@ try {
         clearTimeout(window.__arriveFailsafe);
         html.classList.add('is-departing');
         // hop (500ms) + cover fade tail (ends 600ms) — then drop the cover
-        setTimeout(() => html.classList.remove('is-arriving', 'is-departing'), 650);
+        setTimeout(() => html.classList.remove('is-arriving', 'is-departing'), 520);
       };
       if (document.readyState === 'complete') done();
       else window.addEventListener('load', done, { once: true });

@@ -49,7 +49,7 @@ class InfinityLoader extends HTMLElement {
     const wait = Math.max(0, minShow - (performance.now() - this.#shownAt));
     setTimeout(() => {
       this.classList.add('exit');
-      setTimeout(() => this.remove(), 650); // hop (500) + cover fade tail (600)
+      setTimeout(() => this.remove(), 520); // hop (460) + cover fade tail (480)
     }, wait);
   }
 

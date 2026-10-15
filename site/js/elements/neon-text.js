@@ -56,7 +56,8 @@ class NeonText extends HTMLElement {
     const clean = (t) => t.replaceAll('<br />', ' ').replace(/\s+/g, ' ').trim();
     const words = [clean(bright), clean(dim)].filter(Boolean).join(': ');
     const main = this.closest('main');
-    const hero = !!main && (!!this.closest('.cs-hero, [data-beat="1"]') || main.firstElementChild?.contains(this)) && !this.closest('h1, h2, h3, h4, h5, h6');
+    // a chapter splash (.cs-splash) is a marker inside the story, not the page's title
+    const hero = !!main && (!!this.closest('.cs-hero, [data-beat="1"]') || main.firstElementChild?.contains(this)) && !this.closest('h1, h2, h3, h4, h5, h6, .cs-splash');
     if (words) {
       this.setAttribute('role', hero ? 'heading' : 'img');
       if (hero) this.setAttribute('aria-level', '1');
