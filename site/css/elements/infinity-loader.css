@@ -18,11 +18,11 @@ infinity-loader {
 }
 
 infinity-loader.exit {
-  animation: infinity-fade-out 0.4s ease 0.2s forwards;
+  animation: infinity-fade-out 0.34s ease 0.14s forwards;
 }
 
 infinity-loader.exit svg {
-  animation: infinity-hop-away 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: infinity-hop-away 0.46s linear forwards;
 }
 
 /* Arrival cover spinner: html.is-arriving::before (base.css) paints the
@@ -43,29 +43,53 @@ html.is-arriving::after {
     center / 100% 100% no-repeat;
 }
 
+/* the loop picks up where the old page left it (boot/arriving.js sets
+   data-loop to the nearest eighth), so there is no restart at the swap */
+html.is-arriving[data-loop="1"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='32.074;288.663' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+html.is-arriving[data-loop="2"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='64.147;320.736' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+html.is-arriving[data-loop="3"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='96.221;352.81' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+html.is-arriving[data-loop="4"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='128.294;384.883' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+html.is-arriving[data-loop="5"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='160.368;416.957' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+html.is-arriving[data-loop="6"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='192.442;449.031' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+html.is-arriving[data-loop="7"]::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='3' stroke-dasharray='205.271 51.318' d='M24.3,30C11.4,30,5,43.3,5,50s6.4,20,19.3,20c19.3,0,32.1-40,51.4-40C88.6,30,95,43.3,95,50s-6.4,20-19.3,20C56.4,70,43.6,30,24.3,30z'%3E%3Canimate attributeName='stroke-dashoffset' calcMode='linear' values='224.515;481.104' keyTimes='0;1' dur='1s' begin='0s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+}
+
 html.is-arriving.is-departing::before {
-  animation: infinity-fade-out 0.4s ease 0.2s forwards;
+  animation: infinity-fade-out 0.34s ease 0.14s forwards;
 }
 
 html.is-arriving.is-departing::after {
-  animation: infinity-hop-away 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: infinity-hop-away 0.46s linear forwards;
 }
 
-/* The exit: a quick squat, then the loop leaps up and away while the cover
-   fades out underneath — the page fades in as the spinner hops off. */
+/* The exit: a soft squat, then a launch that eases out as it rises and fades,
+   with no springy overshoot. Each leg carries its own easing. */
 @keyframes infinity-hop-away {
   0% {
     transform: translateY(0) scale(1);
     opacity: 1;
+    animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1);
   }
-  24% {
-    /* Anticipatory squash — loads the spring before the leap. */
-    transform: translateY(14px) scale(1.14, 0.8);
+  26% {
+    transform: translateY(10px) scale(1.1, 0.86);
     opacity: 1;
+    animation-timing-function: cubic-bezier(0.15, 0.75, 0.3, 1);
   }
   100% {
-    /* The back-out curve carries this past the top for a playful overshoot. */
-    transform: translateY(-140px) scale(0.7);
+    transform: translateY(-120px) scale(0.72);
     opacity: 0;
   }
 }

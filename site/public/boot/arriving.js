@@ -8,13 +8,16 @@
       matchMedia('(prefers-reduced-motion: no-preference)').matches
     ) {
       document.documentElement.classList.add('is-arriving');
+      // pick the loop up where the old page left it, to the nearest eighth
+      var t0 = +sessionStorage.getItem('dp-loop-t0');
+      if (t0) document.documentElement.dataset.loop = String(Math.round(((Date.now() - t0) % 1000) / 125) % 8);
       window.__arriveFailsafe = setTimeout(function () {
         // Same graceful exit main.js runs at load — hop out, then drop.
         var html = document.documentElement;
         html.classList.add('is-departing');
         setTimeout(function () {
           html.classList.remove('is-arriving', 'is-departing');
-        }, 650);
+        }, 520);
       }, 3000);
     }
   } catch (e) {}
