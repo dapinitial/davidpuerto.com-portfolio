@@ -273,15 +273,15 @@ if (isDeck) {
     };
 
     // --- the arc map: Freytag's triangle with every beat plotted on it ----
-    const STAGES = ['Exposition', 'Rising action', 'Climax', 'Falling action', 'Resolution'];
-    const EXPLICIT = { exposition: 'Exposition', rising: 'Rising action', climax: 'Climax', falling: 'Falling action', resolution: 'Resolution' };
+    const STAGES = ['Exposition', 'Rising action', 'Crux', 'Falling action', 'Resolution'];
+    const EXPLICIT = { exposition: 'Exposition', rising: 'Rising action', climax: 'Crux', falling: 'Falling action', resolution: 'Resolution' };
     const climaxIdx = beats.map((b, i) => (b.dataset.stage === 'climax' ? i : -1)).filter((i) => i >= 0);
     const peakStart = climaxIdx.length ? climaxIdx[0] : Math.round(beats.length * 0.62);
     const peakEnd = climaxIdx.length ? climaxIdx[climaxIdx.length - 1] : peakStart;
     const stageOf = (i) => {
       const ex = beats[i].dataset.stage ?? '';
       if (EXPLICIT[ex]) return EXPLICIT[ex];
-      if (i >= peakStart && i <= peakEnd) return 'Climax';
+      if (i >= peakStart && i <= peakEnd) return 'Crux';
       if (i < peakStart) return i < Math.max(1, Math.round(peakStart * 0.3)) ? 'Exposition' : 'Rising action';
       const tail = beats.length - 1 - peakEnd;
       return i >= peakEnd + 1 + Math.max(1, Math.floor(tail * 0.6)) ? 'Resolution' : 'Falling action';
@@ -320,8 +320,8 @@ if (isDeck) {
           <line class="base" x1="${PAD}" y1="${BASE + 18}" x2="${W - PAD}" y2="${BASE + 18}"></line>
           <path class="pyramid" d="${pathD}"></path>
           <path class="done" d="${pathD}"></path>
-          <text class="peak" x="${(px(peakStart) + px(peakEnd)) / 2}" y="${APEX - 16}" text-anchor="middle">Climax</text>
-          ${STAGES.filter((n) => n !== 'Climax').map((n) => { const idx = beats.map((_, i) => i).filter((i) => stageOf(i) === n); if (!idx.length) return ''; const x = (px(idx[0]) + px(idx[idx.length - 1])) / 2; const anchor = n === 'Exposition' ? 'start' : n === 'Resolution' ? 'end' : 'middle'; return `<text class="stage" data-stage="${n}" x="${x}" y="${BASE + 44}" text-anchor="${anchor}">${n}</text>`; }).join('')}
+          <text class="peak" x="${(px(peakStart) + px(peakEnd)) / 2}" y="${APEX - 16}" text-anchor="middle">Crux</text>
+          ${STAGES.filter((n) => n !== 'Crux').map((n) => { const idx = beats.map((_, i) => i).filter((i) => stageOf(i) === n); if (!idx.length) return ''; const x = (px(idx[0]) + px(idx[idx.length - 1])) / 2; const anchor = n === 'Exposition' ? 'start' : n === 'Resolution' ? 'end' : 'middle'; return `<text class="stage" data-stage="${n}" x="${x}" y="${BASE + 44}" text-anchor="${anchor}">${n}</text>`; }).join('')}
           ${beats.map((b, i) => `<circle class="dot" data-i="${i}" cx="${px(i)}" cy="${py(i)}" r="6"><title>${i + 1}. ${esc(titleOf(b))}</title></circle>`).join('')}
         </svg>
         <div class="arc-list">
