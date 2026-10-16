@@ -2507,3 +2507,9 @@ html.deck .deck-beat.cs-splash neon-text .bright {
 }
 @layer page { html.deck .deck-beat .ms-demo-cta { margin-top: 22px; display: flex; justify-content: center; width: min(100%, 1320px); margin-inline: auto; } }
 @layer page { html.deck .deck-beat .ms-demo-cta a { font-size: 15px; padding: 9px 18px; } }
+@layer page {
+  html.deck .deck-beat.ms-read > h2 em, html.deck .deck-beat.ms-read.has-art > h2 em {
+    font-family: var(--font-family-heading, serif) !important; font-style: italic !important; font-weight: 400 !important;
+    color: var(--cs-accent, #fb836d) !important; font-variation-settings: 'opsz' 144, 'SOFT' 40;
+  }
+}
