@@ -11,3 +11,9 @@ protected:
   - site/case-studies/nordstrom/
   - site/case-studies/sonosite/
   - site/case-studies/zillow/
+# Build output committed on purpose: `npm run lock` encrypts the built bundle, and a rebuild
+# renames its content-hashed chunks, so a relock typically rewrites ~280 files. That churn
+# doesn't count toward max_files (authored changes since Oct 10: max 28 files per commit);
+# it is still checked against protected.
+generated:
+  - content-locked/
