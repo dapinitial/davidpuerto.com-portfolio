@@ -2513,3 +2513,34 @@ html.deck .deck-beat.cs-splash neon-text .bright {
     color: var(--cs-accent, #fb836d) !important; font-variation-settings: 'opsz' 144, 'SOFT' 40;
   }
 }
+
+/* ---------- Responsive fixes from the Oct 17 audit ---------- */
+@layer page {
+  /* iPad portrait: the rope-partner video was clipped on the right */
+  @media (orientation: portrait) and (max-width: 1024px) {
+    html.deck .deck-beat.ms-guide .guide-live { height: min(52svh, 560px) !important; max-width: 100% !important; justify-self: end; }
+    html.deck .deck-beat.ms-guide .deck-copy, html.deck .deck-beat.ms-guide .deck-copy.deck-two-up { column-gap: 28px !important; }
+  }
+  /* iPad portrait: code and terminal wrap instead of cutting off, and stay readable */
+  @media (orientation: portrait) and (max-width: 1024px) {
+    html.deck .deck-beat .ms-code pre, html.deck .deck-beat .ms-term { white-space: pre-wrap !important; overflow-wrap: anywhere; font-size: 12px !important; }
+    html.deck .deck-beat .ms-code-pair { grid-template-columns: minmax(0, 1fr) !important; gap: 20px !important; }
+    html.deck .deck-beat .ms-three .ms-term { aspect-ratio: auto !important; }
+    html.deck .deck-beat .ms-three-n { font-size: 12.5px; }
+  }
+  /* Short desktop screens: keep the last line clear of the key hint */
+  @media (max-height: 760px) {
+    html.deck .deck-beat.ms-figure-beat > .ms-figure svg { max-height: 50vh !important; }
+  }
+  /* The hero's "Scroll down" sat on top of the key hint; the hint already says how to move on */
+  html.deck .cs-hero .scroll-down { display: none !important; }
+}
+
+/* ---------- Accessibility fixes from the Oct 17 audit (keyboard only, invisible to mouse users) ---------- */
+@layer page {
+  .deck-arc-btn:focus-visible,
+  .arc-col button:focus-visible { outline: 2px solid var(--cs-accent, #fb836d) !important; outline-offset: 3px; }
+  /* the archive caption sat partly under its screenshot's visual edge */
+  html.deck li.deck-beat .ms-d-body figure.ms-shot { display: flex; flex-direction: column; gap: 14px; }
+  html.deck li.deck-beat .ms-d-body figure.ms-shot figcaption { position: relative; z-index: 1; margin-top: 8px; }
+}

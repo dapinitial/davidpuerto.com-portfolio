@@ -53,9 +53,13 @@ const authed = (req) => isValidToken(getCookie(req, 'cs_auth'));
 
 /* ---------- tiny in-memory rate limiter ---------- */
 const hits = new Map(); // key -> { n, reset }
-const rateLimit = (max, windowMs) => (req, res, next) => {
-  const key = `${req.path}:${req.ip}`;
+// The client IP comes from DigitalOcean's edge header, which a visitor can't
+// set; X-Forwarded-For's leftmost value is client-controlled and was spoofable.
+const clientIp = (req) => req.get('do-connecting-ip') || req.socket.remoteAddress || 'unknown';
+const rateLimit = (bucket, max, windowMs) => (req, res, next) => {
+  const key = `${bucket}:${clientIp(req)}`;
   const now = Date.now();
+  if (hits.size > 10_000) for (const [k, v] of hits) if (now > v.reset) hits.delete(k);
   const rec = hits.get(key);
   if (!rec || now > rec.reset) {
     hits.set(key, { n: 1, reset: now + windowMs });
@@ -71,6 +75,20 @@ const app = express();
 // req.ip a rotating edge IP and the rate limiter never accumulated.
 app.set('trust proxy', true);
 app.use(express.json({ limit: '10kb' }));
+
+// Path guard: no encoded slashes or backslashes, no dot-segments, no NULs,
+// and a malformed escape is a 400, not a crash. Closes traversal like
+// /assets/..%2Fcase-studies/... and /admin%2Findex.html before any gate or
+// static handler sees the request.
+app.use((req, res, next) => {
+  const raw = req.originalUrl.split('?')[0];
+  let decoded;
+  try { decoded = decodeURIComponent(raw); } catch { return res.status(400).send('Bad request'); }
+  if (/%2f|%5c|%00/i.test(raw) || decoded.includes('\\') || decoded.includes('\0') || decoded.split('/').some((seg) => seg === '..' || seg === '.')) {
+    return res.status(400).send('Bad request');
+  }
+  next();
+});
 
 // Security headers (CSP allows the case studies' CodePen/YouTube/Dropbox embeds)
 app.use((req, res, next) => {
@@ -89,6 +107,10 @@ app.use((req, res, next) => {
     "img-src 'self' data: https://www.google-analytics.com",
     "media-src 'self' blob: https://www.dropbox.com https://*.dropboxusercontent.com",
     "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'self'",
   ];
   if (isCursorLab) csp.push("worker-src 'self' blob:");
   res.set({
@@ -97,8 +119,10 @@ app.use((req, res, next) => {
     'X-Frame-Options': 'SAMEORIGIN',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
   });
+  // HTTPS only once it is served from the real domain (local runs stay on http)
+  if (isProd) res.set('Strict-Transport-Security', 'max-age=31536000');
   // Camera is on-device for the a11y cursor; allow it only for this route.
-  if (isCursorLab) res.set('Permissions-Policy', 'camera=(self), microphone=(self)');
+  res.set('Permissions-Policy', isCursorLab ? 'camera=(self), microphone=(self)' : 'camera=(), microphone=(), geolocation=()');
   next();
 });
 
@@ -130,7 +154,7 @@ const safeRedirect = (to) =>
     ? to
     : '/case-studies/microsoft/';
 
-app.post('/api/login', rateLimit(5, 15 * 60_000), async (req, res) => {
+app.post('/api/login', rateLimit('login', 5, 15 * 60_000), async (req, res) => {
   const ok = await bcrypt.compare(String(req.body?.password ?? ''), PASSWORD_HASH);
   if (!ok) return res.status(401).json({ success: false });
   res.cookie('cs_auth', makeToken(), {
@@ -200,8 +224,10 @@ async function sendContactEmail({ name, from, message }) {
   throw err;
 }
 
-app.post('/api/contact', rateLimit(3, 60 * 60_000), async (req, res) => {
-  const { name = '', from = '', message = '', company } = req.body ?? {};
+app.post('/api/contact', rateLimit('contact', 3, 60 * 60_000), async (req, res) => {
+  const body = req.body ?? {};
+  const str = (v) => (typeof v === 'string' ? v : '');
+  const name = str(body.name), from = str(body.from), message = str(body.message), company = body.company;
   if (company) return res.json({ success: true }); // honeypot: silently accept bots
   if (!message.trim() || message.length > 5000 || name.length > 200 || from.length > 200) {
     return res.status(400).json({ error: 'Invalid submission' });
@@ -491,6 +517,11 @@ const TYPES = {
 };
 
 function serveLocked(relPath, res, cacheControl) {
+  // Defense in depth: the resolved file must stay inside its own subfolder
+  // of the locked store (assets/, images/case-studies/ or case-studies/).
+  const resolved = path.resolve(lockedDir, `${relPath}.enc`);
+  const allowed = ['assets', 'images/case-studies', 'case-studies'].some((dir) => resolved.startsWith(path.join(lockedDir, dir) + path.sep));
+  if (!allowed) return false;
   if (!CONTENT_KEY) return false;
   let buf = lockedCache.get(relPath);
   if (!buf) {

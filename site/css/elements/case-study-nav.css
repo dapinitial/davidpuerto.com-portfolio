@@ -39,3 +39,8 @@ case-study-nav a {
 case-study-nav a:hover {
   color: #fff;
 }
+
+/* Phones: the Next link stays on screen */
+@media (max-width: 480px) {
+  case-study-nav a { margin: 0 6px; padding: 8px 12px; font-size: 14px; max-width: calc(50vw - 18px); overflow: hidden; text-overflow: ellipsis; }
+}

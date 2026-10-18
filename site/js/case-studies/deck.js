@@ -362,7 +362,7 @@ if (isDeck) {
       genTicks.forEach((t, k) => { t.classList.toggle('on', !!g && k + 1 === g.n); t.classList.toggle('past', !!g && k + 1 < g.n); });
       history.replaceState(null, '', `${location.pathname}${location.search}#b${i + 1}`);
       toc.querySelectorAll('.dot').forEach((d) => { const k = Number(d.dataset.i); d.classList.toggle('now', k === i); d.classList.toggle('past', k < i); });
-      toc.querySelectorAll('.arc-col button').forEach((btn) => { const k = Number(btn.dataset.i); btn.classList.toggle('now', k === i); btn.classList.toggle('past', k < i); });
+      toc.querySelectorAll('.arc-col button').forEach((btn) => { const k = Number(btn.dataset.i); btn.classList.toggle('now', k === i); btn.classList.toggle('past', k < i); if (k === i) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current'); });
       const st = stageOf(i);
       toc.querySelectorAll('.arc-col h4').forEach((h) => h.classList.toggle('on', h.parentElement.dataset.stage === st));
       toc.querySelectorAll('.stage').forEach((t) => t.classList.toggle('on', t.dataset.stage === st));
@@ -452,12 +452,13 @@ if (isDeck) {
         window.scrollTo({ top, behavior: 'smooth' });
       }
     };
-    const openToc = () => { toc.classList.add('open'); arcBtn.setAttribute('aria-expanded', 'true'); setTimeout(() => (toc.querySelector('.arc-col button.now') ?? toc.querySelector('.arc-col button'))?.focus(), 50); };
+    let tocReturn = null;
+    const openToc = () => { tocReturn = document.activeElement; toc.classList.add('open'); arcBtn.setAttribute('aria-expanded', 'true'); setTimeout(() => (toc.querySelector('.arc-col button.now') ?? toc.querySelector('.arc-col button'))?.focus(), 50); };
     const closeToc = () => {
       if (!toc.classList.contains('open')) return;
       toc.classList.remove('open');
       arcBtn.setAttribute('aria-expanded', 'false');
-      if (toc.contains(document.activeElement)) arcBtn.focus({ preventScroll: true }); // focus goes back where it came from
+      if (toc.contains(document.activeElement)) ((tocReturn && tocReturn !== document.body && document.contains(tocReturn)) ? tocReturn : arcBtn).focus({ preventScroll: true }); // focus goes back where it came from
     };
     window.addEventListener('keydown', (e) => {
       if (e.target.closest('input, textarea, select, [role=slider], [contenteditable], video, audio, summary')) return; // their own keys

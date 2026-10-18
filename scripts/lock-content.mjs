@@ -5,8 +5,8 @@
 //
 // Usage: npm run lock   (builds first, then locks; commit content-locked/)
 // Key:   openssl rand -base64 32  -> CONTENT_KEY in .env + platform secrets
-import { createCipheriv, randomBytes } from 'node:crypto';
-import { mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { createCipheriv, createHmac, randomBytes } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
@@ -34,10 +34,26 @@ const encrypt = (buf) => {
   return Buffer.concat([iv, cipher.getAuthTag(), ct]);
 };
 
+// Incremental: a file whose plaintext has not changed keeps its existing
+// ciphertext, so a ship rewrites only what changed (and the repo stops
+// growing by the whole gated set every time). The manifest stores a keyed
+// HMAC of each plaintext, never a bare hash, so it reveals nothing.
+const manifestPath = path.join(out, '.manifest.json');
+let manifest = {};
+try { manifest = JSON.parse(readFileSync(manifestPath, 'utf8')); } catch {}
+const nextManifest = {};
+let rewritten = 0;
+const fingerprint = (buf) => createHmac('sha256', key).update(buf).digest('base64url');
+
 const lock = (absSrc, relDest) => {
   const dest = path.join(out, `${relDest}.enc`);
+  const buf = readFileSync(absSrc);
+  const fp = fingerprint(buf);
+  nextManifest[relDest] = fp;
+  if (manifest[relDest] === fp && existsSync(dest)) return relDest;
   mkdirSync(path.dirname(dest), { recursive: true });
-  writeFileSync(dest, encrypt(readFileSync(absSrc)));
+  writeFileSync(dest, encrypt(buf));
+  rewritten++;
   return relDest;
 };
 
@@ -47,7 +63,7 @@ const walk = (dir) =>
     return statSync(p).isDirectory() ? walk(p) : [p];
   });
 
-rmSync(out, { recursive: true, force: true });
+mkdirSync(out, { recursive: true });
 const locked = [];
 
 // 1. Built case-study pages + every /assets/ chunk they reference.
@@ -98,4 +114,12 @@ for (const abs of walk(imgRoot)) {
   locked.push(lock(abs, path.join('images/case-studies', path.relative(imgRoot, abs))));
 }
 
-console.log(`locked ${locked.length} files into content-locked/`);
+// Remove ciphertext for files no longer in the gated set.
+const keep = new Set(locked.map((r) => path.join(out, `${r}.enc`)));
+let removed = 0;
+for (const abs of walk(out)) {
+  if (abs.endsWith('.enc') && !keep.has(abs)) { rmSync(abs); removed++; }
+}
+writeFileSync(manifestPath, JSON.stringify(nextManifest, null, 0));
+
+console.log(`locked ${locked.length} files into content-locked/ (${rewritten} rewritten, ${locked.length - rewritten} unchanged, ${removed} removed)`);

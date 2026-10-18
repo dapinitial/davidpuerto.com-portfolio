@@ -126,6 +126,11 @@ export const editInPlace = () => ({
     };
     server.middlewares.use('/__edit', async (req, res) => {
       if (req.method !== 'POST') return send(res, 405, { error: 'POST only' });
+      // only this dev server's own pages may save or publish: another site open in the
+      // same browser could otherwise post a text/plain body here without a CORS preflight
+      let sameOrigin = false;
+      try { sameOrigin = new URL(req.headers.origin).host === req.headers.host; } catch {}
+      if (!sameOrigin || !String(req.headers['content-type']).startsWith('application/json')) return send(res, 403, { error: 'same-origin JSON only' });
       try {
         if (req.url === '/save') {
           const { page, edits = [] } = await readBody(req);

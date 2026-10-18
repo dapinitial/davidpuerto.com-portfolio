@@ -601,3 +601,18 @@
     --ms-accent: var(--cs-accent, #fb836d);
   }
 }
+
+/* Phones: the reading pill wraps instead of pushing the page wider than the screen */
+@media (max-width: 520px) {
+  .bodycopy-details { flex-wrap: wrap; padding: 14px 20px; gap: 8px; }
+  .bodycopy-details .column { min-width: 0; }
+  .reading-duration p { font-size: 12px; }
+}
+@media (max-width: 520px) {
+  .bodycopy-details { flex-direction: column; flex-wrap: nowrap; align-items: flex-start; border-radius: 24px; height: auto; }
+  .bodycopy-details .column, .reading-duration { width: 100%; justify-content: flex-start; }
+  .reading-duration p { white-space: normal; margin-left: 0; text-align: left; }
+}
+@media (max-width: 520px) {
+  .results-table .cs-image { max-width: 100%; height: auto; margin-inline: 0; }
+}

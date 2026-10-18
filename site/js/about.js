@@ -40,7 +40,26 @@ if (live && matchMedia('(prefers-reduced-motion: reduce)').matches) {
   // the long read (phones): mobile browsers hold back off-screen autoplay, so
   // start it when it scrolls into view and rest it when it leaves
   new IntersectionObserver(([e]) => {
-    if (e.isIntersecting) live.play().catch(() => {});
+    if (e.isIntersecting && !document.documentElement.hasAttribute('data-videos-paused')) live.play().catch(() => {});
     else live.pause();
   }, { threshold: 0.3 }).observe(live);
+}
+
+// --- Pause control for the looping background videos (WCAG 2.2.2): hidden
+// until a keyboard reaches it, so mouse users see the page unchanged ----------
+const loops = () => document.querySelectorAll('clipped-image video, .guide-live video');
+if (loops().length) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'video-pause';
+  btn.textContent = 'Pause background video';
+  btn.setAttribute('aria-pressed', 'false');
+  btn.addEventListener('click', () => {
+    const paused = btn.getAttribute('aria-pressed') !== 'true';
+    btn.setAttribute('aria-pressed', String(paused));
+    btn.textContent = paused ? 'Play background video' : 'Pause background video';
+    document.documentElement.toggleAttribute('data-videos-paused', paused);
+    loops().forEach((v) => (paused ? v.pause() : v.play().catch(() => {})));
+  });
+  (document.querySelector('main') || document.body).prepend(btn);
 }

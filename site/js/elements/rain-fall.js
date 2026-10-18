@@ -33,6 +33,13 @@ class RainFall extends HTMLElement {
       // each drop carries a random amount of the chapter colour, most of them
       // barely any, so the rain stays rain and never outshines a white sign
       drip.style.setProperty('--tint', `${Math.round(Math.random() ** 2 * 70)}%`);
+      // watercolor wash: each drop carries its own strength of the brand
+      // colour, from a faint stain to a saturated bead, and blooms as it lands
+      if (this.hasAttribute('wash')) {
+        drip.style.setProperty('--tint', `${Math.round(45 + Math.random() * 55)}%`);
+        drip.style.setProperty('--wash', `${(0.12 + Math.random() ** 1.6 * 0.5).toFixed(2)}`);
+        drip.style.setProperty('--bloom', `${Math.round(90 + Math.random() * 140)}px`);
+      }
       this.append(drip);
       setTimeout(() => drip.remove(), 4000);
       this.#lastDrip = timestamp;

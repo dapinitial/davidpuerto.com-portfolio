@@ -423,3 +423,6 @@ site-header .menu li .submenu-toggle::before {
 
 
 html.with-climbs site-header .overlay::before { opacity: 0.09; }
+
+/* A taller tap target for the menu button, same look */
+site-header .hamburger { min-height: 44px; }

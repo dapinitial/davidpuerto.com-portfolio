@@ -57,3 +57,8 @@ html.deck .deck-beat.ms-statement.active hand-mark path {
   hand-mark path { stroke-dashoffset: 0; animation: none !important; }
 }
 html.deck.deck-still hand-mark path { stroke-dashoffset: 0; animation: none !important; }
+
+/* Phones: a long underlined phrase may wrap rather than widen the page */
+@media (max-width: 480px) {
+  hand-mark { white-space: normal; }
+}

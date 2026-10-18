@@ -89,3 +89,38 @@ rain-fall .drip::after {
   43% { bottom: 0; left: 0; opacity: 0; width: 200px; height: 100px; }
   43.001% { opacity: 0; }
 }
+
+/* [wash]: watercolor. Drops carry varying strength of the study colour, and
+   the splash is a soft pool that bleeds outward instead of a hard ring.
+   Radial gradients, not filter blur, so it stays cheap on every frame. */
+rain-fall[wash] .drip::before {
+  background-color: color-mix(in srgb, var(--cs-accent, white) var(--tint, 60%), white);
+  opacity: 0;
+  filter: none;
+  --drop-alpha: var(--wash, 0.3);
+}
+rain-fall[wash] .drip::before { animation-name: rain-wash-drip; }
+rain-fall[wash][fullpage] .drip::before { animation-name: rain-wash-drip-fullpage; }
+rain-fall[wash] .drip::after {
+  border: 0;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--cs-accent, white) var(--tint, 60%), transparent) 0%, color-mix(in srgb, var(--cs-accent, white) calc(var(--tint, 60%) * 0.4), transparent) 55%, transparent 100%);
+  animation-name: rain-wash-bloom;
+}
+@keyframes rain-wash-drip {
+  10% { top: 0; opacity: var(--wash, 0.3); animation-timing-function: cubic-bezier(0.24, 0, 0.76, 0.14); }
+  25% { opacity: var(--wash, 0.3); top: 200px; animation-timing-function: ease-out; width: 13px; height: 15px; left: 92.5px; }
+  30% { opacity: 0; top: 200px; left: 97.5px; }
+  100% { opacity: 0; }
+}
+@keyframes rain-wash-drip-fullpage {
+  10% { top: 0; opacity: var(--wash, 0.3); animation-timing-function: cubic-bezier(0.24, 0, 0.76, 0.14); }
+  25% { opacity: var(--wash, 0.3); top: 58vh; animation-timing-function: ease-out; width: 13px; height: 15px; left: 92.5px; }
+  30% { opacity: 0; top: 58vh; left: 97.5px; }
+  100% { opacity: 0; }
+}
+@keyframes rain-wash-bloom {
+  0%, 24.9% { opacity: 0; width: 0; height: 0; bottom: 50px; left: 100px; }
+  25% { opacity: calc(var(--wash, 0.3) * 1.4); width: 10px; height: 6px; bottom: 47px; left: 95px; }
+  60% { opacity: calc(var(--wash, 0.3) * 0.7); width: var(--bloom, 160px); height: calc(var(--bloom, 160px) * 0.42); bottom: calc(50px - var(--bloom, 160px) * 0.21); left: calc(100px - var(--bloom, 160px) / 2); }
+  100% { opacity: 0; width: calc(var(--bloom, 160px) * 1.15); height: calc(var(--bloom, 160px) * 0.48); bottom: calc(50px - var(--bloom, 160px) * 0.24); left: calc(100px - var(--bloom, 160px) * 0.575); }
+}
