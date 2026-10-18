@@ -207,7 +207,7 @@
     font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #6e6870;
+    color: #a09aa2; /* 4.5:1+ on the dark ground */
     transition: opacity 0.4s ease;
     pointer-events: none;
   }
