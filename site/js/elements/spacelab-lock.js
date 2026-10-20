@@ -29,6 +29,11 @@ const arc = (r, from, to) => {
   return `M${x1.toFixed(2)} ${y1.toFixed(2)} A${r} ${r} 0 ${to - from > 180 ? 1 : 0} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
 };
 // a thick ring segment as a closed shape, for the latches and slot windows
+// a full ring with a hole, so whatever is behind shows through the middle
+const ring = (r0, r1) => {
+  const circle = (r) => `M ${r} 0 A ${r} ${r} 0 1 1 ${-r} 0 A ${r} ${r} 0 1 1 ${r} 0 Z`;
+  return `${circle(r1)} ${circle(r0)}`;
+};
 const band = (r0, r1, from, to) => {
   const [a, b] = polar(r1, from);
   const [c, d] = polar(r1, to);
@@ -45,6 +50,9 @@ const FRAG = /* glsl */ `#version 300 es
 precision highp float;
 uniform vec2 u_res;
 uniform vec2 u_center;   // the lock, in pixels from the bottom left
+uniform float u_unit;    // canvas pixels per lock unit (the lock is 640 units across)
+uniform float u_release; // 0: the blobs live inside the lock; 1: set free across the screen
+uniform float u_dim;     // 1 normally, low while the lock is shorted out
 uniform float u_time;
 uniform float u_burst;   // seconds since the lock blew, < 0 before
 uniform float u_fizzle;  // 1 when the time ran out: a small gray puff instead of the blast
@@ -76,22 +84,32 @@ void main() {
   float alpha = 1.0;
 
   if (u_layer < 0.5) {
-    // the 2014 field: blobs drifting on sin/cos/tan paths, three color groups
+    // the 2014 field: blobs drifting on sin/cos/tan paths, three color groups.
+    // Until the blast they drift inside the glass ring, scaled to fit it;
+    // u_release lets them out to roam the whole screen.
     vec2 pos = frag / u_res.x;
     vec2 center = vec2(0.5, 0.5 * u_res.y / u_res.x);
+    vec2 lockC = u_center / u_res.x;
+    float R = 300.0 * u_unit / u_res.x;        // the glass ring's outer edge: the blobs never cross it
+    float kc = R / 0.34;                         // the screen-wide paths, scaled into it
+    float k = mix(kc, 1.0, u_release);
     float t = u_time * 0.001 * 2.2 * (1.0 - 0.85 * u_calm);
     float a = 0.0, b = 0.0, c = 0.0;
     for (int i = 0; i < 10; i++) {
       float n = float(i) / 10.0;
       float na = hash(n * 1.1 + 0.3), nb = hash(n * 2.8 + 0.7), nc = hash(n * 0.7 + 0.1), nd = hash(n * 3.2 + 0.9);
-      vec2 q = center;
-      q.x += sin(t * na) * cos(t * nb) * clamp(tan(t * na * 0.15), -3.0, 3.0) * 0.3;
-      q.y += clamp(tan(t * nc), -3.0, 3.0) * sin(t * nd) * 0.1;
-      float d = pow(1.6 * na / max(length(q - pos), 1e-3), 1.1);
+      vec2 o = vec2(sin(t * na) * cos(t * nb) * clamp(tan(t * na * 0.15), -3.0, 3.0) * 0.3,
+                    clamp(tan(t * nc), -3.0, 3.0) * sin(t * nd) * 0.1);
+      vec2 q = mix(lockC + o * kc, center + o, u_release);
+      float d = pow(1.6 * na * k / max(length(q - pos), 1e-3), 1.1);
       if (i < 3) a += d; else if (i < 7) b += d; else c += d;
     }
     col = vec3(a * c, b * c, a * b) * 0.00018;
     col = min(col, vec3(0.9));
+    // the glass ring's edge: the blobs stay inside it until they're released
+    float px = 1.5 / u_res.x;
+    float Rm = mix(R, 4.0, u_release);
+    col *= smoothstep(Rm + px, Rm - px, length(pos - lockC)) * u_dim;
     col -= mod(frag.y, 2.0) < 1.0 ? 0.08 : 0.0; // the scanlines
     // the blast lights the field up for a moment
     if (u_burst > 0.0) col += vec3(0.55, 0.3, 0.75) * exp(-u_burst * 2.5) * smoothstep(0.9, 0.0, length(p));
@@ -165,10 +183,10 @@ function field(canvas, layer) {
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const u = (n) => gl.getUniformLocation(prog, n);
-  const U = { res: u('u_res'), center: u('u_center'), time: u('u_time'), burst: u('u_burst'), layer: u('u_layer'), calm: u('u_calm'), fizzle: u('u_fizzle') };
+  const U = { res: u('u_res'), center: u('u_center'), time: u('u_time'), burst: u('u_burst'), layer: u('u_layer'), calm: u('u_calm'), fizzle: u('u_fizzle'), unit: u('u_unit'), release: u('u_release'), dim: u('u_dim') };
   gl.uniform1f(U.layer, layer);
   return {
-    draw({ time, burst, center, calm, fizzle = 0 }) {
+    draw({ time, burst, center, calm, fizzle = 0, unit = 1, release = 1, dim = 1 }) {
       const w = canvas.width;
       const h = canvas.height;
       gl.viewport(0, 0, w, h);
@@ -179,6 +197,9 @@ function field(canvas, layer) {
       gl.uniform1f(U.time, time);
       gl.uniform1f(U.burst, burst);
       gl.uniform1f(U.fizzle, fizzle);
+      gl.uniform1f(U.unit, unit);
+      gl.uniform1f(U.release, release);
+      gl.uniform1f(U.dim, dim);
       gl.uniform1f(U.calm, calm);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
@@ -204,6 +225,12 @@ class SpacelabLock extends HTMLElement {
       this.#readout();
     });
     this.querySelector('.sl-again').addEventListener('click', () => this.#reset());
+    this.querySelectorAll('.sl-latch').forEach((l) => {
+      l.addEventListener('click', () => this.#press(l));
+      l.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.#press(l); } });
+    });
+    this.windowStart = performance.now(); // the minute starts when the lock appears, as in 2014
+    this.release = 0;
     this.#startClock();
     this.#startField(reduced);
     this.reduced = reduced;
@@ -262,19 +289,20 @@ class SpacelabLock extends HTMLElement {
             </filter>
           </defs>
           <g class="sl-outer">
-            <circle r="236" fill="url(#sl-metal)" stroke="#000" stroke-width="2"/>
+            <path d="${ring(190, 236)}" fill="url(#sl-metal)" fill-rule="evenodd" stroke="#000" stroke-width="2"/>
             <circle r="232" fill="none" stroke="#3b3a3d" stroke-width="1.5"/>
             <g class="sl-ticks">${ticks}</g>
-            <circle r="190" fill="#050405" stroke="#2d2c2f" stroke-width="2"/>
+            <path d="${ring(186, 190)}" fill="#050405" fill-rule="evenodd"/>
+            <circle r="190" fill="none" stroke="#2d2c2f" stroke-width="2"/>
           </g>
           <g class="sl-latches">
-            <path class="sl-latch" data-dir="0" d="${band(236, 274, -38, 38)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="240" d="${band(236, 274, 202, 278)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="120" d="${band(236, 274, 82, 158)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="0" data-ring="inner" role="button" tabindex="0" aria-label="Clamp: show the inner ring's number" d="${band(236, 274, -38, 38)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="240" data-ring="outer" role="button" tabindex="0" aria-label="Clamp: show the outer ring's number" d="${band(236, 274, 202, 278)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="120" data-ring="middle" role="button" tabindex="0" aria-label="Clamp: show the middle ring's number" d="${band(236, 274, 82, 158)}" fill="url(#sl-bevel)"/>
           </g>
           <g class="sl-inner">
-            <circle r="186" fill="#161517" stroke="#3a393c" stroke-width="2"/>
-            <circle r="152" fill="#070607" stroke="#2a292b" stroke-width="2"/>
+            <path d="${ring(152, 186)}" fill="#161517" fill-rule="evenodd" stroke="#3a393c" stroke-width="2"/>
+            <circle r="152" fill="#000" fill-opacity="0.18" stroke="#2a292b" stroke-width="2"/>
             <g class="sl-slots" filter="url(#sl-glow)">${slots}</g>
           </g>
           ${dials}
@@ -318,7 +346,7 @@ class SpacelabLock extends HTMLElement {
     const svg = this.querySelector('.sl-lock');
     const set = (v) => {
       if (this.#open || this.broken) return;
-      if (this.windowStart == null) this.windowStart = performance.now(); // the first turn starts the minute
+      if (this.windowStart == null) this.windowStart = performance.now(); // a safety: the minute normally starts with the lock
       v = Math.round(((v % (d.max + d.step)) + (d.max + d.step)) % (d.max + d.step) / d.step) * d.step;
       if (v > d.max) v = 0;
       if (v === this.#values[d.key]) return;
@@ -354,6 +382,38 @@ class SpacelabLock extends HTMLElement {
       if (step) { e.preventDefault(); set(this.#values[d.key] + step * d.step); }
       if (e.key === 'Home') { e.preventDefault(); set(0); }
     });
+  }
+
+  // a clamp pressed: it pushes in, the clamp ring spins one full turn, and its
+  // ring gives itself away (two slots glow white, the status names the number)
+  #press(latch) {
+    if (this.#open || this.broken || this.spinning) return;
+    this.spinning = true;
+    const k = latch.dataset.ring;
+    const a = ((Number(latch.dataset.dir) - 90) * Math.PI) / 180;
+    const ring = this.querySelector('.sl-latches');
+    const pairs = { inner: [0, 3], middle: [1, 4], outer: [2, 5] };
+    const slots = [...this.querySelectorAll('.sl-slot')];
+    const status = this.querySelector('.sl-status');
+    const was = status.textContent;
+    const label = { inner: 'Inner ring', middle: 'Middle ring', outer: 'Outer ring' }[k];
+    const tl = gsap.timeline({
+      onComplete: () => {
+        pairs[k].forEach((i) => slots[i].classList.remove('peek'));
+        if (!this.#open && !this.broken) status.textContent = was;
+        this.spinning = false;
+      },
+    });
+    // press in toward the center, then back out
+    tl.to(latch, { x: -Math.cos(a) * 7, y: -Math.sin(a) * 7, filter: 'brightness(0.7)', duration: 0.08, ease: 'power2.out' });
+    tl.to(latch, { x: 0, y: 0, filter: 'brightness(1)', duration: 0.18, ease: 'back.out(3)' });
+    // the whole clamp ring spins one turn and settles where it began
+    tl.add(() => {
+      pairs[k].forEach((i) => slots[i].classList.add('peek'));
+      status.textContent = `${label}: ${COMBO[k]}`;
+    }, 0.1);
+    tl.fromTo(ring, { rotation: 0 }, { rotation: this.reduced ? 0 : 360, svgOrigin: '0 0', duration: this.reduced ? 0 : 1.1, ease: 'power3.inOut' }, 0.12);
+    tl.to({}, { duration: this.reduced ? 1.6 : 0.6 });
   }
 
   // the numbers under the lock; after the hint, a check by each ring that is right
@@ -423,6 +483,7 @@ class SpacelabLock extends HTMLElement {
       this.broken = false;
       this.classList.remove('sl-broken');
       status.textContent = 'Try again.';
+      this.windowStart = performance.now(); // a fresh minute once it powers back up
     }, 3400);
   }
 
@@ -470,7 +531,8 @@ class SpacelabLock extends HTMLElement {
       const dpr = bg.width / Math.max(1, bg.clientWidth);
       const center = [(lock.left - host.left + lock.width / 2) * dpr, (lock.top - host.top + lock.height / 2) * dpr];
       const burst = this.#burstAt < 0 ? -1 : (now - this.#burstAt) / 1000;
-      const state = { time: now - t0, burst, center, calm: reduced ? 1 : 0 };
+      this.dimNow = (this.dimNow ?? 1) + ((this.broken ? 0.25 : 1) - (this.dimNow ?? 1)) * 0.08;
+      const state = { time: now - t0, burst, center, calm: reduced ? 1 : 0, unit: (lock.width / 640) * dpr, release: this.release ?? 0, dim: this.dimNow };
       back.draw(state);
       const fizzle = this.fizzleAt == null ? -1 : (now - this.fizzleAt) / 1000;
       if (burst >= 0 && burst < 9) front.draw(state);
@@ -504,6 +566,7 @@ class SpacelabLock extends HTMLElement {
     tl.to(q('.sl-clock'), { opacity: 0, duration: 0.6 }, 1.4);
     // 3. the blast: latches fly, the lock jolts, smoke and sparks
     tl.add(() => { this.#burstAt = performance.now(); this.classList.add('sl-blasted'); }, 2.7);
+    tl.to(this, { release: 1, duration: 1.8, ease: 'power2.out' }, 2.7); // the blobs burst out of the lock
     all('.sl-latch').forEach((l) => {
       const a = ((Number(l.dataset.dir) - 90) * Math.PI) / 180;
       tl.to(l, { x: Math.cos(a) * 900, y: Math.sin(a) * 900, rotation: gsap.utils.random(-540, 540), svgOrigin: '0 0', opacity: 0, duration: 1.4, ease: 'power2.out' }, 2.7);

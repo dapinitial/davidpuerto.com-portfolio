@@ -118,3 +118,10 @@ spacelab-lock.sl-broken .sl-status { color: #ff7a6b; }
 /* the last ten seconds: the minute ring warms up */
 spacelab-lock.sl-hurry .sl-clock-hand { stroke: #ff7a6b; }
 @media (prefers-reduced-motion: reduce) { spacelab-lock.sl-broken .sl-lockbox { animation: none; } }
+
+/* the clamps are buttons: press one to spin the ring and see a number */
+spacelab-lock .sl-latch { cursor: pointer; outline: none; }
+spacelab-lock .sl-latch:hover { filter: brightness(1.25); }
+spacelab-lock .sl-latch:focus-visible { stroke: #00fffc; stroke-width: 2; }
+/* a slot giving its ring away: white-hot, brighter than lit */
+spacelab-lock .sl-slot.peek { fill: #f2feff; stroke: none; }
