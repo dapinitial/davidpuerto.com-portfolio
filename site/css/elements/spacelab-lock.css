@@ -1,0 +1,92 @@
+/* <spacelab-lock>: the field fills the screen, the lock sits in the middle,
+   the blast canvas lies over both, the panel swings in last. */
+spacelab-lock {
+  position: relative;
+  display: block;
+  height: 100svh;
+  overflow: hidden;
+  background: #000;
+  color: #fff0f4;
+}
+spacelab-lock canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+spacelab-lock .sl-blast { pointer-events: none; z-index: 3; }
+
+spacelab-lock .sl-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 18px;
+  padding: 72px 16px 24px;
+}
+spacelab-lock .sl-lock { width: min(78vmin, 560px); height: auto; overflow: visible; touch-action: none; user-select: none; }
+
+spacelab-lock .sl-ticks line { stroke: #4a484c; stroke-width: 1.5; }
+spacelab-lock .sl-slot { fill: #0d0c0e; stroke: #000; stroke-width: 2; transition: fill 0.25s ease; }
+spacelab-lock .sl-slot.lit { fill: #44e4ff; }
+
+spacelab-lock .sl-dial { cursor: grab; outline: none; }
+spacelab-lock .sl-dial:active { cursor: grabbing; }
+spacelab-lock .sl-track { fill: none; stroke: rgba(255, 255, 255, 0.07); }
+spacelab-lock .sl-cursor { fill: none; stroke: var(--c); stroke-linecap: butt; opacity: 0.8; filter: drop-shadow(0 0 6px var(--c)); }
+spacelab-lock .sl-hit { fill: none; stroke: transparent; pointer-events: stroke; }
+spacelab-lock .sl-dial:focus-visible .sl-track { stroke: color-mix(in srgb, var(--c) 18%, transparent); }
+
+spacelab-lock .sl-clock-track { fill: none; stroke: rgba(255, 255, 255, 0.22); stroke-width: 10; }
+spacelab-lock .sl-clock-hand { fill: none; stroke: rgba(255, 255, 255, 0.7); stroke-width: 10; }
+
+spacelab-lock .sl-status { margin: 0; font-size: 0.95rem; letter-spacing: 0.06em; color: #c9c3c7; text-shadow: 0 1px 8px #000; }
+spacelab-lock .sl-hint {
+  min-height: 36px;
+  padding: 6px 16px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: #a09aa2;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #333;
+  border-radius: 999px;
+  cursor: pointer;
+}
+spacelab-lock .sl-hint:hover { color: #fff; border-color: #666; }
+spacelab-lock .sl-hint:disabled { cursor: default; color: #00fffc; border-color: #00fffc55; }
+
+/* the panel: a slab of glass that swings in, as 2014's viewport did */
+spacelab-lock .sl-panel { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; perspective: 1200px; }
+spacelab-lock .sl-panel[hidden] { display: none; }
+spacelab-lock .sl-panel-face {
+  width: min(560px, calc(100% - 32px));
+  padding: clamp(28px, 5vw, 56px);
+  text-align: center;
+  background: linear-gradient(160deg, rgba(40, 30, 50, 0.85), rgba(10, 8, 12, 0.92));
+  border: 1px solid rgba(220, 14, 255, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8), 0 0 60px rgba(0, 255, 252, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform-style: preserve-3d;
+}
+spacelab-lock .sl-panel h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-family-heading, serif);
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  line-height: 1;
+  background: linear-gradient(90deg, #dc0eff, #00fffc);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+spacelab-lock .sl-panel p { margin: 0 0 6px; font-size: 1.15rem; color: #e9e3e6; }
+spacelab-lock .sl-panel .sl-panel-date { font-size: 0.85rem; color: #a09aa2; margin-bottom: 24px; }
+spacelab-lock .sl-again {
+  min-height: 40px;
+  padding: 8px 20px;
+  font: inherit;
+  color: #fff;
+  background: none;
+  border: 1px solid #00fffc88;
+  border-radius: 999px;
+  cursor: pointer;
+}
+spacelab-lock .sl-again:hover, spacelab-lock .sl-again:focus-visible { background: #00fffc22; }
+
+spacelab-lock.sl-nogl .sl-field { display: none; }
