@@ -301,10 +301,10 @@ class SpacelabLock extends HTMLElement {
             </filter>
           </defs>
           <g class="sl-outer">
-            <path d="${ring(190, 236)}" fill="url(#sl-metal)" fill-rule="evenodd" stroke="#000" stroke-width="2"/>
+            <path d="${ring(190, 236)}" fill="url(#sl-metal)" fill-opacity="0.55" fill-rule="evenodd" stroke="#000" stroke-width="2"/>
             <circle r="232" fill="none" stroke="#3b3a3d" stroke-width="1.5"/>
             <g class="sl-ticks">${ticks}</g>
-            <path d="${ring(186, 190)}" fill="#050405" fill-rule="evenodd"/>
+            <path d="${ring(186, 190)}" fill="#050405" fill-opacity="0.5" fill-rule="evenodd"/>
             <circle r="190" fill="none" stroke="#2d2c2f" stroke-width="2"/>
           </g>
           <g class="sl-latches">
@@ -313,7 +313,7 @@ class SpacelabLock extends HTMLElement {
             <path class="sl-latch" data-dir="120" data-ring="middle" role="button" tabindex="0" aria-label="Clamp: show the middle ring's number" d="${band(236, 274, 82, 158)}" fill="url(#sl-bevel)"/>
           </g>
           <g class="sl-inner">
-            <path d="${ring(152, 186)}" fill="#161517" fill-rule="evenodd" filter="url(#sl-raised)"/>
+            <path d="${ring(152, 186)}" fill="#161517" fill-opacity="0.5" fill-rule="evenodd" filter="url(#sl-raised)"/>
             <circle r="152" fill="#000" fill-opacity="0.18"/>
             <g class="sl-slots" filter="url(#sl-glow)">${slots}</g>
           </g>
