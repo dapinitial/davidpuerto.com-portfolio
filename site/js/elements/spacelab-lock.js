@@ -185,8 +185,10 @@ class SpacelabLock extends HTMLElement {
     this.innerHTML = this.#markup();
     this.querySelectorAll('.sl-dial').forEach((g) => this.#wireDial(g));
     this.querySelector('.sl-hint').addEventListener('click', (e) => {
-      e.currentTarget.textContent = '10 · 50 · 200, inner to outer';
+      e.currentTarget.textContent = 'Turn the cyan inner ring to 10, the blue middle ring to 50, and the purple outer ring to 200.';
       e.currentTarget.disabled = true;
+      this.hinted = true;
+      this.#readout();
     });
     this.querySelector('.sl-again').addEventListener('click', () => this.#reset());
     this.#startClock();
@@ -254,15 +256,28 @@ class SpacelabLock extends HTMLElement {
           </g>
         </svg>
         <p class="sl-status" role="status" aria-live="polite">Three rings. One combination.</p>
+        <p class="sl-readout" aria-hidden="true">${['inner', 'middle', 'outer'].map((k) => {
+          const d = DIALS.find((x) => x.key === k);
+          return `<span style="--c:${d.color}">${d.label.replace(' ring', '')} <b data-read="${k}">0</b><i data-ok="${k}" hidden>✓</i></span>`;
+        }).join('')}</p>
         <button type="button" class="sl-hint">Need a hint?</button>
       </div>
       <canvas class="sl-blast" aria-hidden="true"></canvas>
       <div class="sl-panel" hidden>
-        <div class="sl-panel-face">
-          <h2>Spacelab Forever</h2>
-          <p>Coming soon</p>
-          <p class="sl-panel-date">davidpuerto.com, October 2014</p>
-          <button type="button" class="sl-again">Lock it again</button>
+        <svg class="sl-ghost" viewBox="-320 -320 640 640" aria-hidden="true">
+          <circle class="sl-ghost-ring" r="236" pathLength="1"/>
+          <circle class="sl-ghost-ring thin" r="190" pathLength="1"/>
+          <g class="sl-ghost-ticks">${Array.from({ length: 60 }, (_, i) => {
+            const [x1, y1] = polar(244, i * 6);
+            const [x2, y2] = polar(i % 5 ? 250 : 258, i * 6);
+            return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+          }).join('')}</g>
+        </svg>
+        <div class="sl-reveal">
+          <h2 class="sl-word" data-text="SPACELAB">SPACELAB</h2>
+          <p class="sl-word sl-sub" data-text="FOREVER">FOREVER</p>
+          <p class="sl-word sl-meta" data-text="COMING SOON · DAVIDPUERTO.COM · 10.2014">COMING SOON · DAVIDPUERTO.COM · 10.2014</p>
+          <button type="button" class="sl-again">[ RELOCK ]</button>
         </div>
       </div>`;
   }
@@ -281,6 +296,7 @@ class SpacelabLock extends HTMLElement {
       g.setAttribute('aria-valuetext', String(v));
       const deg = (v / (d.max + d.step)) * 360; // every stop gets its own place on the ring
       gsap.to(g.querySelector('.sl-cursor'), { rotation: deg, svgOrigin: '0 0', duration: this.reduced ? 0 : 0.18, ease: 'power2.out' });
+      this.#readout();
       this.#check();
     };
     // pointer: the angle around the center becomes the value
@@ -307,6 +323,14 @@ class SpacelabLock extends HTMLElement {
       if (step) { e.preventDefault(); set(this.#values[d.key] + step * d.step); }
       if (e.key === 'Home') { e.preventDefault(); set(0); }
     });
+  }
+
+  // the numbers under the lock; after the hint, a check by each ring that is right
+  #readout() {
+    for (const k of ['inner', 'middle', 'outer']) {
+      this.querySelector(`[data-read="${k}"]`).textContent = this.#values[k];
+      this.querySelector(`[data-ok="${k}"]`).hidden = !(this.hinted && this.#values[k] === COMBO[k]);
+    }
   }
 
   #check() {
@@ -398,7 +422,7 @@ class SpacelabLock extends HTMLElement {
     tl.fromTo(q('.sl-lock'), { scale: 1 }, { scale: 1.12, duration: 0.12, ease: 'power2.out', yoyo: true, repeat: 1 }, 2.7);
     // 4. the lock falls away into the distance
     tl.to(q('.sl-lock'), { scale: 0, opacity: 0, rotation: 30, duration: 1.1, ease: 'power3.in' }, 3.1);
-    tl.to(q('.sl-status'), { opacity: 0, duration: 0.4 }, 3.1);
+    tl.to([q('.sl-status'), q('.sl-readout')], { opacity: 0, duration: 0.4 }, 3.1);
     // 5. the panel swings in
     tl.add(() => this.#showPanel(false), 3.9);
   }
@@ -406,15 +430,40 @@ class SpacelabLock extends HTMLElement {
   #showPanel(instant) {
     const panel = this.querySelector('.sl-panel');
     panel.hidden = false;
-    const face = panel.querySelector('.sl-panel-face');
+    const rings = panel.querySelectorAll('.sl-ghost-ring');
+    const ticks = panel.querySelector('.sl-ghost-ticks');
+    const words = [...panel.querySelectorAll('.sl-word')];
+    const again = panel.querySelector('.sl-again');
     if (instant) {
-      gsap.fromTo(face, { opacity: 0 }, { opacity: 1, duration: 0.6 });
-    } else {
-      gsap.fromTo(face,
-        { rotationY: -75, rotationX: 22, z: -700, opacity: 0, transformPerspective: 1200 },
-        { rotationY: 0, rotationX: 0, z: 0, opacity: 1, duration: 1.6, ease: 'expo.out' });
+      gsap.set(rings, { strokeDashoffset: 0 });
+      words.forEach((w) => { w.style.opacity = 1; });
+      gsap.fromTo(panel, { opacity: 0 }, { opacity: 1, duration: 0.8 });
+      again.focus({ preventScroll: true });
+      return;
     }
-    panel.querySelector('.sl-again').focus({ preventScroll: true });
+    // the ghost of the lock traces itself in, then the words decode out of the smoke
+    const tl = gsap.timeline({ onComplete: () => again.focus({ preventScroll: true }) });
+    tl.fromTo(rings, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut', stagger: 0.15 }, 0);
+    tl.fromTo(ticks, { opacity: 0, rotation: -30, svgOrigin: '0 0' }, { opacity: 1, rotation: 0, svgOrigin: '0 0', duration: 1.6, ease: 'power3.out' }, 0.2);
+    words.forEach((w, i) => tl.add(() => this.#decode(w, i === 0 ? 1.1 : 0.8), 0.5 + i * 0.45));
+    tl.fromTo(again, { opacity: 0 }, { opacity: 1, duration: 0.6 }, 2.4);
+  }
+
+  // glyph by glyph, like a terminal finding the signal
+  #decode(el, seconds) {
+    const target = el.dataset.text;
+    const glyphs = '01<>/\\|[]{}#*+=-_:;ABCDEFGHJKLMNPRSTUVXYZ';
+    const start = performance.now();
+    el.style.opacity = 1;
+    // timed by the clock, not by frames, so a busy GPU never stretches it
+    const step = (now) => {
+      const k = Math.min(1, (now - start) / (seconds * 1000));
+      const settled = Math.floor(k * target.length);
+      el.textContent = [...target].map((ch, i) => (i < settled || ch === ' ' || ch === '·' ? ch : glyphs[(Math.random() * glyphs.length) | 0])).join('');
+      if (k < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(step);
   }
 
   #reset() {
@@ -423,6 +472,7 @@ class SpacelabLock extends HTMLElement {
     this.#open = false;
     this.#burstAt = -1;
     this.classList.remove('sl-blasted');
+    this.hinted = false;
     cancelAnimationFrame(this.#raf);
     this.#cleanup.forEach((fn) => fn());
     this.#cleanup = [];

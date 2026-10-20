@@ -38,6 +38,9 @@ spacelab-lock .sl-clock-track { fill: none; stroke: rgba(255, 255, 255, 0.22); s
 spacelab-lock .sl-clock-hand { fill: none; stroke: rgba(255, 255, 255, 0.7); stroke-width: 10; }
 
 spacelab-lock .sl-status { margin: 0; font-size: 0.95rem; letter-spacing: 0.06em; color: #c9c3c7; text-shadow: 0 1px 8px #000; }
+spacelab-lock .sl-readout { display: flex; gap: 22px; margin: 0; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; color: #a09aa2; }
+spacelab-lock .sl-readout b { margin-left: 6px; font-weight: 600; color: var(--c); font-variant-numeric: tabular-nums; text-shadow: 0 0 10px var(--c); }
+spacelab-lock .sl-readout i { margin-left: 4px; font-style: normal; color: #7dffb0; }
 spacelab-lock .sl-hint {
   min-height: 36px;
   padding: 6px 16px;
@@ -50,43 +53,55 @@ spacelab-lock .sl-hint {
   cursor: pointer;
 }
 spacelab-lock .sl-hint:hover { color: #fff; border-color: #666; }
-spacelab-lock .sl-hint:disabled { cursor: default; color: #00fffc; border-color: #00fffc55; }
+spacelab-lock .sl-hint:disabled { cursor: default; max-width: 34em; color: #e9e3e6; border-color: #00fffc55; border-radius: 14px; line-height: 1.5; text-align: center; }
 
-/* the panel: a slab of glass that swings in, as 2014's viewport did */
-spacelab-lock .sl-panel { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; perspective: 1200px; }
+/* the reveal: the lock's ghost and three decoded lines, no card */
+spacelab-lock .sl-panel { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; }
 spacelab-lock .sl-panel[hidden] { display: none; }
-spacelab-lock .sl-panel-face {
-  width: min(560px, calc(100% - 32px));
-  padding: clamp(28px, 5vw, 56px);
-  text-align: center;
-  background: linear-gradient(160deg, rgba(40, 30, 50, 0.85), rgba(10, 8, 12, 0.92));
-  border: 1px solid rgba(220, 14, 255, 0.35);
-  border-radius: 18px;
-  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.8), 0 0 60px rgba(0, 255, 252, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  transform-style: preserve-3d;
-}
-spacelab-lock .sl-panel h2 {
-  margin: 0 0 8px;
-  font-family: var(--font-family-heading, serif);
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
+spacelab-lock .sl-ghost { position: absolute; width: min(78vmin, 560px); height: auto; overflow: visible; }
+spacelab-lock .sl-ghost-ring { fill: none; stroke: #00fffc; stroke-width: 1.2; stroke-dasharray: 1; opacity: 0.55; filter: drop-shadow(0 0 6px #00fffc88); }
+spacelab-lock .sl-ghost-ring.thin { stroke: #dc0eff; stroke-width: 0.8; opacity: 0.4; }
+spacelab-lock .sl-ghost-ticks line { stroke: #4a484c; stroke-width: 1.5; }
+
+spacelab-lock .sl-reveal { position: relative; display: grid; justify-items: center; gap: 14px; text-align: center; padding-inline: 16px; }
+spacelab-lock .sl-word { margin: 0; opacity: 0; white-space: nowrap; }
+spacelab-lock .sl-reveal h2 {
+  font-family: var(--font-family-default, sans-serif);
+  font-weight: 200;
+  font-size: clamp(2.4rem, 7.5vmin, 5rem);
   line-height: 1;
-  background: linear-gradient(90deg, #dc0eff, #00fffc);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  letter-spacing: 0.42em;
+  margin-right: -0.42em; /* the tracking's trailing gap, so the word centers */
+  color: #f4f8ff;
+  text-shadow: 0 0 18px rgba(0, 255, 252, 0.45), 0 0 2px rgba(255, 255, 255, 0.8);
 }
-spacelab-lock .sl-panel p { margin: 0 0 6px; font-size: 1.15rem; color: #e9e3e6; }
-spacelab-lock .sl-panel .sl-panel-date { font-size: 0.85rem; color: #a09aa2; margin-bottom: 24px; }
+spacelab-lock .sl-sub {
+  font-family: var(--font-family-monospace, monospace);
+  font-size: clamp(0.85rem, 2vmin, 1.05rem);
+  letter-spacing: 0.9em;
+  margin-right: -0.9em;
+  color: #00fffc;
+}
+spacelab-lock .sl-meta {
+  margin-top: 18px;
+  font-family: var(--font-family-monospace, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  color: #8a858c;
+}
 spacelab-lock .sl-again {
+  margin-top: 10px;
   min-height: 40px;
-  padding: 8px 20px;
-  font: inherit;
-  color: #fff;
+  padding: 8px 12px;
+  font-family: var(--font-family-monospace, monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  color: #a09aa2;
   background: none;
-  border: 1px solid #00fffc88;
-  border-radius: 999px;
+  border: 0;
   cursor: pointer;
 }
-spacelab-lock .sl-again:hover, spacelab-lock .sl-again:focus-visible { background: #00fffc22; }
+spacelab-lock .sl-again:hover, spacelab-lock .sl-again:focus-visible { color: #00fffc; }
+@media (max-width: 480px) { spacelab-lock .sl-meta { white-space: normal; max-width: 22em; line-height: 1.8; } }
 
 spacelab-lock.sl-nogl .sl-field { display: none; }
