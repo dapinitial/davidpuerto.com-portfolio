@@ -6,9 +6,11 @@ import './elements/scroll-progress.js';
 import { InfinityLoader } from './elements/infinity-loader.js';
 
 // Inject the scroll-progress ring on every page EXCEPT the homepage —
-// the zoom-scroll experience has its own dot indicator + snap navigation.
+// the zoom-scroll experience has its own dot indicator + snap navigation —
+// and the full-screen pieces (the lock, the timeline), which never scroll.
 const isHomepage = document.querySelector('.indicator-nav');
-if (!isHomepage && !document.querySelector('scroll-progress')) {
+const isFullScreen = document.querySelector('spacelab-lock, wayback-timeline');
+if (!isHomepage && !isFullScreen && !document.querySelector('scroll-progress')) {
   document.body.append(document.createElement('scroll-progress'));
 }
 

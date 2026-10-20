@@ -47,6 +47,7 @@ uniform vec2 u_res;
 uniform vec2 u_center;   // the lock, in pixels from the bottom left
 uniform float u_time;
 uniform float u_burst;   // seconds since the lock blew, < 0 before
+uniform float u_fizzle;  // 1 when the time ran out: a small gray puff instead of the blast
 uniform float u_layer;   // 0: the field behind the lock, 1: the blast in front
 uniform float u_calm;    // 1 under reduced motion
 out vec4 outColor;
@@ -99,6 +100,17 @@ void main() {
     if (u_burst < 0.0) discard;
     float t = u_burst;
     float r = length(p);
+    if (u_fizzle > 0.5) {
+      // time's up: a short, low puff from the lock, gray, gone in a few seconds
+      vec2 fp = p * 3.2 - vec2(0.0, -t * 0.35);
+      float fb = fbm(fp + vec2(fbm(fp * 1.4 + t * 0.6), fbm(fp * 1.2 - t * 0.5)) * 1.2 - t * 0.5);
+      float fbody = smoothstep(0.34 + t * 0.32, 0.0, r) * smoothstep(0.0, 0.2, t);
+      float puff = clamp(fb * 3.0 - 0.6, 0.0, 1.0) * fbody * exp(-t * 0.45);
+      col = mix(vec3(0.16, 0.16, 0.17), vec3(0.42, 0.41, 0.43), fb);
+      alpha = puff * 0.95;
+      outColor = vec4(col * alpha, alpha);
+      return;
+    }
     // shockwave: a thin ring racing out
     float ringR = t * 1.15;
     float ring = exp(-pow((r - ringR) * 40.0, 2.0)) * exp(-t * 1.6);
@@ -118,8 +130,8 @@ void main() {
     // smoke: billowing fbm, pushed outward, thinning as it rises
     vec2 sp = p * 2.4 - vec2(0.0, -t * 0.25);
     float billow = fbm(sp + vec2(fbm(sp * 1.3 + t * 0.4), fbm(sp * 1.1 - t * 0.3)) * 1.4 - t * 0.35);
-    float body = smoothstep(0.4 + t * 0.5, 0.05, r) * smoothstep(0.0, 0.18, t);
-    float smoke = clamp(billow * 2.6 - 0.6, 0.0, 1.0) * body * exp(-t * 0.45);
+    float body = smoothstep(0.55 + t * 0.6, 0.0, r) * smoothstep(0.0, 0.15, t);
+    float smoke = clamp(billow * 3.0 - 0.55, 0.0, 1.0) * body * exp(-t * 0.28);
     vec3 smokeCol = mix(vec3(0.22, 0.2, 0.24), vec3(0.62, 0.56, 0.7), billow);
     col = mix(col, smokeCol + col * 0.4, smoke);
     alpha = clamp(max(smoke, max(max(col.r, col.g), col.b)), 0.0, 1.0);
@@ -153,10 +165,10 @@ function field(canvas, layer) {
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const u = (n) => gl.getUniformLocation(prog, n);
-  const U = { res: u('u_res'), center: u('u_center'), time: u('u_time'), burst: u('u_burst'), layer: u('u_layer'), calm: u('u_calm') };
+  const U = { res: u('u_res'), center: u('u_center'), time: u('u_time'), burst: u('u_burst'), layer: u('u_layer'), calm: u('u_calm'), fizzle: u('u_fizzle') };
   gl.uniform1f(U.layer, layer);
   return {
-    draw({ time, burst, center, calm }) {
+    draw({ time, burst, center, calm, fizzle = 0 }) {
       const w = canvas.width;
       const h = canvas.height;
       gl.viewport(0, 0, w, h);
@@ -166,6 +178,7 @@ function field(canvas, layer) {
       gl.uniform2f(U.center, center[0], h - center[1]);
       gl.uniform1f(U.time, time);
       gl.uniform1f(U.burst, burst);
+      gl.uniform1f(U.fizzle, fizzle);
       gl.uniform1f(U.calm, calm);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     },
@@ -194,6 +207,7 @@ class SpacelabLock extends HTMLElement {
     this.#startClock();
     this.#startField(reduced);
     this.reduced = reduced;
+    this.#mountGlass(reduced);
   }
 
   disconnectedCallback() {
@@ -221,6 +235,7 @@ class SpacelabLock extends HTMLElement {
     return `
       <canvas class="sl-field" aria-hidden="true"></canvas>
       <div class="sl-stage">
+        <div class="sl-lockbox">
         <svg class="sl-lock" viewBox="-320 -320 640 640" aria-label="A combination lock with three rings">
           <defs>
             <radialGradient id="sl-metal" r="0.75">
@@ -229,6 +244,19 @@ class SpacelabLock extends HTMLElement {
             <linearGradient id="sl-bevel" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0" stop-color="#5a585c"/><stop offset="0.45" stop-color="#232224"/><stop offset="1" stop-color="#0b0a0b"/>
             </linearGradient>
+            <!-- the glass bezel: a frosted disk under everything, a clear rim that catches the light -->
+            <radialGradient id="sl-glass-disk" r="0.5">
+              <stop offset="0.72" stop-color="#b4dcff" stop-opacity="0"/><stop offset="0.93" stop-color="#b4dcff" stop-opacity="0.07"/><stop offset="1" stop-color="#dff2ff" stop-opacity="0.12"/>
+            </radialGradient>
+            <linearGradient id="sl-glass-rim" x1="0.15" y1="0.05" x2="0.85" y2="0.95">
+              <stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/><stop offset="0.35" stop-color="#cfe9ff" stop-opacity="0.08"/>
+              <stop offset="0.7" stop-color="#9fd8ff" stop-opacity="0.05"/><stop offset="1" stop-color="#00fffc" stop-opacity="0.28"/>
+            </linearGradient>
+            <filter id="sl-soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.5"/></filter>
+            <!-- a lit slot: white-hot in the middle, through cyan, to deep blue, as 2012's lights were -->
+            <radialGradient id="sl-lit" cx="50%" cy="50%" r="65%">
+              <stop offset="0" stop-color="#eafdff"/><stop offset="0.35" stop-color="#00d8ff"/><stop offset="1" stop-color="#0050d8"/>
+            </radialGradient>
             <filter id="sl-glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
@@ -240,9 +268,9 @@ class SpacelabLock extends HTMLElement {
             <circle r="190" fill="#050405" stroke="#2d2c2f" stroke-width="2"/>
           </g>
           <g class="sl-latches">
-            <path class="sl-latch" data-dir="0" d="${band(240, 270, -24, 24)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="215" d="${band(244, 268, 196, 234)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="145" d="${band(244, 268, 128, 162)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="0" d="${band(240, 274, -22, 22)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="215" d="${band(244, 274, 198, 232)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="145" d="${band(244, 274, 128, 162)}" fill="url(#sl-bevel)"/>
           </g>
           <g class="sl-inner">
             <circle r="186" fill="#161517" stroke="#3a393c" stroke-width="2"/>
@@ -255,6 +283,8 @@ class SpacelabLock extends HTMLElement {
             <path class="sl-clock-hand" d=""/>
           </g>
         </svg>
+        <canvas class="sl-glass3d" aria-hidden="true"></canvas>
+        </div>
         <p class="sl-status" role="status" aria-live="polite">Three rings. One combination.</p>
         <p class="sl-readout" aria-hidden="true">${['inner', 'middle', 'outer'].map((k) => {
           const d = DIALS.find((x) => x.key === k);
@@ -287,7 +317,8 @@ class SpacelabLock extends HTMLElement {
     const d = DIALS.find((x) => x.key === g.dataset.key);
     const svg = this.querySelector('.sl-lock');
     const set = (v) => {
-      if (this.#open) return;
+      if (this.#open || this.broken) return;
+      if (this.windowStart == null) this.windowStart = performance.now(); // the first turn starts the minute
       v = Math.round(((v % (d.max + d.step)) + (d.max + d.step)) % (d.max + d.step) / d.step) * d.step;
       if (v > d.max) v = 0;
       if (v === this.#values[d.key]) return;
@@ -335,19 +366,75 @@ class SpacelabLock extends HTMLElement {
 
   #check() {
     const v = this.#values;
+    // each ring that is right lights its pair of slots, opposite each other
+    const pairs = { inner: [0, 3], middle: [1, 4], outer: [2, 5] };
+    const slots = this.querySelectorAll('.sl-slot');
+    for (const [k, [a, b]] of Object.entries(pairs)) {
+      const on = v[k] === COMBO[k];
+      slots[a].classList.toggle('lit', on);
+      slots[b].classList.toggle('lit', on);
+    }
     if (v.inner === COMBO.inner && v.middle === COMBO.middle && v.outer === COMBO.outer) this.#unlock();
   }
 
+  // --- the glass bezel: three.js, loaded after the lock is up ---------------
+  #mountGlass(reduced) {
+    const canvas = this.querySelector('.sl-glass3d');
+    import('./spacelab-glass.js')
+      .then(({ mountGlass }) => {
+        if (!canvas.isConnected) return;
+        const glass = mountGlass(canvas, { reduced });
+        this.#cleanup.push(() => glass.dispose());
+      })
+      .catch(() => canvas.remove()); // no WebGL or no three: the lock stands without its glass
+  }
+
   // --- the seconds clock in the middle -------------------------------------
+  // the seconds clock until a dial turns; then the ring is your minute, as in 2014
   #startClock() {
     const hand = this.querySelector('.sl-clock-hand');
     const tick = () => {
-      const s = new Date().getSeconds();
-      hand.setAttribute('d', s ? arc(44, 0, Math.max(0.5, s * 6)) : '');
+      let s;
+      if (this.windowStart != null && !this.#open && !this.broken) {
+        s = (performance.now() - this.windowStart) / 1000;
+        if (s >= 60) return this.#timesUp();
+        this.classList.toggle('sl-hurry', s > 50);
+      } else {
+        s = new Date().getSeconds();
+      }
+      hand.setAttribute('d', s >= 0.5 ? arc(44, 0, Math.max(0.5, s * 6)) : '');
     };
     tick();
-    const id = setInterval(tick, 1000);
+    const id = setInterval(tick, 200);
     this.#cleanup.push(() => clearInterval(id));
+  }
+
+  // --- time's up: a gray puff, the lock shorts out, the dials fall back -----
+  #timesUp() {
+    this.broken = true;
+    this.windowStart = null;
+    this.fizzleAt = performance.now();
+    this.classList.remove('sl-hurry');
+    this.classList.add('sl-broken');
+    const status = this.querySelector('.sl-status');
+    status.textContent = 'You missed your window. Authorities have not been alerted.';
+    setTimeout(() => this.#zero(), 400);
+    setTimeout(() => {
+      this.broken = false;
+      this.classList.remove('sl-broken');
+      status.textContent = 'Try again.';
+    }, 3400);
+  }
+
+  #zero() {
+    this.#values = { outer: 0, middle: 0, inner: 0 };
+    this.querySelectorAll('.sl-slot').forEach((sl) => sl.classList.remove('lit'));
+    this.querySelectorAll('.sl-dial').forEach((g) => {
+      g.setAttribute('aria-valuenow', 0);
+      g.setAttribute('aria-valuetext', '0');
+      gsap.to(g.querySelector('.sl-cursor'), { rotation: 0, svgOrigin: '0 0', duration: this.reduced ? 0 : 0.7, ease: 'power3.inOut' });
+    });
+    this.#readout();
   }
 
   // --- the field and the blast ---------------------------------------------
@@ -385,8 +472,10 @@ class SpacelabLock extends HTMLElement {
       const burst = this.#burstAt < 0 ? -1 : (now - this.#burstAt) / 1000;
       const state = { time: now - t0, burst, center, calm: reduced ? 1 : 0 };
       back.draw(state);
-      if (burst >= 0 && burst < 6) front.draw(state);
-      else if (burst >= 6) front.draw({ ...state, burst: -1 });
+      const fizzle = this.fizzleAt == null ? -1 : (now - this.fizzleAt) / 1000;
+      if (burst >= 0 && burst < 9) front.draw(state);
+      else if (fizzle >= 0 && fizzle < 7) front.draw({ ...state, burst: fizzle, fizzle: 1 });
+      else front.draw({ ...state, burst: -1 });
     };
     this.#raf = requestAnimationFrame(loop);
   }
@@ -419,9 +508,9 @@ class SpacelabLock extends HTMLElement {
       const a = ((Number(l.dataset.dir) - 90) * Math.PI) / 180;
       tl.to(l, { x: Math.cos(a) * 900, y: Math.sin(a) * 900, rotation: gsap.utils.random(-540, 540), svgOrigin: '0 0', opacity: 0, duration: 1.4, ease: 'power2.out' }, 2.7);
     });
-    tl.fromTo(q('.sl-lock'), { scale: 1 }, { scale: 1.12, duration: 0.12, ease: 'power2.out', yoyo: true, repeat: 1 }, 2.7);
+    tl.fromTo(q('.sl-lockbox'), { scale: 1 }, { scale: 1.12, duration: 0.12, ease: 'power2.out', yoyo: true, repeat: 1 }, 2.7);
     // 4. the lock falls away into the distance
-    tl.to(q('.sl-lock'), { scale: 0, opacity: 0, rotation: 30, duration: 1.1, ease: 'power3.in' }, 3.1);
+    tl.to(q('.sl-lockbox'), { scale: 0, opacity: 0, rotation: 30, duration: 1.1, ease: 'power3.in' }, 3.1);
     tl.to([q('.sl-status'), q('.sl-readout')], { opacity: 0, duration: 0.4 }, 3.1);
     // 5. the panel swings in
     tl.add(() => this.#showPanel(false), 3.9);
@@ -471,8 +560,11 @@ class SpacelabLock extends HTMLElement {
     this.#values = { outer: 0, middle: 0, inner: 0 };
     this.#open = false;
     this.#burstAt = -1;
-    this.classList.remove('sl-blasted');
+    this.classList.remove('sl-blasted', 'sl-broken', 'sl-hurry');
     this.hinted = false;
+    this.windowStart = null;
+    this.fizzleAt = null;
+    this.broken = false;
     cancelAnimationFrame(this.#raf);
     this.#cleanup.forEach((fn) => fn());
     this.#cleanup = [];

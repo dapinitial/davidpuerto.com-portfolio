@@ -88,3 +88,4 @@ wayback-timeline .wt-grid { display: grid; grid-template-columns: repeat(auto-fi
 wayback-timeline .wt-grid a { display: grid; gap: 8px; color: #e9e3e6; text-decoration: none; }
 wayback-timeline .wt-grid img { width: 100%; height: auto; border-radius: 6px; }
 wayback-timeline .wt-lost { display: grid; place-items: center; aspect-ratio: 16 / 10; border: 1px solid #4a4448; border-radius: 6px; color: #a09aa2; }
+html:has(wayback-timeline:not(.wt-flat)) { overflow: hidden; }
