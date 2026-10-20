@@ -617,6 +617,8 @@ class SpacelabLock extends HTMLElement {
     // 2. the wheels spin apart
     tl.to(q('.sl-outer'), { rotation: -360 * 6, svgOrigin: '0 0', duration: 1.9, ease: 'power3.in' }, 0.8);
     tl.to(q('.sl-inner'), { rotation: 360 * 6, svgOrigin: '0 0', duration: 1.9, ease: 'power3.in' }, 0.8);
+    // the lights run white-hot as the wheels wind up, one after another around the ring
+    all('.sl-slot').forEach((s, i) => tl.add(() => s.classList.add('hot'), 0.9 + i * 0.12));
     tl.to(all('.sl-dial'), { opacity: 0, duration: 0.8, stagger: 0.1 }, 1.2);
     tl.to(q('.sl-clock'), { opacity: 0, duration: 0.6 }, 1.4);
     // 3. the blast: latches fly, the lock jolts, smoke and sparks

@@ -29,6 +29,7 @@ spacelab-lock .sl-glass3d { position: absolute; inset: 0; width: 100%; height: 1
 spacelab-lock .sl-ticks line { stroke: #4a484c; stroke-width: 1.5; }
 spacelab-lock .sl-slot { fill: #0d0c0e; stroke: #000; stroke-width: 2; transition: fill 0.25s ease; }
 spacelab-lock .sl-slot.lit { fill: url(#sl-lit); stroke: none; }
+spacelab-lock .sl-slot.hot { fill: #f2feff; stroke: none; }
 
 spacelab-lock .sl-dial { cursor: grab; outline: none; }
 spacelab-lock .sl-dial:active { cursor: grabbing; }
