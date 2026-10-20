@@ -41,6 +41,7 @@
           </div>
           <nav class="dash-tabs" role="tablist" aria-label="Dashboard sections">
             <button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
+            <button type="button" role="tab" id="tab-visits" aria-controls="panel-visits" aria-selected="false" tabindex="-1">Visits</button>
             <button type="button" role="tab" id="tab-audience" aria-controls="panel-audience" aria-selected="false" tabindex="-1">Audience</button>
             <button type="button" role="tab" id="tab-acquisition" aria-controls="panel-acquisition" aria-selected="false" tabindex="-1">Acquisition</button>
             <button type="button" role="tab" id="tab-content" aria-controls="panel-content" aria-selected="false" tabindex="-1">Content</button>
@@ -78,6 +79,25 @@
             <ul></ul>
           </section>
           </div>
+        </div>
+        <div class="dash-panel" id="panel-visits" role="tabpanel" aria-labelledby="tab-visits" hidden>
+          <div class="visits-bar">
+            <div class="range-switcher visits-filter" role="group" aria-label="Which visits">
+              <button type="button" data-kind="real" aria-pressed="true">People</button>
+              <button type="button" data-kind="all">Everything</button>
+            </div>
+            <p class="visits-count" data-visits="count"></p>
+          </div>
+          <form class="tag-maker dash-card">
+            <label for="tag-name">Make a tagged link</label>
+            <div class="tag-row">
+              <input id="tag-name" name="tag" placeholder="msft-loop" pattern="[A-Za-z0-9_\-]{1,60}" autocomplete="off" required>
+              <input name="path" aria-label="Page" value="/" autocomplete="off">
+              <button type="submit">Copy link</button>
+            </div>
+            <output class="tag-out"></output>
+          </form>
+          <ol class="visit-list"></ol>
         </div>
         <div class="dash-panel" id="panel-audience" role="tabpanel" aria-labelledby="tab-audience" hidden>
           <div class="dash-grid">

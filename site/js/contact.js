@@ -1,6 +1,6 @@
 // Contact page: the locator (live Mountain clock, decoded coordinates) and the
 // form submission to /api/contact.
-import { track } from './lib/analytics.js';
+import { note, track } from './lib/analytics.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -50,6 +50,8 @@ const form = document.querySelector('.contact-form');
 const status = form.querySelector('.form-status');
 const button = form.querySelector('button[type="submit"]');
 const say = (text, kind = '') => { status.textContent = text; status.className = `form-status ${kind}`; };
+
+form.addEventListener('input', () => note('contact_start'), { once: true });
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();

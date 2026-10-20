@@ -11,6 +11,7 @@
 // enter-href="/somewhere" adds an [ ENTER ] link to the reveal.
 // Light DOM. Pair with css/elements/spacelab-lock.css.
 import { gsap } from '../lib/gsap.js';
+import { note } from '../lib/analytics.js';
 
 const COMBO = { inner: 10, middle: 50, outer: 200 }; // the 2014 combination
 const DIALS = [
@@ -230,6 +231,7 @@ class SpacelabLock extends HTMLElement {
       e.currentTarget.textContent = 'Turn the cyan inner ring to 10, the blue middle ring to 50, and the purple outer ring to 200.';
       e.currentTarget.disabled = true;
       this.hinted = true;
+      note('lock_hint');
       this.#readout();
     });
     this.querySelector('.sl-again').addEventListener('click', () => this.#reset());
@@ -435,6 +437,7 @@ class SpacelabLock extends HTMLElement {
     if (this.#open || this.broken || this.spinning) return;
     this.spinning = true;
     const k = latch.dataset.ring;
+    note('lock_clamp', { ring: k });
     const a = ((Number(latch.dataset.dir) - 90) * Math.PI) / 180;
     const ring = this.querySelector('.sl-latches');
     const pairs = { inner: [0, 3], middle: [1, 4], outer: [2, 5] };
@@ -516,6 +519,7 @@ class SpacelabLock extends HTMLElement {
 
   // --- time's up: a gray puff, the lock shorts out, the dials fall back -----
   #timesUp() {
+    note('lock_timeout', { combo: `${this.#values.inner}·${this.#values.middle}·${this.#values.outer}` });
     this.broken = true;
     this.windowStart = null;
     this.fizzleAt = performance.now();
@@ -594,6 +598,7 @@ class SpacelabLock extends HTMLElement {
 
   // --- the unlock, as 2014 choreographed it, with more to work with -------
   #unlock() {
+    note('lock_open', { hinted: !!this.hinted });
     this.#open = true;
     const q = (s) => this.querySelector(s);
     const all = (s) => [...this.querySelectorAll(s)];

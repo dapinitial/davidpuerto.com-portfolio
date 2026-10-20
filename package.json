@@ -13,7 +13,8 @@
     "test": "node --env-file-if-exists=.env --test tests/server.test.mjs",
     "test:smoke": "node tests/smoke.mjs",
     "test:ga": "node --env-file=.env tests/ga-health.mjs",
-    "admin:password": "node tools/set-admin-password.mjs"
+    "admin:password": "node tools/set-admin-password.mjs",
+    "visits:connect": "node tools/connect-visits.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

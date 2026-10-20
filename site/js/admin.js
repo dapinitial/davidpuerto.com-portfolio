@@ -210,12 +210,79 @@ async function load(range) {
   }
 }
 
+/* ---------- visits: one story per visit, from the site's own log ---------- */
+const visitList = document.querySelector('.visit-list');
+const visitCount = document.querySelector('[data-visits="count"]');
+const visitFilter = document.querySelector('.visits-filter');
+let visitData = null;
+const KIND = { real: 'Person', cloud: 'Cloud server', bot: 'Bot', preview: 'Link preview', test: 'Our checks' };
+const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+const when = (iso) => new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Denver' });
+const dur = (s) => (s == null ? '' : s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, '0')}s`);
+const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; } };
+
+function renderVisits() {
+  if (!visitData) return;
+  const all = visitFilter.querySelector('[aria-pressed="true"]').dataset.kind === 'all';
+  const shown = all ? visitData : visitData.filter((v) => v.kind === 'real');
+  const hidden = visitData.length - shown.length;
+  visitCount.textContent = `${shown.length} visit${shown.length === 1 ? '' : 's'}${hidden ? ` · ${hidden} bots, previews and checks folded away` : ''}`;
+  visitList.innerHTML = shown.length ? shown.map((v) => `
+    <li class="visit kind-${v.kind}">
+      <div class="visit-head">
+        <time datetime="${v.start}">${when(v.start)}</time>
+        <span class="visit-kind">${KIND[v.kind] ?? v.kind}</span>
+        ${v.tag ? `<span class="visit-tag">${esc(v.tag)}</span>` : ''}
+      </div>
+      <p class="visit-who">${esc(v.network ?? 'Unknown network')}${v.country ? ` · ${esc(v.country)}` : ''} · ${esc(v.device)}, ${esc(v.browser)} on ${esc(v.os)}${v.referrer ? ` · from ${esc(host(v.referrer))}` : ''}</p>
+      <ol class="visit-steps">${v.steps.map((s) => `
+        <li><span class="step-path">${esc(s.path)}</span>${s.seconds != null ? ` <span class="step-time">${dur(s.seconds)}</span>` : ''}${s.did.length ? `<span class="step-did">${s.did.map(esc).join(' · ')}</span>` : ''}</li>`).join('')}
+      </ol>
+      <p class="visit-read"><span>Read as</span> ${esc(v.readAs)}</p>
+      <details class="visit-more"><summary>Details</summary>
+        <dl><dt>Address</dt><dd>${esc(v.ip ?? 'forgotten')}</dd><dt>Network no.</dt><dd>${esc(v.asn ?? '')}</dd><dt>Screen</dt><dd>${esc(v.screen ?? '')}</dd><dt>Visit id</dt><dd>${esc(v.session)}</dd></dl>
+      </details>
+    </li>`).join('') : '<li class="row-empty">No visits in this range yet.</li>';
+}
+
+async function loadVisits(range) {
+  const days = { 7: 7, 28: 28, 90: 90 }[range] ?? 7;
+  visitCount.textContent = 'reading the log…';
+  try {
+    const res = await fetch(`/api/admin/visits?days=${days}`);
+    if (res.status === 503) { visitCount.textContent = 'The visit log is not connected yet: add VISITS_URL and VISITS_KEY.'; visitList.innerHTML = ''; return; }
+    if (!res.ok) throw new Error(`visits ${res.status}`);
+    visitData = (await res.json()).visits;
+    renderVisits();
+  } catch {
+    visitCount.textContent = 'Could not read the visit log. Try again in a minute.';
+  }
+}
+
+visitFilter.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-kind]');
+  if (!btn) return;
+  visitFilter.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+  renderVisits();
+});
+
+// a link you send someone, so the log can say which link was opened
+document.querySelector('.tag-maker').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const f = new FormData(e.currentTarget);
+  const page = String(f.get('path') || '/').startsWith('/') ? f.get('path') : `/${f.get('path')}`;
+  const url = `https://davidpuerto.com${page}${page.includes('?') ? '&' : '?'}ref=${encodeURIComponent(f.get('tag'))}`;
+  const out = e.currentTarget.querySelector('.tag-out');
+  try { await navigator.clipboard.writeText(url); out.textContent = `Copied: ${url}`; } catch { out.textContent = url; }
+});
+
 switcher.addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-range]');
   if (!btn || btn.getAttribute('aria-pressed') === 'true') return;
   switcher.querySelectorAll('button').forEach((b) => b.removeAttribute('aria-pressed'));
   btn.setAttribute('aria-pressed', 'true');
   load(btn.dataset.range);
+  loadVisits(btn.dataset.range);
 });
 
 /* ---------- tabs: arrow keys move between them, as a tablist should ---------- */
@@ -244,5 +311,6 @@ const fromHash = tabs.find((t) => t.id === `tab-${location.hash.slice(1)}`);
 if (fromHash) selectTab(fromHash);
 
 load(28);
+loadVisits(28);
 loadRealtime();
 setInterval(loadRealtime, 60_000);

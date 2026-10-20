@@ -19,6 +19,7 @@
 // arc · F fullscreen · Esc closes the arc.
 import { gsap, ScrollTrigger } from '../lib/gsap.js';
 import '../elements/hand-mark.js';
+import { note } from '../lib/analytics.js';
 
 const params = new URLSearchParams(location.search);
 // The deck is the default on a desktop (a fine pointer and room for the
@@ -344,6 +345,7 @@ if (isDeck) {
 
     // --- state: which slot is centred -------------------------------------
     let cur = -1;
+    let noteT = 0;
     let numT = 0;
     const paint = (i) => {
       fill.style.width = `${((i + 1) / beats.length) * 100}%`;
@@ -372,6 +374,9 @@ if (isDeck) {
       if (i === cur) return;
       const prev = cur >= 0 ? beats[cur] : null;
       cur = i;
+      // the visit log hears about a slide once it has stayed up for a moment
+      clearTimeout(noteT);
+      noteT = setTimeout(() => { if (cur === i) note('slide', { n: i + 1, of: beats.length }); }, 800);
       beats.forEach((b, k) => b.classList.toggle('active', k === i));
       // a reel keeps playing after its slide has gone; stop every video that is not on the active slide
       beats.forEach((b, k) => { if (k !== i) b.querySelectorAll('video').forEach((v) => { if (!v.paused) v.pause(); }); });

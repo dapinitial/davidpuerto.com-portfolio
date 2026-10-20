@@ -8,6 +8,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import { contactEmail } from './contact-email.js';
+import { beacon, visits, visitsConfigured } from './visits.js';
 
 const {
   PORT = 3000,
@@ -305,6 +306,20 @@ async function getGaToken() {
 
 // 10-minute cache per range — a personal dashboard must not burn GA quota.
 const statsCache = new Map(); // range -> { data, exp }
+
+// The visit log: beacons in, one story per visit out (server/visits.js).
+app.post('/api/v', rateLimit('visit', 240, 60_000), beacon(clientIp));
+app.get('/api/admin/visits', async (req, res) => {
+  if (!adminAuthed(req)) return res.status(401).json({ error: 'Unauthorized' });
+  if (!visitsConfigured) return res.status(503).json({ error: 'Visit log not configured' });
+  const days = ['1', '7', '28', '90'].includes(req.query.days) ? Number(req.query.days) : 7;
+  try {
+    res.json({ days, visits: await visits(days) });
+  } catch (err) {
+    console.error('visit log: read failed', err.message);
+    res.status(502).json({ error: 'Could not read the visit log' });
+  }
+});
 
 app.get('/api/admin/stats', async (req, res) => {
   if (!adminAuthed(req)) return res.status(401).json({ error: 'Unauthorized' });

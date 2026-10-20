@@ -352,3 +352,35 @@
     .hour-col span { font-size: 0.625rem; }
   }
 }
+
+@layer page {
+  /* ---------- visits: one story per visit ---------- */
+  .visits-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+  .visits-count { margin: 0; color: #a09aa2; font-size: 0.875rem; }
+
+  .tag-maker { display: grid; gap: 10px; }
+  .tag-maker label { font-family: 'Poppins', sans-serif; font-size: 0.8125rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: #a09aa2; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag-row input { flex: 1 1 140px; min-width: 0; padding: 8px 10px; background: #0d0b0c; border: 1px solid #333; border-radius: 6px; color: #fff; font: inherit; font-size: 0.875rem; }
+  .tag-row button { padding: 8px 14px; background: none; border: 1px solid #00a3bb; border-radius: 6px; color: #fff; font: inherit; font-size: 0.875rem; cursor: pointer; }
+  .tag-out { font-size: 0.8125rem; color: #7de3f0; overflow-wrap: anywhere; }
+
+  .visit-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .visit { display: grid; gap: 8px; padding: 18px 20px; background: rgba(255, 255, 255, 0.025); border: 1px solid #262224; border-left: 3px solid #00a3bb; border-radius: 12px; min-width: 0; }
+  .visit:not(.kind-real) { border-left-color: #444; opacity: 0.75; }
+  .visit-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; }
+  .visit time { color: #fff; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .visit-kind, .visit-tag { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; padding: 2px 8px; border-radius: 999px; border: 1px solid #444; color: #a09aa2; }
+  .visit-tag { border-color: #00a3bb; color: #7de3f0; }
+  .visit-who { margin: 0; color: #c9c3c6; font-size: 0.875rem; overflow-wrap: anywhere; }
+  .visit-steps { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; font-size: 0.875rem; color: #ddd; }
+  .step-path { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 0.8125rem; overflow-wrap: anywhere; }
+  .step-time { color: #a09aa2; font-variant-numeric: tabular-nums; }
+  .step-did { display: block; color: #a09aa2; font-size: 0.8125rem; }
+  .visit-read { margin: 0; font-size: 0.9375rem; color: #fff; }
+  .visit-read span { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: #7de3f0; margin-right: 6px; }
+  .visit-more { font-size: 0.8125rem; color: #a09aa2; }
+  .visit-more summary { cursor: pointer; }
+  .visit-more dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 8px 0 0; }
+  .visit-more dd { margin: 0; color: #ddd; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+}
