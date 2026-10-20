@@ -100,8 +100,13 @@ void main() {
       float na = hash(n * 1.1 + 0.3), nb = hash(n * 2.8 + 0.7), nc = hash(n * 0.7 + 0.1), nd = hash(n * 3.2 + 0.9);
       vec2 o = vec2(sin(t * na) * cos(t * nb) * clamp(tan(t * na * 0.15), -3.0, 3.0) * 0.3,
                     clamp(tan(t * nc), -3.0, 3.0) * sin(t * nd) * 0.1);
-      vec2 q = mix(lockC + o * kc, center + o, u_release);
-      float d = pow(1.6 * na * k / max(length(q - pos), 1e-3), 1.1);
+      // inside the glass they're drawn toward each other, so they meet and merge more
+      vec2 q = mix(lockC + o * kc * 0.62, center + o, u_release);
+      // and their glows are softer and wider, so merges swell bigger
+      float blobiness = mix(0.92, 1.1, u_release);
+      // bigger while they're contained; their usual size once they're free
+      float grow = mix(2.0, 1.0, u_release);
+      float d = pow(1.6 * na * k * grow / max(length(q - pos), 1e-3), blobiness);
       if (i < 3) a += d; else if (i < 7) b += d; else c += d;
     }
     col = vec3(a * c, b * c, a * b) * 0.00018;
@@ -313,7 +318,7 @@ class SpacelabLock extends HTMLElement {
         </svg>
         <canvas class="sl-glass3d" aria-hidden="true"></canvas>
         </div>
-        <p class="sl-status" role="status" aria-live="polite">Three rings. One combination.</p>
+        <p class="sl-status" role="status" aria-live="polite"></p>
         <p class="sl-readout" aria-hidden="true">${['inner', 'middle', 'outer'].map((k) => {
           const d = DIALS.find((x) => x.key === k);
           return `<span style="--c:${d.color}">${d.label.replace(' ring', '')} <b data-read="${k}">0</b><i data-ok="${k}" hidden>✓</i></span>`;
@@ -334,7 +339,7 @@ class SpacelabLock extends HTMLElement {
         <div class="sl-reveal">
           <h2 class="sl-word" data-text="SPACELAB">SPACELAB</h2>
           <p class="sl-word sl-sub" data-text="FOREVER">FOREVER</p>
-          <p class="sl-word sl-meta" data-text="COMING SOON · DAVIDPUERTO.COM · 10.2014">COMING SOON · DAVIDPUERTO.COM · 10.2014</p>
+          <p class="sl-word sl-meta" data-text="COMING SOON · 1.2027">COMING SOON · 1.2027</p>
           <button type="button" class="sl-again">[ RELOCK ]</button>
         </div>
       </div>`;
