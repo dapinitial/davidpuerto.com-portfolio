@@ -97,16 +97,16 @@ app.use((req, res, next) => {
   const isCursorLab = req.path.startsWith('/cursorlab');
   const scriptSrc = isCursorLab
     ? "script-src 'self' 'wasm-unsafe-eval' blob:"
-    : "script-src 'self' 'wasm-unsafe-eval' https://cpwebassets.codepen.io https://www.googletagmanager.com"; // wasm: the meshopt decoder behind the case studies' glass model
+    : "script-src 'self' 'wasm-unsafe-eval' https://cpwebassets.codepen.io https://*.googletagmanager.com"; // wasm: the meshopt decoder behind the case studies' glass model
   const csp = [
     "default-src 'self'",
     scriptSrc,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self'",
     "frame-src 'self' https://codepen.io https://www.youtube.com https://www.youtube-nocookie.com",
-    "img-src 'self' data: https://www.google-analytics.com",
+    "img-src 'self' data: https://www.google.com https://*.google-analytics.com https://*.googletagmanager.com",
     "media-src 'self' blob: https://www.dropbox.com https://*.dropboxusercontent.com",
-    "connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://www.googletagmanager.com",
+    "connect-src 'self' https://www.google.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
