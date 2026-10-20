@@ -243,6 +243,36 @@ class SpacelabLock extends HTMLElement {
     this.#startField(reduced);
     this.reduced = reduced;
     this.#mountGlass(reduced);
+    this.#assemble();
+  }
+
+  // --- the arrival: the lock builds itself, piece by piece, while the glass turns in
+  #assemble() {
+    if (this.reduced) return;
+    const q = (s) => this.querySelector(s);
+    const all = (s) => [...this.querySelectorAll(s)];
+    const O = { svgOrigin: '0 0' };
+    const clunk = (at) => tl.fromTo(q('.sl-lock'), { scale: 1.018 }, { scale: 1, duration: 0.35, ease: 'power3.out' }, at);
+    const tl = gsap.timeline({ delay: 0.15 });
+    // the core comes first: the clock, then the three dials unfold, each turning against the last
+    tl.from(q('.sl-clock'), { ...O, scale: 0, opacity: 0, duration: 0.4, ease: 'back.out(2.5)' }, 0);
+    all('.sl-dial').forEach((g, i) => {
+      tl.from(g, { ...O, scale: 0.6, rotation: i % 2 ? -110 : 110, opacity: 0, duration: 0.55, ease: 'back.out(1.8)' }, 0.1 + i * 0.1);
+    });
+    // the inner ring grows out from under the dials, turning the other way
+    tl.from(q('.sl-inner'), { ...O, scale: 0.5, rotation: 200, opacity: 0, duration: 0.6, ease: 'back.out(1.5)' }, 0.35);
+    // the outer wheel slides out from behind the core and spins into its seat
+    tl.from(q('.sl-outer'), { ...O, scale: 0.55, rotation: -150, duration: 0.6, ease: 'back.out(1.3)' }, 0.6);
+    tl.from(q('.sl-outer'), { opacity: 0, duration: 0.2, ease: 'none' }, 0.6);
+    // the three clamps push out from behind it and bite
+    all('.sl-latch').forEach((l, i) => {
+      const a = (+l.dataset.dir - 90) * Math.PI / 180;
+      tl.from(l, { ...O, x: -Math.cos(a) * 110, y: -Math.sin(a) * 110, rotation: i % 2 ? 40 : -40, opacity: 0, duration: 0.42, ease: 'back.out(2.2)' }, 0.85 + i * 0.07);
+    });
+    clunk(1.3);
+    // the slots blink on in a sweep, and the readout comes up last
+    tl.from(all('.sl-slot'), { opacity: 0, duration: 0.12, stagger: 0.05, ease: 'none' }, 1.0);
+    tl.from([q('.sl-readout'), q('.sl-hint')], { opacity: 0, y: 8, duration: 0.5, stagger: 0.1, ease: 'power2.out' }, 1.4);
   }
 
   disconnectedCallback() {
@@ -537,7 +567,9 @@ class SpacelabLock extends HTMLElement {
     ro.observe(this);
     size();
     this.#cleanup.push(() => ro.disconnect());
-    const t0 = performance.now();
+    // start the field mid-drift, so the blobs are already spread out, not piled in the center
+    const t0 = performance.now() - 24000;
+    const born = performance.now();
     const loop = (now) => {
       this.#raf = requestAnimationFrame(loop);
       if (document.hidden) return;
@@ -546,8 +578,11 @@ class SpacelabLock extends HTMLElement {
       const dpr = bg.width / Math.max(1, bg.clientWidth);
       const center = [(lock.left - host.left + lock.width / 2) * dpr, (lock.top - host.top + lock.height / 2) * dpr];
       const burst = this.#burstAt < 0 ? -1 : (now - this.#burstAt) / 1000;
-      this.dimNow = (this.dimNow ?? 1) + ((this.broken ? 0.25 : 1) - (this.dimNow ?? 1)) * 0.08;
-      const state = { time: now - t0, burst, center, calm: reduced ? 1 : 0, unit: (lock.width / 640) * dpr, release: this.release ?? 0, dim: this.dimNow };
+      this.dimNow = (this.dimNow ?? 0) + ((this.broken ? 0.25 : 1) - (this.dimNow ?? 0)) * 0.08;
+      // and fade it up over the first second, on the same soft curve as the glass
+      const arrive = Math.min(1, (now - born) / 1200);
+      const fadeIn = 1 - (1 - arrive) ** 3;
+      const state = { time: now - t0, burst, center, calm: reduced ? 1 : 0, unit: (lock.width / 640) * dpr, release: this.release ?? 0, dim: this.dimNow * fadeIn };
       back.draw(state);
       const fizzle = this.fizzleAt == null ? -1 : (now - this.fizzleAt) / 1000;
       if (burst >= 0 && burst < 9) front.draw(state);

@@ -13,6 +13,22 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const PINK = 0xff4fd8;
 const CYAN = 0x4fe3ff;
+// the entrance curve, cubic-bezier(0.16, 1, 0.3, 1): quick to start, a long, soft landing
+const ease = (x) => {
+  const [x1, y1, x2, y2] = [0.16, 1, 0.3, 1];
+  const bx = (t) => 3 * x1 * t * (1 - t) ** 2 + 3 * x2 * t * t * (1 - t) + t ** 3;
+  const by = (t) => 3 * y1 * t * (1 - t) ** 2 + 3 * y2 * t * t * (1 - t) + t ** 3;
+  let t = x;
+  for (let i = 0; i < 8; i++) { // Newton's method on x(t) = x
+    const dx = 3 * (1 - t) ** 2 * x1 + 6 * (1 - t) * t * (x2 - x1) + 3 * t * t * (1 - x2);
+    if (Math.abs(dx) < 1e-6) break;
+    t -= (bx(t) - x) / dx;
+    t = Math.min(1, Math.max(0, t));
+  }
+  return by(t);
+};
+const INTRO = 1600; // ms: the ring expands, turns and fades into place
+
 const RING = 286; // centerline radius, in SVG units: just outside the latches
 const TUBE = 14;
 
@@ -44,6 +60,9 @@ export function mountGlass(canvas, { reduced = false } = {}) {
     opacity: 0.62,
     depthWrite: false,
   });
+  const base = material.opacity;
+  let fade = 1; // setOpacity's share
+  material.opacity = 0; // nothing shows until the entrance draws it in
   const ring = new THREE.Mesh(new THREE.TorusGeometry(RING, TUBE, 64, 256), material);
   scene.add(ring);
 
@@ -88,6 +107,13 @@ export function mountGlass(canvas, { reduced = false } = {}) {
     if (!visible || document.hidden) return;
     ring.rotation.x += (tx - ring.rotation.x) * 0.06;
     ring.rotation.y += (ty - ring.rotation.y) * 0.06;
+    // the entrance: expand from 80%, turn a third of a revolution, fade up, all on one curve
+    const e = ease(Math.min(1, (now - t0) / (reduced ? 600 : INTRO)));
+    if (!reduced) {
+      ring.scale.setScalar(0.8 + 0.2 * e);
+      ring.rotation.z = (1 - e) * -2.1;
+    }
+    material.opacity = base * e * fade;
     // the rims drift slowly, so light travels around the glass
     if (!reduced) {
       const a = (now - t0) * 0.00018;
@@ -99,7 +125,7 @@ export function mountGlass(canvas, { reduced = false } = {}) {
   raf = requestAnimationFrame(loop);
 
   return {
-    setOpacity(v) { material.opacity = 0.62 * v; },
+    setOpacity(v) { fade = v; },
     dispose() {
       cancelAnimationFrame(raf);
       ro.disconnect();
