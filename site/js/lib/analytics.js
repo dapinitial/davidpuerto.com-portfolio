@@ -3,7 +3,12 @@
 // Missing/empty meta, Do Not Track or Global Privacy Control → no-op; the site works before GA exists.
 const id = document.querySelector('meta[name="ga-id"]')?.content.trim();
 
-if (id && navigator.doNotTrack !== '1' && !navigator.globalPrivacyControl) {
+// Only the real site counts: a local or preview copy never sends hits.
+const live = /(^|\.)davidpuerto\.com$/.test(location.hostname);
+// The automated checks mark themselves internal, so GA can filter them out.
+const internal = (() => { try { return localStorage.getItem('dp-internal') === '1'; } catch { return false; } })();
+
+if (id && live && navigator.doNotTrack !== '1' && !navigator.globalPrivacyControl) {
   const s = document.createElement('script');
   s.async = true;
   s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
@@ -14,7 +19,7 @@ if (id && navigator.doNotTrack !== '1' && !navigator.globalPrivacyControl) {
     window.dataLayer.push(arguments);
   };
   window.gtag('js', new Date());
-  window.gtag('config', id);
+  window.gtag('config', id, internal ? { traffic_type: 'internal' } : {});
 }
 
 // Fire a custom event — safe no-op when collection is off (no id / DNT / GPC).

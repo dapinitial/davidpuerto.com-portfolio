@@ -51,6 +51,7 @@ class WaybackTimeline extends HTMLElement {
     this.#renderChrome();
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!this.#hasGL()) return this.#renderGrid();
+    this.querySelector('.wt-stage').title = 'Open this version on the Wayback Machine';
     this.#initGL(reduced);
     this.#select(this.#frames.length - 1, { instant: true });
   }
@@ -79,6 +80,7 @@ class WaybackTimeline extends HTMLElement {
       <div class="wt-readout">
         <p class="wt-year" aria-hidden="true"></p>
         <p class="wt-date" aria-live="polite"></p>
+        <p class="wt-note" hidden>Archived without its styles and scripts</p>
         <a class="wt-open" target="_blank" rel="noopener noreferrer">Open this capture on the Wayback Machine</a>
       </div>
       <nav class="wt-ruler" aria-label="Archived versions by date">
@@ -105,6 +107,7 @@ class WaybackTimeline extends HTMLElement {
     this.querySelector('.wt-year').textContent = f.ts.slice(0, 4);
     this.querySelector('.wt-date').textContent = fmt.format(dateOf(f.ts));
     this.querySelector('.wt-open').href = archiveUrl(f.ts);
+    this.querySelector('.wt-note').hidden = !f.bare;
     this.querySelectorAll('.wt-ruler button').forEach((b, k) => {
       if (k === i) b.setAttribute('aria-current', 'true');
       else b.removeAttribute('aria-current');
@@ -222,13 +225,21 @@ class WaybackTimeline extends HTMLElement {
       }
     };
     let dragX = null;
-    const onDown = (e) => { dragX = e.clientX; stage.setPointerCapture(e.pointerId); };
+    let downAt = null;
+    const onDown = (e) => { dragX = e.clientX; downAt = [e.clientX, e.clientY]; stage.setPointerCapture(e.pointerId); };
     const onMove = (e) => {
       if (dragX == null) return;
       const dx = e.clientX - dragX;
       if (Math.abs(dx) > 50) { this.#select(this.#target + (dx < 0 ? 1 : -1)); dragX = e.clientX; }
     };
-    const onUp = () => { dragX = null; };
+    // a click that did not drag opens the pane in front on the Wayback Machine
+    const onUp = (e) => {
+      dragX = null;
+      if (downAt && Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) < 6) {
+        window.open(archiveUrl(this.#frames[this.#target].ts), '_blank', 'noopener');
+      }
+      downAt = null;
+    };
     const onKey = (e) => {
       if (e.target.closest('input, textarea')) return;
       const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];

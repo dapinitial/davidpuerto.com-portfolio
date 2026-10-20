@@ -18,6 +18,8 @@ let gaHits = 0;
 
 for (const path of PAGES) {
   const context = await browser.newContext({ userAgent: UA, viewport: { width: 1454, height: 840 } });
+  // label these visits internal so GA's Internal Traffic filter drops them
+  await context.addInitScript(() => localStorage.setItem('dp-internal', '1'));
   const page = await context.newPage();
   const fail = (msg) => failures.push(`${path}: ${msg}`);
   page.on('console', (m) => { if (m.type() === 'error') fail(`console: ${m.text().slice(0, 200)}`); });
@@ -38,8 +40,10 @@ for (const path of PAGES) {
 }
 await browser.close();
 
-if (!gaTag) failures.push('GA tag never loaded');
-if (!gaHits) failures.push('Google accepted no GA hits');
+// analytics only runs on the real domain; a local run checks everything else
+const live = /(^|\.)davidpuerto\.com$/.test(new URL(BASE).hostname);
+if (live && !gaTag) failures.push('GA tag never loaded');
+if (live && !gaHits) failures.push('Google accepted no GA hits');
 
 console.log(`${BASE}: ${PAGES.length} pages, GA tag loaded ${gaTag}x, ${gaHits} hits accepted`);
 if (failures.length) {

@@ -8,7 +8,7 @@ wayback-timeline {
   background: radial-gradient(120% 90% at 50% 40%, #1a1517 0%, #0e0c0d 70%);
   color: #fff0f4;
 }
-wayback-timeline .wt-stage { position: absolute; inset: 0; touch-action: pan-y; cursor: grab; }
+wayback-timeline .wt-stage { position: absolute; inset: 0; touch-action: pan-y; cursor: pointer; }
 wayback-timeline .wt-stage:active { cursor: grabbing; }
 wayback-timeline canvas { display: block; width: 100%; height: 100%; }
 
@@ -30,6 +30,7 @@ wayback-timeline .wt-year {
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8);
 }
 wayback-timeline .wt-date { margin: 0; font-size: 1rem; color: #e9e3e6; }
+wayback-timeline .wt-note { margin: 0; font-size: 0.875rem; color: #a09aa2; }
 wayback-timeline .wt-open { pointer-events: auto; font-size: 0.95rem; color: var(--color-primary, #fb836d); justify-self: start; }
 
 wayback-timeline .wt-ruler {
