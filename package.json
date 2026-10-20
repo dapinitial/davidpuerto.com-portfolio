@@ -11,7 +11,9 @@
     "preview": "npm run build && NODE_ENV=production PORT=3001 node --env-file=.env server/index.js",
     "lock": "npm run build && node --env-file=.env scripts/lock-content.mjs",
     "test": "node --env-file-if-exists=.env --test tests/server.test.mjs",
-    "test:smoke": "node tests/smoke.mjs"
+    "test:smoke": "node tests/smoke.mjs",
+    "test:ga": "node --env-file=.env tests/ga-health.mjs",
+    "admin:password": "node tools/set-admin-password.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

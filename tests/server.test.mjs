@@ -14,6 +14,7 @@ import bcrypt from 'bcryptjs';
 const PORT = 3939;
 const BASE = `http://127.0.0.1:${PORT}`;
 const PASSWORD = randomBytes(12).toString('base64url');
+const ADMIN_PASSWORD = randomBytes(12).toString('base64url');
 let server;
 
 before(async () => {
@@ -25,6 +26,7 @@ before(async () => {
       NODE_ENV: 'production',
       COOKIE_SECRET: randomBytes(32).toString('base64'),
       PASSWORD_HASH: bcrypt.hashSync(PASSWORD, 4),
+      ADMIN_PASSWORD_HASH: bcrypt.hashSync(ADMIN_PASSWORD, 4),
       ...(process.env.CONTENT_KEY && { CONTENT_KEY: process.env.CONTENT_KEY }),
     },
     stdio: ['ignore', 'pipe', 'inherit'],
@@ -37,8 +39,9 @@ before(async () => {
 after(() => server?.kill());
 
 const get = (path, opts = {}) => fetch(BASE + path, { redirect: 'manual', ...opts });
-const login = (password, ip = '10.0.0.1') =>
-  fetch(`${BASE}/api/login`, { method: 'POST', headers: { 'content-type': 'application/json', 'do-connecting-ip': ip }, body: JSON.stringify({ password }) });
+const login = (password, ip = '10.0.0.1', redirectTo) =>
+  fetch(`${BASE}/api/login`, { method: 'POST', headers: { 'content-type': 'application/json', 'do-connecting-ip': ip }, body: JSON.stringify({ password, redirectTo }) });
+const cookiesOf = (res) => res.headers.getSetCookie().map((c) => c.split(';')[0]).join('; ');
 
 test('public pages answer 200', async () => {
   for (const p of ['/', '/about-me/', '/contact/', '/login/', '/resume/', '/privacy/', '/terms/', '/since-2004/']) assert.equal((await get(p)).status, 200, p);
@@ -104,4 +107,22 @@ test('contact refuses malformed input without crashing', async () => {
   });
   assert.ok([400, 503].includes(res.status), `got ${res.status}`);
   assert.equal((await get('/')).status, 200, 'server still up');
+});
+
+test('the shared case-study password never opens the admin', async () => {
+  const res = await login(PASSWORD, '10.3.3.3');
+  assert.equal(res.status, 200);
+  const cookie = cookiesOf(res);
+  assert.equal((await get('/admin/', { headers: { cookie } })).status, 302, 'admin page');
+  assert.equal((await get('/api/admin/stats', { headers: { cookie } })).status, 401, 'admin data');
+  assert.equal((await login(PASSWORD, '10.3.3.4', '/admin/')).status, 401, 'asking for the admin with it');
+});
+
+test('the admin password opens the admin and the case studies', async () => {
+  const res = await login(ADMIN_PASSWORD, '10.4.4.4', '/admin/');
+  assert.equal(res.status, 200);
+  const cookie = cookiesOf(res);
+  assert.match(cookie, /dp_admin=/);
+  assert.equal((await get('/admin/', { headers: { cookie } })).status, 200, 'admin page');
+  assert.notEqual((await get('/case-studies/apple/', { headers: { cookie } })).status, 302, 'case study');
 });

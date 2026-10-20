@@ -1,0 +1,39 @@
+# Every push: build the site, run the server contract tests, then load the
+# pages in a real browser against a local production server. A failure here
+# emails the repo owner, usually while DigitalOcean is still deploying.
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout-cone-mode: false
+          # the encrypted case studies are most of the repo and the tests
+          # only need to know they redirect; skip the heavy images
+          sparse-checkout: |
+            /*
+            !/content-locked/images/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Server contract tests
+        run: npm test
+      - name: Browser smoke test against a local production server
+        run: |
+          npx playwright install --with-deps chromium-headless-shell
+          export COOKIE_SECRET=$(openssl rand -base64 32)
+          export PASSWORD_HASH=$(node -e "console.log(require('bcryptjs').hashSync(require('crypto').randomBytes(16).toString('hex'), 4))")
+          PORT=3001 NODE_ENV=production node server/index.js &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://localhost:3001/ && break; sleep 1; done
+          node tests/smoke.mjs http://localhost:3001

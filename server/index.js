@@ -14,6 +14,8 @@ const {
   NODE_ENV,
   COOKIE_SECRET,
   PASSWORD_HASH,
+  // the admin has its own password: the case-study one is shared with reviewers
+  ADMIN_PASSWORD_HASH,
   GMAIL_USER,
   GMAIL_APP_PASSWORD,
   CONTACT_TO = 'me@davidpuerto.com',
@@ -33,14 +35,16 @@ for (const [key, val] of Object.entries({ COOKIE_SECRET, PASSWORD_HASH })) {
 /* ---------- stateless signed auth cookie ---------- */
 const MAX_AGE = 30 * 24 * 60 * 60 * 1000; // 30 days
 const sign = (s) => createHmac('sha256', COOKIE_SECRET).update(s).digest('base64url');
-const makeToken = () => {
-  const exp = Date.now() + MAX_AGE;
-  return `${exp}.${sign(`cs.${exp}`)}`;
+const ADMIN_MAX_AGE = 7 * 24 * 60 * 60 * 1000; // a week
+// kind keeps the two cookies apart: a case-study token never opens the admin
+const makeToken = (kind = 'cs', maxAge = MAX_AGE) => {
+  const exp = Date.now() + maxAge;
+  return `${exp}.${sign(`${kind}.${exp}`)}`;
 };
-const isValidToken = (token) => {
+const isValidToken = (token, kind = 'cs') => {
   const [exp, sig] = String(token ?? '').split('.');
   if (!exp || !sig) return false;
-  const want = Buffer.from(sign(`cs.${exp}`));
+  const want = Buffer.from(sign(`${kind}.${exp}`));
   const got = Buffer.from(sig);
   return got.length === want.length && timingSafeEqual(got, want) && Number(exp) > Date.now();
 };
@@ -49,7 +53,9 @@ const getCookie = (req, name) =>
     ?.split('; ')
     .find((c) => c.startsWith(`${name}=`))
     ?.slice(name.length + 1);
-const authed = (req) => isValidToken(getCookie(req, 'cs_auth'));
+const adminAuthed = (req) => isValidToken(getCookie(req, 'dp_admin'), 'admin');
+// the admin password opens the case studies too
+const authed = (req) => adminAuthed(req) || isValidToken(getCookie(req, 'cs_auth'));
 
 /* ---------- tiny in-memory rate limiter ---------- */
 const hits = new Map(); // key -> { n, reset }
@@ -145,7 +151,7 @@ app.use('/images/case-studies', (req, res, next) => {
 });
 
 app.use('/admin', (req, res, next) => {
-  if (authed(req)) return next();
+  if (adminAuthed(req)) return next();
   res.redirect(`/login/?redirectTo=${encodeURIComponent(`/admin${req.url}`)}`);
 });
 
@@ -155,8 +161,21 @@ const safeRedirect = (to) =>
     : '/case-studies/microsoft/';
 
 app.post('/api/login', rateLimit('login', 5, 15 * 60_000), async (req, res) => {
-  const ok = await bcrypt.compare(String(req.body?.password ?? ''), PASSWORD_HASH);
+  const password = String(req.body?.password ?? '');
+  const admin = Boolean(ADMIN_PASSWORD_HASH) && (await bcrypt.compare(password, ADMIN_PASSWORD_HASH));
+  const ok = admin || (await bcrypt.compare(password, PASSWORD_HASH));
   if (!ok) return res.status(401).json({ success: false });
+  // the shared password never opens the admin, whatever redirectTo asks for
+  if (!admin && String(req.body?.redirectTo ?? '').startsWith('/admin')) return res.status(401).json({ success: false });
+  if (admin) {
+    res.cookie('dp_admin', makeToken('admin', ADMIN_MAX_AGE), {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'strict',
+      maxAge: ADMIN_MAX_AGE,
+      path: '/',
+    });
+  }
   res.cookie('cs_auth', makeToken(), {
     httpOnly: true,
     secure: isProd,
@@ -169,6 +188,7 @@ app.post('/api/login', rateLimit('login', 5, 15 * 60_000), async (req, res) => {
 
 app.post('/api/logout', (req, res) => {
   res.clearCookie('cs_auth', { path: '/' });
+  res.clearCookie('dp_admin', { path: '/' });
   res.json({ success: true });
 });
 
@@ -287,7 +307,7 @@ async function getGaToken() {
 const statsCache = new Map(); // range -> { data, exp }
 
 app.get('/api/admin/stats', async (req, res) => {
-  if (!authed(req)) return res.status(401).json({ error: 'Unauthorized' });
+  if (!adminAuthed(req)) return res.status(401).json({ error: 'Unauthorized' });
   if (!gaConfigured) return res.status(503).json({ error: 'Analytics not configured' });
 
   const range = ['7', '28', '90'].includes(req.query.range) ? Number(req.query.range) : 28;
@@ -428,7 +448,7 @@ app.get('/api/admin/stats', async (req, res) => {
 let realtimeCache = null; // { data, exp }
 
 app.get('/api/admin/realtime', async (req, res) => {
-  if (!authed(req)) return res.status(401).json({ error: 'Unauthorized' });
+  if (!adminAuthed(req)) return res.status(401).json({ error: 'Unauthorized' });
   if (!gaConfigured) return res.status(503).json({ error: 'Analytics not configured' });
   if (realtimeCache && Date.now() < realtimeCache.exp) return res.json(realtimeCache.data);
 
