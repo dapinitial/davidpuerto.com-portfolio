@@ -1,4 +1,4 @@
-// The lock's glass bezel: a real 3D torus in the Unakin glass, the same recipe
+// The lock's glass bezel: a real 3D torus in smoked black glass, after the Unakin glass, the same recipe
 // as unakin.com's Blender models. A deep-teal alpha glass with a hard
 // clearcoat, a room environment to reflect, a magenta rim low-left, a cyan
 // rim high-right, a white key and filmic tone mapping; the bloom is a CSS glow
@@ -33,15 +33,15 @@ export function mountGlass(canvas, { reduced = false } = {}) {
 
   // the Unakin alpha glass: dark teal at low opacity, the shine from clearcoat and the rims
   const material = new THREE.MeshPhysicalMaterial({
-    color: 0x1e5f78,
+    color: 0x121215, // smoked black glass
     metalness: 0,
     roughness: 0.16,
     clearcoat: 1,
     clearcoatRoughness: 0.08,
-    envMapIntensity: 0.55,
+    envMapIntensity: 0.85,
     specularIntensity: 1,
     transparent: true,
-    opacity: 0.5,
+    opacity: 0.62,
     depthWrite: false,
   });
   const ring = new THREE.Mesh(new THREE.TorusGeometry(RING, TUBE, 64, 256), material);
@@ -76,7 +76,7 @@ export function mountGlass(canvas, { reduced = false } = {}) {
     tx = (e.clientY / innerHeight - 0.5) * 0.35;
     ty = (e.clientX / innerWidth - 0.5) * 0.45;
   };
-  if (!reduced) addEventListener('pointermove', onMove, { passive: true });
+  // no cursor tilt: the lock is a fixed object, not a floating card
 
   let raf = 0;
   let visible = true;
@@ -99,7 +99,7 @@ export function mountGlass(canvas, { reduced = false } = {}) {
   raf = requestAnimationFrame(loop);
 
   return {
-    setOpacity(v) { material.opacity = 0.5 * v; },
+    setOpacity(v) { material.opacity = 0.62 * v; },
     dispose() {
       cancelAnimationFrame(raf);
       ro.disconnect();

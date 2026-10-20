@@ -268,9 +268,9 @@ class SpacelabLock extends HTMLElement {
             <circle r="190" fill="#050405" stroke="#2d2c2f" stroke-width="2"/>
           </g>
           <g class="sl-latches">
-            <path class="sl-latch" data-dir="0" d="${band(240, 274, -22, 22)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="215" d="${band(244, 274, 198, 232)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="145" d="${band(244, 274, 128, 162)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="0" d="${band(236, 274, -38, 38)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="240" d="${band(236, 274, 202, 278)}" fill="url(#sl-bevel)"/>
+            <path class="sl-latch" data-dir="120" d="${band(236, 274, 82, 158)}" fill="url(#sl-bevel)"/>
           </g>
           <g class="sl-inner">
             <circle r="186" fill="#161517" stroke="#3a393c" stroke-width="2"/>
