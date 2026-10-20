@@ -8,6 +8,7 @@
 // metaball shader in the spirit of soulwire. This is SVG for the lock, one
 // fragment shader for the field and the blast, GSAP for the choreography.
 // Every dial is a real slider: drag it around, or use the arrow keys.
+// enter-href="/somewhere" adds an [ ENTER ] link to the reveal.
 // Light DOM. Pair with css/elements/spacelab-lock.css.
 import { gsap } from '../lib/gsap.js';
 
@@ -115,7 +116,9 @@ void main() {
     float px = 1.5 / u_res.x;
     float Rm = mix(R, 4.0, u_release);
     col *= smoothstep(Rm + px, Rm - px, length(pos - lockC)) * u_dim;
-    col -= mod(frag.y, 2.0) < 1.0 ? 0.08 : 0.0; // the scanlines
+    // a ground a hair off black, so the scanlines read across the whole screen
+    col += vec3(0.028, 0.026, 0.032);
+    col -= mod(frag.y, 2.0) < 1.0 ? 0.03 + 0.06 * min(1.0, max(col.r, max(col.g, col.b)) * 4.0) : 0.0; // the scanlines
     // the blast lights the field up for a moment
     if (u_burst > 0.0) col += vec3(0.55, 0.3, 0.75) * exp(-u_burst * 2.5) * smoothstep(0.9, 0.0, length(p));
     col = max(col, 0.0);
@@ -289,6 +292,10 @@ class SpacelabLock extends HTMLElement {
             <radialGradient id="sl-lit" cx="50%" cy="50%" r="65%">
               <stop offset="0" stop-color="#eafdff"/><stop offset="0.35" stop-color="#00d8ff"/><stop offset="1" stop-color="#0050d8"/>
             </radialGradient>
+            <!-- the slot ring sits raised: a soft shadow under it, outward onto the wheel and in toward the window -->
+            <filter id="sl-raised" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000" flood-opacity="0.85"/>
+            </filter>
             <filter id="sl-glow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
             </filter>
@@ -306,8 +313,8 @@ class SpacelabLock extends HTMLElement {
             <path class="sl-latch" data-dir="120" data-ring="middle" role="button" tabindex="0" aria-label="Clamp: show the middle ring's number" d="${band(236, 274, 82, 158)}" fill="url(#sl-bevel)"/>
           </g>
           <g class="sl-inner">
-            <path d="${ring(152, 186)}" fill="#161517" fill-rule="evenodd" stroke="#3a393c" stroke-width="2"/>
-            <circle r="152" fill="#000" fill-opacity="0.18" stroke="#2a292b" stroke-width="2"/>
+            <path d="${ring(152, 186)}" fill="#161517" fill-rule="evenodd" filter="url(#sl-raised)"/>
+            <circle r="152" fill="#000" fill-opacity="0.18"/>
             <g class="sl-slots" filter="url(#sl-glow)">${slots}</g>
           </g>
           ${dials}
@@ -340,7 +347,10 @@ class SpacelabLock extends HTMLElement {
           <h2 class="sl-word" data-text="SPACELAB">SPACELAB</h2>
           <p class="sl-word sl-sub" data-text="FOREVER">FOREVER</p>
           <p class="sl-word sl-meta" data-text="COMING SOON · 1.2027">COMING SOON · 1.2027</p>
-          <button type="button" class="sl-again">[ RELOCK ]</button>
+          <p class="sl-actions">
+            ${this.getAttribute('enter-href') ? `<a class="sl-enter" href="${this.getAttribute('enter-href')}">[ ENTER ]</a>` : ''}
+            <button type="button" class="sl-again">[ RELOCK ]</button>
+          </p>
         </div>
       </div>`;
   }
@@ -590,7 +600,7 @@ class SpacelabLock extends HTMLElement {
     const rings = panel.querySelectorAll('.sl-ghost-ring');
     const ticks = panel.querySelector('.sl-ghost-ticks');
     const words = [...panel.querySelectorAll('.sl-word')];
-    const again = panel.querySelector('.sl-again');
+    const again = panel.querySelector('.sl-enter') || panel.querySelector('.sl-again');
     if (instant) {
       gsap.set(rings, { strokeDashoffset: 0 });
       words.forEach((w) => { w.style.opacity = 1; });
@@ -603,7 +613,7 @@ class SpacelabLock extends HTMLElement {
     tl.fromTo(rings, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut', stagger: 0.15 }, 0);
     tl.fromTo(ticks, { opacity: 0, rotation: -30, svgOrigin: '0 0' }, { opacity: 1, rotation: 0, svgOrigin: '0 0', duration: 1.6, ease: 'power3.out' }, 0.2);
     words.forEach((w, i) => tl.add(() => this.#decode(w, i === 0 ? 1.1 : 0.8), 0.5 + i * 0.45));
-    tl.fromTo(again, { opacity: 0 }, { opacity: 1, duration: 0.6 }, 2.4);
+    tl.fromTo(panel.querySelector('.sl-actions'), { opacity: 0 }, { opacity: 1, duration: 0.6 }, 2.4);
   }
 
   // glyph by glyph, like a terminal finding the signal

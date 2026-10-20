@@ -92,8 +92,20 @@ spacelab-lock .sl-meta {
   letter-spacing: 0.28em;
   color: #8a858c;
 }
+spacelab-lock .sl-actions { display: flex; gap: 8px; justify-content: center; margin: 10px 0 0; }
+spacelab-lock .sl-enter {
+  display: inline-grid;
+  place-items: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  font-family: var(--font-family-monospace, monospace);
+  font-size: 0.78rem;
+  letter-spacing: 0.3em;
+  color: #00fffc;
+  text-decoration: none;
+}
+spacelab-lock .sl-enter:hover, spacelab-lock .sl-enter:focus-visible { color: #fff; text-shadow: 0 0 10px #00fffc; }
 spacelab-lock .sl-again {
-  margin-top: 10px;
   min-height: 40px;
   padding: 8px 12px;
   font-family: var(--font-family-monospace, monospace);
