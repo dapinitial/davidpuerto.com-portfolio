@@ -85,3 +85,6 @@ window.addEventListener('resize', () => {
     150,
   );
 });
+
+// The copyright line's end year follows the calendar, so it never goes stale.
+document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });

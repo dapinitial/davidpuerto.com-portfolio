@@ -138,3 +138,15 @@
     font-style: normal;
   }
 }
+
+/* © line with Privacy and Terms, at the foot of contact, login and the legal pages */
+.site-mark {
+  margin: 0;
+  padding: 24px 16px 32px;
+  text-align: center;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: #a09aa2;
+}
+.site-mark a { color: inherit; text-decoration: none; border-bottom: 1px solid transparent; }
+.site-mark a:hover, .site-mark a:focus-visible { color: #fff0f4; border-bottom-color: currentColor; }

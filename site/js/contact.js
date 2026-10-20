@@ -1,15 +1,15 @@
-// Contact page: the locator (live Pacific clock, decoded coordinates) and the
+// Contact page: the locator (live Mountain clock, decoded coordinates) and the
 // form submission to /api/contact.
 import { track } from './lib/analytics.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// --- live local time (Pacific: Seattle and Los Angeles share it), ticking every second ---------
+// --- live local time (Mountain: Las Cruces), ticking every second ---------
 const clock = document.querySelector('[data-clock]');
 const tzEl = document.querySelector('[data-tz]');
 if (clock) {
-  const time = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-  const zone = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', timeZoneName: 'short' });
+  const time = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  const zone = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', timeZoneName: 'short' });
   const tick = () => {
     clock.textContent = time.format(new Date());
     const tz = zone.formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value;

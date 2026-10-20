@@ -1,0 +1,89 @@
+/* <wayback-timeline>: the corridor fills the frame, the readout sits top left,
+   the ruler runs along the bottom. */
+wayback-timeline {
+  position: relative;
+  display: block;
+  height: 100svh;
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 40%, #1a1517 0%, #0e0c0d 70%);
+  color: #fff0f4;
+}
+wayback-timeline .wt-stage { position: absolute; inset: 0; touch-action: pan-y; cursor: grab; }
+wayback-timeline .wt-stage:active { cursor: grabbing; }
+wayback-timeline canvas { display: block; width: 100%; height: 100%; }
+
+wayback-timeline .wt-readout {
+  position: absolute;
+  left: clamp(16px, 5vw, 64px);
+  top: clamp(72px, 12vh, 120px);
+  display: grid;
+  gap: 6px;
+  pointer-events: none;
+}
+wayback-timeline .wt-year {
+  margin: 0;
+  font-family: var(--font-family-heading, serif);
+  font-style: italic;
+  font-size: clamp(4rem, 12vw, 9rem);
+  line-height: 0.9;
+  color: var(--color-primary, #fb836d);
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.8);
+}
+wayback-timeline .wt-date { margin: 0; font-size: 1rem; color: #e9e3e6; }
+wayback-timeline .wt-open { pointer-events: auto; font-size: 0.95rem; color: var(--color-primary, #fb836d); justify-self: start; }
+
+wayback-timeline .wt-ruler {
+  position: absolute;
+  left: clamp(16px, 5vw, 64px);
+  right: clamp(16px, 5vw, 64px);
+  bottom: clamp(48px, 9vh, 80px);
+}
+wayback-timeline .wt-ruler ol { position: relative; height: 28px; margin: 0; padding: 0; list-style: none; border-bottom: 1px solid #4a4448; }
+wayback-timeline .wt-ruler li { position: absolute; left: var(--x); bottom: 0; translate: -50% 0; }
+wayback-timeline .wt-ruler button {
+  display: block;
+  width: 12px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+wayback-timeline .wt-ruler button::after {
+  content: '';
+  display: block;
+  width: 2px;
+  height: 12px;
+  margin: 12px auto 0;
+  background: #a09aa2;
+  transition: height 0.2s ease, background 0.2s ease;
+}
+wayback-timeline .wt-ruler button:hover::after { height: 18px; margin-top: 6px; background: #fff0f4; }
+wayback-timeline .wt-ruler button[aria-current]::after { height: 24px; margin-top: 0; width: 3px; background: var(--color-primary, #fb836d); }
+wayback-timeline .wt-ruler button:focus-visible { outline: 2px solid var(--color-primary, #fb836d); outline-offset: 2px; }
+wayback-timeline .wt-years { position: relative; height: 1.4em; margin-top: 6px; font-size: 11px; letter-spacing: 0.08em; color: #a09aa2; }
+wayback-timeline .wt-years span { position: absolute; left: var(--x); }
+/* every year on a wide screen, every other on a phone */
+@media (max-width: 720px) { wayback-timeline .wt-years span:nth-child(even) { visibility: hidden; } }
+
+wayback-timeline .wt-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  translate: -50% 0;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #a09aa2;
+  white-space: nowrap;
+}
+
+/* no WebGL: a linked grid */
+wayback-timeline.wt-flat { height: auto; overflow: visible; }
+wayback-timeline.wt-flat .wt-stage { position: static; padding: 260px clamp(16px, 5vw, 64px) 160px; cursor: auto; }
+wayback-timeline.wt-flat .wt-readout, wayback-timeline.wt-flat .wt-ruler, wayback-timeline.wt-flat .wt-hint { display: none; }
+wayback-timeline .wt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; margin: 0; padding: 0; list-style: none; }
+wayback-timeline .wt-grid a { display: grid; gap: 8px; color: #e9e3e6; text-decoration: none; }
+wayback-timeline .wt-grid img { width: 100%; height: auto; border-radius: 6px; }
+wayback-timeline .wt-lost { display: grid; place-items: center; aspect-ratio: 16 / 10; border: 1px solid #4a4448; border-radius: 6px; color: #a09aa2; }

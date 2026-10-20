@@ -16,6 +16,16 @@ const PUBLIC_EXEMPT = ['/case-studies/rebuild'];
 const devAuthGate = () => ({
   name: 'dev-auth-gate',
   configureServer(server) {
+    // like production: a page folder without its trailing slash redirects to it
+    server.middlewares.use((req, res, next) => {
+      const [path, query = ''] = (req.url ?? '').split('?');
+      if (req.method === 'GET' && !path.endsWith('/') && !path.includes('.') && !path.startsWith('/@') && !path.startsWith('/api') && !path.startsWith('/__')
+        && existsSync(resolve(import.meta.dirname, 'site', `.${path}/index.html`))) {
+        res.writeHead(301, { Location: `${path}/${query ? `?${query}` : ''}` });
+        return res.end();
+      }
+      next();
+    });
     server.middlewares.use(async (req, res, next) => {
       if (!GATED_PREFIXES.some((p) => req.url?.startsWith(p))) return next();
       if (PUBLIC_EXEMPT.some((p) => req.url?.startsWith(p))) return next();
@@ -70,6 +80,9 @@ export default defineConfig({
         approach: page('approach/index.html'),
         contact: page('contact/index.html'),
         resume: page('resume/index.html'),
+        privacy: page('privacy/index.html'),
+        terms: page('terms/index.html'),
+        since: page('since-2004/index.html'),
         login: page('login/index.html'),
         admin: page('admin/index.html'),
         notfound: page('404.html'),

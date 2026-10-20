@@ -23,107 +23,130 @@
 
 <body>
   <site-header></site-header>
-  <main>
+  <main id="main">
     <section class="dark-section admin-dashboard">
-      <div class="container">
-        <h2>Analytics <em>at a glance</em></h2>
-
-        <p class="live-now" hidden>
-          <span class="live-dot" aria-hidden="true"></span>
-          <strong data-live="count">0</strong>
-          <span data-live="label">on the site right now</span>
-          <span class="live-detail" data-live="detail"></span>
-        </p>
-
-        <div class="range-switcher" role="group" aria-label="Date range">
-          <button type="button" data-range="7">7 days</button>
-          <button type="button" data-range="28" aria-pressed="true">28 days</button>
-          <button type="button" data-range="90">90 days</button>
-        </div>
+      <div class="dash-wrap">
+        <header class="dash-bar">
+          <h1>Analytics</h1>
+          <p class="live-now" hidden>
+            <span class="live-dot" aria-hidden="true"></span>
+            <strong data-live="count">0</strong>
+            <span data-live="label">on the site right now</span>
+            <span class="live-detail" data-live="detail"></span>
+          </p>
+          <div class="range-switcher" role="group" aria-label="Date range">
+            <button type="button" data-range="7">7 days</button>
+            <button type="button" data-range="28" aria-pressed="true">28 days</button>
+            <button type="button" data-range="90">90 days</button>
+          </div>
+          <nav class="dash-tabs" role="tablist" aria-label="Dashboard sections">
+            <button type="button" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
+            <button type="button" role="tab" id="tab-audience" aria-controls="panel-audience" aria-selected="false" tabindex="-1">Audience</button>
+            <button type="button" role="tab" id="tab-acquisition" aria-controls="panel-acquisition" aria-selected="false" tabindex="-1">Acquisition</button>
+            <button type="button" role="tab" id="tab-content" aria-controls="panel-content" aria-selected="false" tabindex="-1">Content</button>
+            <button type="button" role="tab" id="tab-tech" aria-controls="panel-tech" aria-selected="false" tabindex="-1">Tech</button>
+          </nav>
+        </header>
 
         <p class="dash-status" role="status">crunching…</p>
 
         <div class="dash-body" hidden>
+        <div class="dash-panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
           <div class="headline-numbers">
-            <div class="stat">
-              <span class="stat-number" data-stat="users">0</span>
-              <span class="stat-label">visitors</span>
-            </div>
-            <div class="stat">
-              <span class="stat-number" data-stat="pageviews">0</span>
-              <span class="stat-label">pageviews</span>
-            </div>
-            <div class="stat">
-              <span class="stat-number" data-stat="engagement">0%</span>
-              <span class="stat-label">engaged</span>
-            </div>
-            <div class="stat">
-              <span class="stat-number" data-stat="duration">0:00</span>
-              <span class="stat-label">avg visit</span>
-            </div>
+            <div class="stat"><span class="stat-number" data-stat="users">0</span><span class="stat-label">visitors</span></div>
+            <div class="stat"><span class="stat-number" data-stat="pageviews">0</span><span class="stat-label">pageviews</span></div>
+            <div class="stat"><span class="stat-number" data-stat="engagement">0%</span><span class="stat-label">engaged</span></div>
+            <div class="stat"><span class="stat-number" data-stat="duration">0:00</span><span class="stat-label">avg visit</span></div>
           </div>
-
-          <figure class="timeline-chart" aria-label="Daily visitors"></figure>
-
-          <figure class="hour-chart" aria-label="Visits by hour of day">
-            <figcaption>Visits by hour</figcaption>
-            <div class="hour-bars"></div>
-          </figure>
-
+          <div class="dash-charts">
+            <figure class="dash-card timeline-chart-card">
+              <figcaption>Daily visitors</figcaption>
+              <div class="timeline-chart"></div>
+            </figure>
+            <figure class="dash-card hour-chart">
+              <figcaption>Visits by hour</figcaption>
+              <div class="hour-bars"></div>
+            </figure>
+          </div>
           <div class="dash-grid">
-            <section class="dash-list" data-list="sources">
-              <h6>Top Sources</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="pages">
-              <h6>Top Pages</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="countries">
-              <h6>Countries</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="devices">
-              <h6>Devices</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="channels">
-              <h6>Channels</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="referrers">
-              <h6>Referrers</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="landings">
-              <h6>Landing Pages</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="cities">
-              <h6>Cities</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="browsers">
-              <h6>Browsers</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="os">
-              <h6>Operating Systems</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="screens">
-              <h6>Screen Sizes</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="visitorTypes">
-              <h6>New vs Returning</h6>
-              <ul></ul>
-            </section>
-            <section class="dash-list" data-list="events">
-              <h6>Events</h6>
-              <ul></ul>
-            </section>
+          <section class="dash-list" data-list="pages" data-limit="5">
+            <h3>Top pages</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="sources" data-limit="5">
+            <h3>Top sources</h3>
+            <ul></ul>
+          </section>
           </div>
+        </div>
+        <div class="dash-panel" id="panel-audience" role="tabpanel" aria-labelledby="tab-audience" hidden>
+          <div class="dash-grid">
+          <section class="dash-list" data-list="countries">
+            <h3>Countries</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="cities">
+            <h3>Cities</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="visitorTypes">
+            <h3>New vs returning</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="devices">
+            <h3>Devices</h3>
+            <ul></ul>
+          </section>
+          </div>
+        </div>
+        <div class="dash-panel" id="panel-acquisition" role="tabpanel" aria-labelledby="tab-acquisition" hidden>
+          <div class="dash-grid">
+          <section class="dash-list" data-list="channels">
+            <h3>Channels</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="sources">
+            <h3>All sources</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="referrers">
+            <h3>Referrers</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="landings">
+            <h3>Landing pages</h3>
+            <ul></ul>
+          </section>
+          </div>
+        </div>
+        <div class="dash-panel" id="panel-content" role="tabpanel" aria-labelledby="tab-content" hidden>
+          <div class="dash-grid">
+          <section class="dash-list" data-list="pages">
+            <h3>All pages</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="events">
+            <h3>Events</h3>
+            <ul></ul>
+          </section>
+          </div>
+        </div>
+        <div class="dash-panel" id="panel-tech" role="tabpanel" aria-labelledby="tab-tech" hidden>
+          <div class="dash-grid">
+          <section class="dash-list" data-list="browsers">
+            <h3>Browsers</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="os">
+            <h3>Operating systems</h3>
+            <ul></ul>
+          </section>
+          <section class="dash-list" data-list="screens">
+            <h3>Screen sizes</h3>
+            <ul></ul>
+          </section>
+          </div>
+        </div>
         </div>
       </div>
     </section>

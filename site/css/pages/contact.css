@@ -160,6 +160,10 @@
   .readout a { color: var(--ct-accent); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--ct-accent) 40%, transparent); }
   .readout a:hover { border-bottom-color: var(--ct-accent); }
   .ct-dim { color: var(--ct-mute); }
+  .readout .ct-social { display: flex; gap: 14px; align-items: center; }
+  .readout .ct-social a { display: inline-grid; place-items: center; min-width: 24px; min-height: 24px; border-bottom: 0; color: var(--ct-accent); }
+  .readout .ct-social a:hover { color: #fff0f4; }
+  .readout .ct-social svg { width: 18px; height: 18px; fill: currentColor; filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.9)); }
 
   /* the transmission */
   .contact-form {

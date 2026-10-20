@@ -1,61 +1,57 @@
 @layer page {
-  /* Analytics dashboard — dark, Poppins, big Mona-Sans numerals.
-     Left-aligned data display inside the globally-centered interior system. */
+  /* Analytics dashboard: a sticky bar (title, live now, range, tabs) over
+     five tabbed panels of cards. Desktop up to 1440px wide, two columns on
+     an iPad, one on a phone, where the tabs become a swipeable strip. */
   .admin-dashboard {
-    padding: 140px 24px 80px;
+    padding: 48px 0 80px; /* clear the fixed site header */
     min-height: 100vh;
-  }
-
-  .admin-dashboard .container {
-    max-width: 960px;
     text-align: left;
   }
 
-  .admin-dashboard h2 {
+  .dash-wrap {
+    width: min(1440px, 100%);
+    margin-inline: auto;
+    padding-inline: clamp(16px, 4vw, 48px);
+  }
+
+  /* ---------- the sticky bar ---------- */
+  .dash-bar {
+    position: sticky;
+    top: 48px;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      'title live range'
+      'tabs tabs tabs';
+    align-items: center;
+    gap: 12px 24px;
+    margin-inline: calc(-1 * clamp(16px, 4vw, 48px));
+    padding: 20px clamp(16px, 4vw, 48px) 0;
+    background: rgba(14, 12, 13, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid #262224;
+  }
+
+  .dash-bar h1 {
+    grid-area: title;
+    margin: 0;
+    font-size: clamp(1.5rem, 1rem + 1.5vw, 2rem);
+    line-height: 1.1;
     text-align: left;
-  }
-
-  /* ---------- range switcher ---------- */
-  .range-switcher {
-    display: flex;
-    gap: 8px;
-    margin: 0 0 32px;
-  }
-
-  .range-switcher button {
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.875rem;
-    color: #ccc;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid #333;
-    border-radius: 6px;
-    padding: 8px 16px;
-    cursor: pointer;
-    transition: border-color 0.187s ease-in-out, color 0.187s ease-in-out;
-  }
-
-  .range-switcher button:hover {
-    border-color: #666;
-    color: #fff;
-  }
-
-  .range-switcher button[aria-pressed='true'] {
-    border-color: #00a3bb;
-    color: #fff;
-  }
-
-  .dash-status {
-    margin: 40px 0;
   }
 
   /* ---------- live now ---------- */
   .live-now {
+    grid-area: live;
     display: flex;
     align-items: baseline;
     gap: 8px;
+    min-width: 0;
+    margin: 0;
     font-size: 0.9375rem;
     color: #ccc;
-    margin: 0 0 28px;
   }
 
   .live-now strong {
@@ -63,7 +59,18 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .live-now [data-live='label'] { flex: none; white-space: nowrap; }
+
+  .live-detail {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #a09aa2;
+  }
+
   .live-dot {
+    flex: none;
     width: 9px;
     height: 9px;
     border-radius: 50%;
@@ -77,34 +84,166 @@
     animation: none;
   }
 
-  .live-detail {
-    color: #888;
-  }
-
   @keyframes live-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.35; }
   }
 
-  /* ---------- visits by hour ---------- */
-  .hour-chart {
-    margin: 0 0 48px;
+  @media (prefers-reduced-motion: reduce) {
+    .live-dot { animation: none; }
   }
 
-  .hour-chart figcaption {
+  /* ---------- range switcher ---------- */
+  .range-switcher {
+    grid-area: range;
+    display: flex;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .range-switcher button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.875rem;
+    color: #ccc;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid #333;
+    border-radius: 6px;
+    min-height: 36px;
+    padding: 6px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.187s ease-in-out, color 0.187s ease-in-out;
+  }
+
+  .range-switcher button:hover { border-color: #666; color: #fff; }
+  .range-switcher button[aria-pressed='true'] { border-color: #00a3bb; color: #fff; }
+
+  /* ---------- tabs ---------- */
+  .dash-tabs {
+    grid-area: tabs;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: -1px; /* the selected tab's underline sits on the bar's rule */
+  }
+
+  .dash-tabs::-webkit-scrollbar { display: none; }
+
+  .dash-tabs [role='tab'] {
+    flex: none;
+    min-height: 44px;
+    padding: 0 16px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9375rem;
+    color: #a09aa2;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .dash-tabs [role='tab']:hover { color: #fff; }
+
+  .dash-tabs [role='tab'][aria-selected='true'] {
+    color: #fff;
+    border-bottom-color: var(--color-primary, #fb836d);
+  }
+
+  .dash-status {
+    margin: 40px 0;
+  }
+
+  .dash-panel {
+    padding-top: 32px;
+    display: grid;
+    gap: 24px;
+  }
+
+  .dash-panel[hidden] { display: none; }
+
+  /* ---------- cards ---------- */
+  .dash-card,
+  .dash-list {
+    margin: 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid #262224;
+    border-radius: 12px;
+    min-width: 0;
+  }
+
+  .dash-card figcaption,
+  .dash-list h3 {
+    margin: 0 0 14px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    font-size: 0.8125rem;
-    color: #888;
-    margin: 0 0 12px;
+    color: #a09aa2;
+    text-align: left;
   }
+
+  /* ---------- headline numbers ---------- */
+  .headline-numbers {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .stat {
+    display: grid;
+    gap: 6px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid #262224;
+    border-radius: 12px;
+  }
+
+  .stat-number {
+    font-family: 'Mona-Sans', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 1rem + 2.5vw, 3.5rem);
+    line-height: 1;
+    color: #fff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat-label {
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #a09aa2;
+  }
+
+  /* ---------- charts ---------- */
+  .dash-charts {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .timeline-chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .timeline-chart .chart-axis { stroke: #2a2a2a; stroke-width: 1; }
+  .timeline-chart text { font-family: 'Poppins', sans-serif; font-size: 12px; fill: #a09aa2; }
+  .chart-empty { color: #a09aa2; }
+
+  .hour-chart { display: grid; grid-template-rows: auto 1fr; }
 
   .hour-bars {
     display: grid;
     grid-template-columns: repeat(24, 1fr);
     align-items: end;
-    gap: 4px;
-    height: 72px;
+    gap: 3px;
+    height: 100%;
+    min-height: 140px;
   }
 
   .hour-col {
@@ -115,87 +254,25 @@
     min-width: 0;
   }
 
-  .hour-bar {
-    background: #00a3bb;
-    border-radius: 2px 2px 0 0;
-    opacity: 0.8;
-  }
+  .hour-bar { background: #00a3bb; border-radius: 2px 2px 0 0; opacity: 0.8; }
 
   .hour-col span {
     font-size: 0.6875rem;
-    color: #888;
-    text-align: left;
+    color: #a09aa2;
     height: 16px;
     line-height: 16px;
+    overflow: visible;
+    white-space: nowrap;
   }
 
-  /* ---------- headline numbers ---------- */
-  .headline-numbers {
-    display: flex;
-    gap: 64px;
-    flex-wrap: wrap;
-    margin: 0 0 40px;
-  }
+  /* Overview's two lists share the row evenly */
+  #panel-overview .dash-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-  .stat {
-    display: grid;
-    gap: 4px;
-  }
-
-  .stat-number {
-    font-family: 'Mona-Sans', sans-serif;
-    font-weight: 900;
-    font-size: clamp(2.5rem, 1rem + 4vw, 4.5rem);
-    line-height: 1;
-    color: #fff;
-  }
-
-  .stat-label {
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #888;
-  }
-
-  /* ---------- timeline chart ---------- */
-  .timeline-chart {
-    margin: 0 0 48px;
-  }
-
-  .timeline-chart svg {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  .timeline-chart .chart-axis {
-    stroke: #2a2a2a;
-    stroke-width: 1;
-  }
-
-  .timeline-chart text {
-    font-family: 'Poppins', sans-serif;
-    font-size: 12px;
-    fill: #888;
-  }
-
-  .chart-empty {
-    color: #888;
-  }
-
-  /* ---------- the four lists ---------- */
+  /* ---------- lists ---------- */
   .dash-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 40px 56px;
-  }
-
-  .dash-list h6 {
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 0.8125rem;
-    color: #888;
-    margin: 0 0 12px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 16px;
   }
 
   .dash-list ul {
@@ -208,30 +285,22 @@
 
   .dash-list li {
     display: grid;
-    grid-template-columns: minmax(100px, 40%) 1fr auto;
+    grid-template-columns: minmax(0, 1fr) minmax(48px, 30%) auto;
     align-items: center;
     gap: 12px;
     font-size: 0.875rem;
   }
 
   .row-label {
-    color: #ccc;
+    min-width: 0;
+    color: #ddd;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .row-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 2px;
-    height: 6px;
-  }
-
-  .row-bar {
-    height: 100%;
-    border-radius: 2px;
-    min-width: 2px;
-  }
+  .row-track { background: rgba(255, 255, 255, 0.05); border-radius: 2px; height: 6px; }
+  .row-bar { height: 100%; border-radius: 2px; min-width: 2px; }
 
   .row-value {
     color: #fff;
@@ -240,13 +309,46 @@
     min-width: 3ch;
   }
 
-  @media (max-width: 480px) {
-    .headline-numbers {
-      gap: 32px;
+  .dash-list li.row-empty { display: block; color: #a09aa2; }
+
+  /* ---------- iPad ---------- */
+  @media (max-width: 1024px) {
+    .dash-bar {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'title range'
+        'live live'
+        'tabs tabs';
     }
 
-    .dash-grid {
+    .headline-numbers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .dash-charts { grid-template-columns: minmax(0, 1fr); }
+    .hour-bars { min-height: 100px; }
+  }
+
+  /* ---------- iPhone ---------- */
+  @media (max-width: 600px) {
+    .dash-bar {
       grid-template-columns: 1fr;
+      grid-template-areas:
+        'title'
+        'live'
+        'range'
+        'tabs';
+      gap: 10px;
+      padding-top: 14px;
     }
+
+    .range-switcher button { flex: 1; }
+    .live-now { flex-wrap: wrap; row-gap: 2px; }
+    .live-detail { flex-basis: 100%; padding-left: 17px; }
+    #panel-overview .dash-grid { grid-template-columns: minmax(0, 1fr); }
+    /* the strip scrolls sideways: fade the edge so more tabs read as there */
+    .dash-tabs { mask-image: linear-gradient(90deg, #000 85%, transparent); -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); }
+    .dash-tabs [role='tab'] { padding: 0 12px; }
+    .dash-panel { padding-top: 20px; gap: 16px; }
+    .dash-card, .dash-list, .stat { padding: 16px; }
+    .stat-number { font-size: 2rem; }
+    .hour-col span { font-size: 0.625rem; }
   }
 }

@@ -1,9 +1,9 @@
 // GA4 collection — the measurement id lives in <meta name="ga-id"> so the
 // markup is the single source of truth (no env plumbing into the bundle).
-// Missing/empty meta or Do Not Track → no-op; the site works before GA exists.
+// Missing/empty meta, Do Not Track or Global Privacy Control → no-op; the site works before GA exists.
 const id = document.querySelector('meta[name="ga-id"]')?.content.trim();
 
-if (id && navigator.doNotTrack !== '1') {
+if (id && navigator.doNotTrack !== '1' && !navigator.globalPrivacyControl) {
   const s = document.createElement('script');
   s.async = true;
   s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
@@ -17,7 +17,7 @@ if (id && navigator.doNotTrack !== '1') {
   window.gtag('config', id);
 }
 
-// Fire a custom event — safe no-op when collection is off (no id / DNT).
+// Fire a custom event — safe no-op when collection is off (no id / DNT / GPC).
 // Beacon transport so events survive an immediate navigation (login redirect).
 export function track(name, params = {}) {
   window.gtag?.('event', name, { transport_type: 'beacon', ...params });

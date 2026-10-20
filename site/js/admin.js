@@ -1,5 +1,5 @@
 // Admin analytics dashboard — fetch /api/admin/stats, render headline numbers,
-// a hand-built SVG timeline, and four label+bar lists. No chart library.
+// a hand-built SVG timeline, and label+bar lists grouped into tabs. No chart library.
 const BAR_COLORS = ['#fb836d', '#edb417', '#ab65c0', '#00a3bb', '#1277e1'];
 const LINE_COLOR = '#00a3bb';
 const fmt = new Intl.NumberFormat('en-US');
@@ -11,8 +11,9 @@ const switcher = document.querySelector('.range-switcher');
 
 /* ---------- timeline: inline SVG area/line chart ---------- */
 function chartSVG(timeline) {
-  const W = 800;
-  const H = 260;
+  // drawn at the card's real width so the date labels stay readable on a phone
+  const W = Math.max(280, Math.round(chartEl.clientWidth || 800));
+  const H = W < 560 ? 180 : 240;
   const PAD = { top: 12, right: 12, bottom: 28, left: 12 };
   const innerW = W - PAD.left - PAD.right;
   const innerH = H - PAD.top - PAD.bottom;
@@ -55,26 +56,35 @@ function chartSVG(timeline) {
 
 /* ---------- lists: label + thin bar + value ---------- */
 function renderList(name, rows) {
-  const ul = document.querySelector(`.dash-list[data-list="${name}"] ul`);
-  ul.textContent = '';
-  const max = Math.max(1, ...rows.map((r) => r.value));
-  rows.forEach((row, i) => {
-    const li = document.createElement('li');
-    const label = document.createElement('span');
-    label.className = 'row-label';
-    label.textContent = row.label || '(not set)';
-    const track = document.createElement('div');
-    track.className = 'row-track';
-    const bar = document.createElement('div');
-    bar.className = 'row-bar';
-    bar.style.width = `${((row.value / max) * 100).toFixed(1)}%`;
-    bar.style.background = BAR_COLORS[i % BAR_COLORS.length];
-    track.append(bar);
-    const value = document.createElement('span');
-    value.className = 'row-value';
-    value.textContent = fmt.format(row.value);
-    li.append(label, track, value);
-    ul.append(li);
+  // a list can appear twice: a top five on Overview, the full list on its tab
+  document.querySelectorAll(`.dash-list[data-list="${name}"]`).forEach((section) => {
+    const ul = section.querySelector('ul');
+    ul.textContent = '';
+    const shown = rows.slice(0, Number(section.dataset.limit) || rows.length);
+    if (!shown.length) {
+      ul.innerHTML = '<li class="row-empty">Nothing yet</li>';
+      return;
+    }
+    const max = Math.max(1, ...shown.map((r) => r.value));
+    shown.forEach((row, i) => {
+      const li = document.createElement('li');
+      const label = document.createElement('span');
+      label.className = 'row-label';
+      label.textContent = row.label || '(not set)';
+      label.title = label.textContent;
+      const track = document.createElement('div');
+      track.className = 'row-track';
+      const bar = document.createElement('div');
+      bar.className = 'row-bar';
+      bar.style.width = `${((row.value / max) * 100).toFixed(1)}%`;
+      bar.style.background = BAR_COLORS[i % BAR_COLORS.length];
+      track.append(bar);
+      const value = document.createElement('span');
+      value.className = 'row-value';
+      value.textContent = fmt.format(row.value);
+      li.append(label, track, value);
+      ul.append(li);
+    });
   });
 }
 
@@ -167,6 +177,15 @@ async function loadRealtime() {
 }
 
 /* ---------- load + range switching ---------- */
+let lastData = null;
+let resizeTimer;
+addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (lastData?.timeline.length) chartEl.innerHTML = chartSVG(lastData.timeline);
+  }, 150);
+});
+
 async function load(range) {
   statusEl.hidden = false;
   statusEl.textContent = 'crunching…';
@@ -182,9 +201,10 @@ async function load(range) {
       return;
     }
     if (!res.ok) throw new Error(`stats ${res.status}`);
-    render(await res.json());
+    lastData = await res.json();
     statusEl.hidden = true;
-    bodyEl.hidden = false;
+    bodyEl.hidden = false; // visible first, so the chart can measure its card
+    render(lastData);
   } catch {
     statusEl.textContent = 'Could not load analytics — try again in a minute.';
   }
@@ -197,6 +217,31 @@ switcher.addEventListener('click', (e) => {
   btn.setAttribute('aria-pressed', 'true');
   load(btn.dataset.range);
 });
+
+/* ---------- tabs: arrow keys move between them, as a tablist should ---------- */
+const tabs = [...document.querySelectorAll('.dash-tabs [role="tab"]')];
+function selectTab(tab, focus = false) {
+  tabs.forEach((t) => {
+    const on = t === tab;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  });
+  if (focus) tab.focus();
+  tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  history.replaceState(null, '', `#${tab.id.replace('tab-', '')}`);
+}
+tabs.forEach((tab, i) => {
+  tab.addEventListener('click', () => selectTab(tab));
+  tab.addEventListener('keydown', (e) => {
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (step) selectTab(tabs[(i + step + tabs.length) % tabs.length], true);
+    if (e.key === 'Home') selectTab(tabs[0], true);
+    if (e.key === 'End') selectTab(tabs.at(-1), true);
+  });
+});
+const fromHash = tabs.find((t) => t.id === `tab-${location.hash.slice(1)}`);
+if (fromHash) selectTab(fromHash);
 
 load(28);
 loadRealtime();
