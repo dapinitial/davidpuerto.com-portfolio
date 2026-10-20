@@ -38,7 +38,7 @@ const ask = (prompt) =>
 
 let key = '';
 try {
-  const keys = JSON.parse(execFileSync('supabase', ['projects', 'api-keys', '--project-ref', REF, '-o', 'json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+  const keys = JSON.parse(execFileSync('supabase', ['projects', 'api-keys', '--project-ref', REF, '--reveal', '-o', 'json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
   key = keys.find((k) => k.type === 'secret')?.api_key ?? keys.find((k) => k.name === 'service_role')?.api_key ?? '';
 } catch {}
 if (key) console.log('✔ secret key read from the Supabase CLI');
