@@ -135,6 +135,11 @@ spacelab-lock.sl-hurry .sl-clock-hand { stroke: #ff7a6b; }
 /* the clamps are buttons: press one to spin the ring and see a number */
 spacelab-lock .sl-latch { cursor: pointer; outline: none; }
 spacelab-lock .sl-latch:hover { filter: brightness(1.25); }
+/* the clamp's press area past its edge: unseen, but it takes the finger */
+spacelab-lock .sl-latch-hit { fill: transparent; stroke: none; pointer-events: fill; cursor: pointer; }
+spacelab-lock .sl-latches:has(.sl-latch-hit[data-for="inner"]:hover) .sl-latch[data-ring="inner"],
+spacelab-lock .sl-latches:has(.sl-latch-hit[data-for="middle"]:hover) .sl-latch[data-ring="middle"],
+spacelab-lock .sl-latches:has(.sl-latch-hit[data-for="outer"]:hover) .sl-latch[data-ring="outer"] { filter: brightness(1.25); }
 spacelab-lock .sl-latch:focus-visible { stroke: #00fffc; stroke-width: 2; }
 /* a slot giving its ring away: white-hot, brighter than lit */
 spacelab-lock .sl-slot.peek { fill: #f2feff; stroke: none; }

@@ -14,11 +14,15 @@ import { gsap } from '../lib/gsap.js';
 import { note } from '../lib/analytics.js';
 
 const COMBO = { inner: 10, middle: 50, outer: 200 }; // the 2014 combination
+// hit: the radial band [from, to] a finger may land on to grab the ring. The
+// bands tile the lock face edge to edge (the clock stays untouched in the
+// middle, the clamps begin at 236), so no gap between rings is dead space.
 const DIALS = [
-  { key: 'outer', label: 'Outer ring', r: 218, w: 16, max: 300, step: 100, color: '#dc0eff' },
-  { key: 'middle', label: 'Middle ring', r: 128, w: 22, max: 100, step: 10, color: '#007fd1' },
-  { key: 'inner', label: 'Inner ring', r: 86, w: 26, max: 100, step: 10, color: '#00fffc' },
+  { key: 'outer', label: 'Outer ring', r: 218, w: 16, hit: [174, 236], max: 300, step: 100, color: '#dc0eff' },
+  { key: 'middle', label: 'Middle ring', r: 128, w: 22, hit: [108, 174], max: 100, step: 10, color: '#007fd1' },
+  { key: 'inner', label: 'Inner ring', r: 86, w: 26, hit: [30, 108], max: 100, step: 10, color: '#00fffc' },
 ];
+const LATCH_HIT = 318; // the clamps' press area reaches out to the lock's edge
 const CURSOR = 26; // degrees of arc the knob's cursor covers
 
 const polar = (r, deg) => {
@@ -238,6 +242,8 @@ class SpacelabLock extends HTMLElement {
     this.querySelectorAll('.sl-latch').forEach((l) => {
       l.addEventListener('click', () => this.#press(l));
       l.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.#press(l); } });
+      // a press on the clamp's outer reach counts as a press on the clamp
+      this.querySelector(`.sl-latch-hit[data-for="${l.dataset.ring}"]`).addEventListener('click', () => this.#press(l));
     });
     this.windowStart = performance.now(); // the minute starts when the lock appears, as in 2014
     this.release = 0;
@@ -292,12 +298,16 @@ class SpacelabLock extends HTMLElement {
       const [x2, y2] = polar(i % 5 ? 198 : 202, i * 6);
       return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
     }).join('');
+    // each clamp, plus an unseen press area reaching out past it to the lock's edge
+    const latches = [['inner', 0], ['outer', 240], ['middle', 120]].map(([k, dir]) => `
+      <path class="sl-latch" data-dir="${dir}" data-ring="${k}" role="button" tabindex="0" aria-label="Clamp: show the ${k} ring's number" d="${band(236, 274, dir - 38, dir + 38)}" fill="url(#sl-bevel)"/>
+      <path class="sl-latch-hit" data-for="${k}" aria-hidden="true" d="${band(274, LATCH_HIT, dir - 38, dir + 38)}"/>`).join('');
     const dials = DIALS.map((d) => `
       <g class="sl-dial" data-key="${d.key}" role="slider" tabindex="0" aria-label="${d.label}"
          aria-valuemin="0" aria-valuemax="${d.max}" aria-valuenow="0" style="--c:${d.color}">
         <circle class="sl-track" r="${d.r}" stroke-width="${d.w}"/>
         <path class="sl-cursor" d="${arc(d.r, -CURSOR / 2, CURSOR / 2)}" stroke-width="${d.w}"/>
-        <circle class="sl-hit" r="${d.r}" stroke-width="${d.w + 22}"/>
+        <circle class="sl-hit" r="${(d.hit[0] + d.hit[1]) / 2}" stroke-width="${d.hit[1] - d.hit[0]}"/>
       </g>`).join('');
     return `
       <canvas class="sl-field" aria-hidden="true"></canvas>
@@ -339,11 +349,7 @@ class SpacelabLock extends HTMLElement {
             <path d="${ring(186, 190)}" fill="#050405" fill-opacity="0.5" fill-rule="evenodd"/>
             <circle r="190" fill="none" stroke="#2d2c2f" stroke-width="2"/>
           </g>
-          <g class="sl-latches">
-            <path class="sl-latch" data-dir="0" data-ring="inner" role="button" tabindex="0" aria-label="Clamp: show the inner ring's number" d="${band(236, 274, -38, 38)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="240" data-ring="outer" role="button" tabindex="0" aria-label="Clamp: show the outer ring's number" d="${band(236, 274, 202, 278)}" fill="url(#sl-bevel)"/>
-            <path class="sl-latch" data-dir="120" data-ring="middle" role="button" tabindex="0" aria-label="Clamp: show the middle ring's number" d="${band(236, 274, 82, 158)}" fill="url(#sl-bevel)"/>
-          </g>
+          <g class="sl-latches">${latches}</g>
           <g class="sl-inner">
             <path d="${ring(152, 186)}" fill="#161517" fill-opacity="0.5" fill-rule="evenodd" filter="url(#sl-raised)"/>
             <circle r="152" fill="#000" fill-opacity="0.18"/>
@@ -620,6 +626,18 @@ class SpacelabLock extends HTMLElement {
     // the lights run white-hot as the wheels wind up, one after another around the ring
     all('.sl-slot').forEach((s, i) => tl.add(() => s.classList.add('hot'), 0.9 + i * 0.12));
     tl.to(all('.sl-dial'), { opacity: 0, duration: 0.8, stagger: 0.1 }, 1.2);
+    // the lights burn out: as the wheels reach full speed each one gutters on
+    // its own ragged beat and dies dark, the surge before the blast
+    all('.sl-slot').forEach((s) => {
+      const gutter = gsap.timeline();
+      let t = 0;
+      for (let i = gsap.utils.random(5, 8, 1); i > 0; i--) {
+        t += gsap.utils.random(0.03, 0.12);
+        gutter.set(s, { opacity: gsap.utils.random([0, 0.1, 0.35, 0.7, 1]) }, t);
+      }
+      gutter.set(s, { opacity: 0 }, t + gsap.utils.random(0.03, 0.1));
+      tl.add(gutter, 1.95 + gsap.utils.random(0, 0.2));
+    });
     tl.to(q('.sl-clock'), { opacity: 0, duration: 0.6 }, 1.4);
     // 3. the blast: latches fly, the lock jolts, smoke and sparks
     tl.add(() => { this.#burstAt = performance.now(); this.classList.add('sl-blasted'); }, 2.7);
