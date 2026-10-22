@@ -1,17 +1,16 @@
 # DigitalOcean App Platform spec — davidpuerto.com
-# Push-to-deploy from GitHub main. No Docker, no registry, no SSH.
+# Push-to-deploy from GitHub main, built from the Dockerfile at the root
+# (layered, so a deploy re-sends only what changed; no registry, no SSH).
 # Domains are added AFTER the app checks out on its default URL (see M7).
 name: davidpuerto-com
 region: nyc
 services:
   - name: web
-    environment_slug: node-js
+    dockerfile_path: Dockerfile
     github:
       repo: dapinitial/davidpuerto.com-portfolio
       branch: main
       deploy_on_push: true
-    build_command: npm run build
-    run_command: node server/index.js
     http_port: 3000
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb # ~$5/mo, always-on
