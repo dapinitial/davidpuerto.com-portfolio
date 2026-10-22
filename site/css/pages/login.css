@@ -207,4 +207,32 @@
   @media (max-width: 900px) {
     html.with-climbs .login-hero::after { background-image: url('/images/climbs/contact-arete-960.jpg'); }
   }
+
+  /* ask for the password: a button that reads as a link, and the form it opens */
+  .lg-ask {
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--lg-accent) 40%, transparent);
+    background: none;
+    color: var(--lg-accent);
+    font: inherit;
+    cursor: pointer;
+  }
+  .lg-ask:hover, .lg-ask[aria-expanded='true'] { border-bottom-color: var(--lg-accent); }
+  .lg-request {
+    display: grid;
+    gap: 14px;
+    width: min(460px, 100%);
+    margin: 18px auto 0;
+    padding: 20px 22px 18px;
+    border: 1px solid var(--lg-line);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.35);
+    text-align: left;
+  }
+  .lg-request[hidden] { display: none; }
+  .lg-request-lead { margin: 0; color: var(--lg-mute); font-size: 14px; line-height: 1.5; }
+  .lg-request .lg-input input { padding-right: 16px; }
+  .lg-request input:disabled { opacity: 0.6; }
+  .lg-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 }

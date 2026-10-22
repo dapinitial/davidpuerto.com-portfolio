@@ -41,7 +41,18 @@
           <button type="submit" class="glass-button"><span>Login</span></button>
           <p class="form-status" role="alert"></p>
         </div>
-        <p class="lg-help">Need the password? Ask me: <a href="mailto:me@davidpuerto.com?subject=Password%20for%20davidpuerto.com">me@davidpuerto.com</a></p>
+        <p class="lg-help">Need the password? <button type="button" class="lg-ask" aria-expanded="false" aria-controls="lg-request">Ask me for it</button> or email <a href="mailto:me@davidpuerto.com?subject=Password%20for%20davidpuerto.com">me@davidpuerto.com</a></p>
+      </form>
+      <form class="lg-request" id="lg-request" hidden novalidate>
+        <p class="lg-request-lead">Leave your name and email. I reply with the password, usually the same day.</p>
+        <label class="lg-field"><span class="lg-label">Name</span><span class="lg-input"><input type="text" name="name" autocomplete="name" maxlength="200" placeholder="Who's asking"></span></label>
+        <label class="lg-field"><span class="lg-label">Email</span><span class="lg-input"><input type="email" name="from" autocomplete="email" maxlength="200" required placeholder="Where I send it"></span></label>
+        <label class="lg-field"><span class="lg-label">A line about why, if you like</span><span class="lg-input"><input type="text" name="note" maxlength="1000" placeholder="Hiring for… / saw your talk at…"></span></label>
+        <label class="lg-trap" aria-hidden="true"><input type="text" name="company" tabindex="-1" autocomplete="off"></label>
+        <div class="lg-actions">
+          <button type="submit" class="glass-button"><span>Send</span></button>
+          <p class="form-status" role="status"></p>
+        </div>
       </form>
     </section>
     <p class="site-mark"><a href="/since-2004/">&copy; 2004&ndash;<span data-year>2026</span> David A. Puerto</a> <span aria-hidden="true">&middot;</span> <a href="/privacy/">Privacy</a> <span aria-hidden="true">&middot;</span> <a href="/terms/">Terms</a></p>

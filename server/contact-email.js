@@ -17,7 +17,7 @@ const MONO = "ui-monospace,'SF Mono',Menlo,Consolas,monospace";
 const SANS = "-apple-system,'Segoe UI',Helvetica,Arial,sans-serif";
 const SERIF = "Georgia,'Times New Roman',serif";
 
-export function contactEmail({ name = '', from = '', message = '' }) {
+export function contactEmail({ name = '', from = '', message = '', subject = '' }) {
   const when = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/Los_Angeles', weekday: 'short', month: 'short', day: 'numeric',
     hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
@@ -63,5 +63,5 @@ export function contactEmail({ name = '', from = '', message = '' }) {
 </body></html>`;
 
   const text = `New transmission from davidpuerto.com\n\nFrom: ${who} <${from}>\nReceived: ${when}\n\n${message}\n`;
-  return { html, text, subject: `New transmission: ${who}`.slice(0, 120) };
+  return { html, text, subject: (subject || `New transmission: ${who}`).slice(0, 120) };
 }

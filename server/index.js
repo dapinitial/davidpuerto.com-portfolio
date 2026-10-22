@@ -225,8 +225,8 @@ const mailer =
       })
     : null;
 
-async function sendContactEmail({ name, from, message }) {
-  const { subject, text, html } = contactEmail({ name, from, message });
+async function sendContactEmail({ name, from, message, subject: subj }) {
+  const { subject, text, html } = contactEmail({ name, from, message, subject: subj });
 
   if (RESEND_API_KEY) {
     const res = await fetch('https://api.resend.com/emails', {
@@ -277,6 +277,27 @@ app.post('/api/contact', rateLimit('contact', 3, 60 * 60_000), async (req, res) 
   }
 });
 
+// Request access: from the login page, when someone wants a study and has no
+// password. Same pipeline as the contact form; David replies with it.
+const STUDY_NAMES = { microsoft: 'Microsoft · Preview Sites', apple: 'Apple · Project Studio', review: 'The review deck', facebook: 'Facebook', nordstrom: 'Nordstrom', sonosite: 'SonoSite', zillow: 'Zillow' };
+app.post('/api/access-request', rateLimit('access', 3, 60 * 60_000), async (req, res) => {
+  const body = req.body ?? {};
+  const str = (v) => (typeof v === 'string' ? v.trim() : '');
+  const name = str(body.name), from = str(body.from), note = str(body.note), study = str(body.study);
+  if (body.company) return res.json({ success: true }); // honeypot
+  if (!from.includes('@') || from.length > 200 || name.length > 200 || note.length > 1000) return res.status(400).json({ error: 'Invalid submission' });
+  const label = STUDY_NAMES[study] ?? 'a case study';
+  const message = `Asking for the password to ${label}.${note ? `\n\n${note}` : ''}\n\nFrom the login page. Reply with the password, or not.`;
+  try {
+    await sendContactEmail({ name, from, message, subject: `Access request: ${label}${name ? ` · ${name}` : ''}` });
+    res.json({ success: true });
+  } catch (err) {
+    if (err.unconfigured) return res.status(503).json({ error: 'Temporarily unavailable' });
+    console.error('access request failed:', err.message);
+    res.status(502).json({ error: 'Send failed' });
+  }
+});
+
 /* ---------- analytics: GA4 Data API proxy for /admin ----------
    ZERO dependencies on purpose: the Google service-account OAuth flow is a
    signed JWT swapped for a bearer token — node:crypto + fetch cover it.
@@ -320,7 +341,9 @@ async function getGaToken() {
 const statsCache = new Map(); // range -> { data, exp }
 
 // The visit log: beacons in, one story per visit out (server/visits.js).
-app.post('/api/v', rateLimit('visit', 240, 60_000), beacon(clientIp));
+// a notable visit (an employer's network, a tagged link, the password gate) emails David once per visit
+const notify = ({ subject, message }) => sendContactEmail({ name: 'Visit log', from: '', message, subject }).catch((err) => console.error('visit alert failed:', err.message));
+app.post('/api/v', rateLimit('visit', 240, 60_000), beacon(clientIp, notify));
 app.get('/api/admin/visits', async (req, res) => {
   if (!adminAuthed(req)) return res.status(401).json({ error: 'Unauthorized' });
   if (!visitsConfigured) return res.status(503).json({ error: 'Visit log not configured' });

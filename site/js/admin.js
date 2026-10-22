@@ -223,16 +223,17 @@ const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, '')
 
 function renderVisits() {
   if (!visitData) return;
-  const all = visitFilter.querySelector('[aria-pressed="true"]').dataset.kind === 'all';
-  const shown = all ? visitData : visitData.filter((v) => v.kind === 'real');
+  const mode = visitFilter.querySelector('[aria-pressed="true"]').dataset.kind;
+  const shown = mode === 'all' ? visitData : mode === 'notable' ? visitData.filter((v) => v.notable?.length) : visitData.filter((v) => v.kind === 'real');
   const hidden = visitData.length - shown.length;
-  visitCount.textContent = `${shown.length} visit${shown.length === 1 ? '' : 's'}${hidden ? ` · ${hidden} bots, previews and checks folded away` : ''}`;
+  visitCount.textContent = `${shown.length} visit${shown.length === 1 ? '' : 's'}${hidden ? ` · ${hidden} more under Everything` : ''}`;
   visitList.innerHTML = shown.length ? shown.map((v) => `
     <li class="visit kind-${v.kind}">
       <div class="visit-head">
         <time datetime="${v.start}">${when(v.start)}</time>
         <span class="visit-kind">${KIND[v.kind] ?? v.kind}</span>
         ${v.tag ? `<span class="visit-tag">${esc(v.tag)}</span>` : ''}
+        ${v.notable?.length ? `<span class="visit-star" title="${esc(v.notable.join('; '))}">★ notable</span>` : ''}
       </div>
       <p class="visit-who">${esc(v.network ?? 'Unknown network')}${v.country ? ` · ${esc(v.country)}` : ''} · ${esc(v.device)}, ${esc(v.browser)} on ${esc(v.os)}${v.referrer ? ` · from ${esc(host(v.referrer))}` : ''}</p>
       <ol class="visit-steps">${v.steps.map((s) => `

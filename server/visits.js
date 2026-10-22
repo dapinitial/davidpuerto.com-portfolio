@@ -97,7 +97,7 @@ function label({ ua, net, internal, webdriver, notFound }) {
 const clip = (s, n) => (typeof s === 'string' ? s.slice(0, n) : null);
 
 /* ---------- POST /api/v ---------- */
-export function beacon(clientIp) {
+export function beacon(clientIp, notify) {
   return async (req, res) => {
     res.status(204).end();
     // Do Not Track and Global Privacy Control turn the log off, as the Privacy page says.
@@ -136,6 +136,7 @@ export function beacon(clientIp) {
         body: JSON.stringify(row),
       });
       if (!r.ok) console.error('visit log: insert', r.status, await r.text());
+      else if (notify) alertIfNotable(row, notify);
     } catch (err) {
       console.error('visit log: insert failed', err.message);
     }
@@ -146,6 +147,37 @@ const authHeaders = () => ({
   apikey: VISITS_KEY,
   ...(VISITS_KEY?.startsWith('eyJ') ? { authorization: `Bearer ${VISITS_KEY}` } : {}),
 });
+
+/* ---------- notable visits: one email per visit, the moment it earns it ---------- */
+const alerted = new Set(); // session ids already emailed today
+let alertedDay = '';
+function notableReasons({ kind, network, tag, event, path, detail }) {
+  if (kind !== 'real') return [];
+  const out = [];
+  const employer = EMPLOYERS.find(([re]) => re.test(network ?? ''));
+  if (employer) out.push(`on ${employer[1]}'s network`);
+  if (tag) out.push(`opened the link tagged "${tag}"`);
+  if (event === 'view' && path?.startsWith('/login')) {
+    const want = detail?.to?.match(/^\/case-studies\/([a-z]+)/)?.[1];
+    out.push(want ? `reached the password gate for the ${want[0].toUpperCase()}${want.slice(1)} study` : 'reached the password gate');
+  }
+  if (event === 'access_request') out.push('asked for the password');
+  if (event === 'contact_submit') out.push('sent the contact form');
+  return out;
+}
+function alertIfNotable(row, notify) {
+  const day = new Date().toISOString().slice(0, 10);
+  if (day !== alertedDay) { alerted.clear(); alertedDay = day; }
+  const reasons = notableReasons(row);
+  if (!reasons.length || alerted.has(row.session)) return;
+  alerted.add(row.session);
+  const when = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date());
+  const who = `${row.network ?? 'unknown network'}${row.country ? `, ${row.country}` : ''} · ${row.device}, ${row.browser} on ${row.os}`;
+  notify({
+    subject: `Visit: ${reasons[0]}`,
+    message: `${when} Mountain. Someone ${reasons.join(', and ')}.\n\n${who}\nPage: ${row.path ?? ''}${row.referrer ? `\nFrom: ${row.referrer}` : ''}\n\nThe whole visit: https://davidpuerto.com/admin/#visits`,
+  });
+}
 
 /* ---------- GET /api/admin/visits: one story per visit ---------- */
 export async function visits(days) {
@@ -199,6 +231,7 @@ function story(session, hs) {
     screen: first.screen,
     seconds,
     steps,
+    notable: [...new Set(hs.flatMap((h) => notableReasons({ ...h, kind })))],
     readAs: readAs({ kind, tag, referrer, steps, hs, seconds, network: first.network }),
   };
 }
@@ -212,6 +245,7 @@ function describe(h) {
     case 'outbound': return `left for ${d.host}`;
     case 'pdf': return `opened ${d.file}`;
     case 'contact_submit': return 'sent the contact form';
+    case 'access_request': return `asked for the password${d.study ? ` to ${d.study}` : ''}`;
     case 'contact_start': return 'started the contact form';
     case 'case_study_unlock': return 'unlocked the case studies';
     case 'lock_try': return `tried ${d.combo}`;
