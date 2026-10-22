@@ -156,10 +156,22 @@ app.use('/admin', (req, res, next) => {
   res.redirect(`/login/?redirectTo=${encodeURIComponent(`/admin${req.url}`)}`);
 });
 
-const safeRedirect = (to) =>
-  typeof to === 'string' && (to.startsWith('/case-studies') || to.startsWith('/admin'))
-    ? to
-    : '/case-studies/microsoft/';
+// Where a login lands: only the studies or the admin, a page that exists
+// (no bare /case-studies/, no index.html), else the Microsoft study.
+const safeRedirect = (to) => {
+  if (typeof to !== 'string' || !/^\/(case-studies|admin)(\/|$|\?)/.test(to)) return '/case-studies/microsoft/';
+  const tidy = to.replace(/\/index\.html(?=$|[?#])/, '/');
+  return /^\/case-studies\/?(\?|$)/.test(tidy) ? '/case-studies/microsoft/' : tidy;
+};
+
+// Already signed in? The login page sends you straight on.
+app.get(['/login', '/login/'], (req, res, next) => {
+  const to = String(req.query.redirectTo ?? '');
+  if (!to) return next();
+  const ok = to.startsWith('/admin') ? adminAuthed(req) : authed(req);
+  if (ok) return res.redirect(safeRedirect(to));
+  next();
+});
 
 app.post('/api/login', rateLimit('login', 5, 15 * 60_000), async (req, res) => {
   const password = String(req.body?.password ?? '');
@@ -521,6 +533,8 @@ app.use(
     setHeaders(res, file) {
       if (file.includes(`${path.sep}assets${path.sep}`)) {
         res.set('Cache-Control', 'public, max-age=31536000, immutable');
+      } else if (file.includes(`${path.sep}admin${path.sep}`) || (file.includes(`${path.sep}case-studies${path.sep}`) && !file.includes(`${path.sep}rebuild${path.sep}`) && file.endsWith('.html'))) {
+        res.set('Cache-Control', 'private, no-store'); // gone from Back after a logout
       } else if (file.endsWith('.html')) {
         res.set('Cache-Control', 'no-cache');
       } else {
@@ -584,14 +598,15 @@ function serveLocked(relPath, res, cacheControl) {
   return true;
 }
 
-const GATED_STUDY = /^\/case-studies\/(apple|microsoft|facebook|nordstrom|sonosite|zillow|review)\/?$/;
+const GATED_STUDY = /^\/case-studies\/(apple|microsoft|facebook|nordstrom|sonosite|zillow|review)(\/|\/index\.html)?$/;
 
 app.use((req, res, next) => {
   // Gated pages (auth was enforced upstream, but re-check — defense in depth)
   const m = req.path.match(GATED_STUDY);
   if (m && authed(req)) {
     if (!CONTENT_KEY) return res.status(503).send('Content channel not configured');
-    if (serveLocked(`case-studies/${m[1]}/index.html`, res, 'no-cache')) return;
+    // no-store: after a logout, Back must not bring an NDA page out of the browser's memory
+    if (serveLocked(`case-studies/${m[1]}/index.html`, res, 'private, no-store')) return;
   }
   // Gated images (the /images/case-studies gate already 403'd unauthed)
   if (req.path.startsWith('/images/case-studies/') && authed(req)) {
