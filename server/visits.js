@@ -222,6 +222,13 @@ function describe(h) {
   }
 }
 
+// Networks that name an employer. The owner strings come from the public ASN table.
+const EMPLOYERS = [
+  [/MICROSOFT/i, 'Microsoft'], [/APPLE/i, 'Apple'], [/^GOOGLE(?!-CLOUD)/i, 'Google'], [/FACEBOOK|^META\b/i, 'Meta'],
+  [/AMAZON-(?!02|AES)/i, 'Amazon'], [/NETFLIX/i, 'Netflix'], [/ADOBE/i, 'Adobe'], [/SALESFORCE/i, 'Salesforce'],
+  [/NVIDIA/i, 'Nvidia'], [/ORACLE-CORP/i, 'Oracle'], [/LINKEDIN/i, 'LinkedIn'], [/ATLASSIAN/i, 'Atlassian'],
+];
+
 // A guess, always shown as one. Plain rules, in order of how much they say.
 function readAs({ kind, tag, referrer, steps, hs, seconds, network }) {
   if (kind === 'test') return 'Our own checks.';
@@ -233,7 +240,14 @@ function readAs({ kind, tag, referrer, steps, hs, seconds, network }) {
   const deepest = slides.reduce((m, h) => (h.detail?.n > (m?.detail?.n ?? 0) ? h : m), null);
   const parts = [];
   if (tag) parts.push(`Opened the link you tagged "${tag}".`);
-  if (/microsoft/i.test(network ?? '')) parts.push("On Microsoft's network.");
+  const employer = EMPLOYERS.find(([re]) => re.test(network ?? ''));
+  if (employer) parts.push(`On ${employer[1]}'s network.`);
+  // the password gate: they wanted a study and didn't have the password
+  const gate = hs.find((h) => h.event === 'view' && h.path?.startsWith('/login'));
+  if (gate && !hs.some((h) => h.event === 'case_study_unlock')) {
+    const want = gate.detail?.to?.match(/^\/case-studies\/([a-z]+)/)?.[1];
+    parts.push(want ? `Reached the password gate for the ${want[0].toUpperCase()}${want.slice(1)} study and didn't go in.` : "Reached the password gate and didn't go in.");
+  }
   if (deepest) parts.push(`Went through a deck to slide ${deepest.detail.n} of ${deepest.detail.of}${deepest.detail.n >= deepest.detail.of ? ', the whole thing' : ''}.`);
   if (paths.some((p) => p.startsWith('/resume')) || hs.some((h) => h.event === 'pdf')) parts.push('Checked the résumé, the way a recruiter skims.');
   if (hs.some((h) => h.event === 'contact_submit')) parts.push('Wrote to you.');

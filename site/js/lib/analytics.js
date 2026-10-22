@@ -48,6 +48,9 @@ export function note(e, d) {
     body.r = document.referrer && !document.referrer.startsWith(location.origin) ? document.referrer : undefined;
     body.s = `${screen.width}x${screen.height}`;
     if (document.querySelector('meta[name="not-found"]')) body.nf = 1;
+    // on the login page, which study they were after
+    const to = location.pathname.startsWith('/login') && new URLSearchParams(location.search).get('redirectTo');
+    if (to) body.d = { ...(body.d || {}), to: to.slice(0, 80) };
   }
   const blob = new Blob([JSON.stringify(body)], { type: 'application/json' });
   if (!navigator.sendBeacon?.('/api/v', blob)) fetch('/api/v', { method: 'POST', body: blob, keepalive: true }).catch(() => {});
