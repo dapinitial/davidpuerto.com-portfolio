@@ -508,10 +508,16 @@ app.get('/api/admin/realtime', async (req, res) => {
   }
 });
 
-/* ---------- static: hashed assets immutable, HTML no-cache ---------- */
+/* ---------- static: hashed assets immutable, HTML no-cache ----------
+   No Last-Modified or ETag: the build stamps every file 1980-01-01, so both
+   validators stay the same from one deploy to the next and a browser kept
+   being told its old page was current, an old page whose hashed CSS and JS
+   were gone, so it rendered unstyled. Pages are small; refetch them. */
 app.use(
   express.static(dist, {
     extensions: ['html'],
+    lastModified: false,
+    etag: false,
     setHeaders(res, file) {
       if (file.includes(`${path.sep}assets${path.sep}`)) {
         res.set('Cache-Control', 'public, max-age=31536000, immutable');

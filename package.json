@@ -14,6 +14,7 @@
     "test:smoke": "node tests/smoke.mjs",
     "test:ga": "node --env-file=.env tests/ga-health.mjs",
     "admin:password": "node tools/set-admin-password.mjs",
+    "cs:password": "node tools/set-admin-password.mjs --case-studies",
     "visits:connect": "node tools/connect-visits.mjs"
   },
   "dependencies": {
