@@ -94,6 +94,7 @@
 
   /* which study they asked for */
   .lg-for { color: #fff0f4; letter-spacing: 0.08em; }
+  .lg-nda { margin: 0; color: var(--lg-mute); font-size: 14px; line-height: 1.5; }
   .lg-for b { color: var(--lg-accent); font-weight: 400; }
 
   .lg-field { display: grid; gap: 8px; margin-top: 6px; }
