@@ -134,7 +134,7 @@ ${n}
 .sl-input::placeholder { color: var(--sl-muted); }
 .sl-input:hover { border-color: var(--sl-muted); }
 .sl-input:focus-visible { outline: 2px solid var(--sl-ring); outline-offset: 1px; border-color: var(--sl-accent); }
-.sl-field__help { font-size: var(--sl-fs-n1); color: var(--sl-muted); }
+.sl-field__help { margin: 0; font-size: var(--sl-fs-n1); color: var(--sl-muted); }
 .sl-field--error .sl-input { border-color: var(--sl-danger); }
 .sl-field--error .sl-field__help { color: var(--sl-danger); }
 
