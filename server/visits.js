@@ -150,6 +150,7 @@ const authHeaders = () => ({
 
 /* ---------- notable visits: one email per visit, the moment it earns it ---------- */
 const alerted = new Set(); // session ids already emailed today
+const alertTimes = []; // when each alert in the last hour went out
 let alertedDay = '';
 function notableReasons({ kind, network, tag, event, path, detail }) {
   if (kind !== 'real') return [];
@@ -170,6 +171,13 @@ function alertIfNotable(row, notify) {
   if (day !== alertedDay) { alerted.clear(); alertedDay = day; }
   const reasons = notableReasons(row);
   if (!reasons.length || alerted.has(row.session)) return;
+  // Anyone can send a beacon with a tag, and a new browser string is a new
+  // session, so a script could mail David once per beacon. Ten an hour at most;
+  // the visits are all still in the log.
+  const now = Date.now();
+  while (alertTimes.length && now - alertTimes[0] > 3_600_000) alertTimes.shift();
+  if (alertTimes.length >= 10) return;
+  alertTimes.push(now);
   alerted.add(row.session);
   const when = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date());
   const who = `${row.network ?? 'unknown network'}${row.country ? `, ${row.country}` : ''} · ${row.device}, ${row.browser} on ${row.os}`;
@@ -200,9 +208,16 @@ export async function visits(days) {
 // Turn a session's hits into steps (one per page) and a plain guess at intent.
 function story(session, hs) {
   const first = hs[0];
-  // the strongest label wins: one bot signal makes the whole visit a bot
+  // the strongest label wins: one bot signal makes the whole visit a bot.
+  // Except a 404: a session is one address and one browser string, so the browser
+  // and network signals are the same on every hit, and a 404 is the only bot signal
+  // that can differ page to page. Bot hits beside human ones are a mistyped or
+  // mangled link, so they don't turn the visit into a bot. Only the view beacon
+  // carries the 404 flag, so human hits on the 404 page itself don't count.
   const rank = ['test', 'preview', 'bot', 'cloud', 'real'];
-  const kind = hs.map((h) => h.kind).sort((a, b) => rank.indexOf(a) - rank.indexOf(b))[0];
+  const missed = new Set(hs.filter((h) => h.kind === 'bot').map((h) => h.path));
+  const human = hs.some((h) => (h.kind === 'real' || h.kind === 'cloud') && !missed.has(h.path));
+  const kind = hs.map((h) => h.kind).filter((k) => !(human && k === 'bot')).sort((a, b) => rank.indexOf(a) - rank.indexOf(b))[0];
   const steps = [];
   for (const h of hs) {
     if (h.event === 'view' || !steps.length) steps.push({ path: h.path, at: h.at, seconds: null, did: [] });

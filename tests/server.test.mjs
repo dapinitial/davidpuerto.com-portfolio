@@ -8,7 +8,7 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import bcrypt from 'bcryptjs';
 
 const PORT = 3939;
@@ -125,4 +125,21 @@ test('the admin password opens the admin and the case studies', async () => {
   assert.match(cookie, /dp_admin=/);
   assert.equal((await get('/admin/', { headers: { cookie } })).status, 200, 'admin page');
   assert.notEqual((await get('/case-studies/apple/', { headers: { cookie } })).status, 302, 'case study');
+});
+
+test('locked asset chunks need the cookie: the public repo lists their names', { skip: !process.env.CONTENT_KEY && 'no CONTENT_KEY' }, async () => {
+  const chunk = readdirSync('content-locked/assets').map((f) => f.replace(/\.enc$/, '')).find((f) => f.endsWith('.js') && !existsSync(`dist/assets/${f}`));
+  assert.equal((await get(`/assets/${chunk}`)).status, 404, 'without the cookie');
+  const cookie = cookiesOf(await login(PASSWORD, '10.5.5.5'));
+  const res = await get(`/assets/${chunk}`, { headers: { cookie } });
+  assert.equal(res.status, 200, 'with the cookie');
+  assert.match(res.headers.get('cache-control'), /^private/);
+});
+
+test('a cross-site post is refused; our own page and scripts get through', async () => {
+  const post = (headers) => fetch(`${BASE}/api/contact`, { method: 'POST', headers: { 'content-type': 'application/json', 'do-connecting-ip': '10.6.6.6', ...headers }, body: '{}' });
+  assert.equal((await post({ origin: 'https://evil.example' })).status, 403, 'another origin');
+  assert.equal((await post({ 'sec-fetch-site': 'cross-site' })).status, 403, 'cross-site fetch');
+  assert.equal((await post({ origin: BASE })).status, 400, 'our own origin reaches validation');
+  assert.equal((await post({})).status, 400, 'no origin reaches validation');
 });

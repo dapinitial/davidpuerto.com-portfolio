@@ -63,8 +63,9 @@ const hits = new Map(); // key -> { n, reset }
 // The client IP comes from DigitalOcean's edge header, which a visitor can't
 // set; X-Forwarded-For's leftmost value is client-controlled and was spoofable.
 const clientIp = (req) => req.get('do-connecting-ip') || req.socket.remoteAddress || 'unknown';
-const rateLimit = (bucket, max, windowMs) => (req, res, next) => {
-  const key = `${bucket}:${clientIp(req)}`;
+// everyone: one shared count for the whole site, for a botnet that rotates addresses
+const rateLimit = (bucket, max, windowMs, { everyone = false } = {}) => (req, res, next) => {
+  const key = `${bucket}:${everyone ? '*' : clientIp(req)}`;
   const now = Date.now();
   if (hits.size > 10_000) for (const [k, v] of hits) if (now > v.reset) hits.delete(k);
   const rec = hits.get(key);
@@ -130,6 +131,23 @@ app.use((req, res, next) => {
   if (isProd) res.set('Strict-Transport-Security', 'max-age=31536000');
   // Camera is on-device for the a11y cursor; allow it only for this route.
   res.set('Permissions-Policy', isCursorLab ? 'camera=(self), microphone=(self)' : 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+
+// Cross-site guard, the same one unakin.com runs: a request that changes
+// something must come from this site. An Origin naming another host, or a
+// browser saying the fetch is cross-site, is refused. Scripts send neither and
+// pass to the rate limits; this stops another page driving a visitor's browser.
+app.use((req, res, next) => {
+  if (/^(GET|HEAD|OPTIONS)$/.test(req.method)) return next();
+  const origin = req.get('origin');
+  let originHost = null;
+  if (origin) { try { originHost = new URL(origin).host; } catch { originHost = '!'; } }
+  // behind the proxy the public host may arrive as X-Forwarded-Host; either one is this site
+  const ours = [req.get('x-forwarded-host'), req.get('host')].filter(Boolean).map((h) => h.split(',')[0].trim());
+  if ((originHost && !ours.includes(originHost)) || req.get('sec-fetch-site') === 'cross-site') {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
   next();
 });
 
@@ -257,7 +275,7 @@ async function sendContactEmail({ name, from, message, subject: subj }) {
   throw err;
 }
 
-app.post('/api/contact', rateLimit('contact', 3, 60 * 60_000), async (req, res) => {
+app.post('/api/contact', rateLimit('contact', 3, 60 * 60_000), rateLimit('contact', 20, 60 * 60_000, { everyone: true }), async (req, res) => {
   const body = req.body ?? {};
   const str = (v) => (typeof v === 'string' ? v : '');
   const name = str(body.name), from = str(body.from), message = str(body.message), company = body.company;
@@ -280,7 +298,7 @@ app.post('/api/contact', rateLimit('contact', 3, 60 * 60_000), async (req, res) 
 // Request access: from the login page, when someone wants a study and has no
 // password. Same pipeline as the contact form; David replies with it.
 const STUDY_NAMES = { microsoft: 'Microsoft · Preview Sites', apple: 'Apple · Project Studio', review: 'The review deck', facebook: 'Facebook', nordstrom: 'Nordstrom', sonosite: 'SonoSite', zillow: 'Zillow' };
-app.post('/api/access-request', rateLimit('access', 3, 60 * 60_000), async (req, res) => {
+app.post('/api/access-request', rateLimit('access', 3, 60 * 60_000), rateLimit('access', 20, 60 * 60_000, { everyone: true }), async (req, res) => {
   const body = req.body ?? {};
   const str = (v) => (typeof v === 'string' ? v.trim() : '');
   const name = str(body.name), from = str(body.from), note = str(body.note), study = str(body.study);
@@ -635,9 +653,11 @@ app.use((req, res, next) => {
   if (req.path.startsWith('/images/case-studies/') && authed(req)) {
     if (serveLocked(decodeURIComponent(req.path.slice(1)), res, 'private, max-age=3600')) return;
   }
-  // Page-specific asset chunks absent from this build (hashed: safe to cache)
-  if (req.path.startsWith('/assets/')) {
-    if (serveLocked(decodeURIComponent(req.path.slice(1)), res, 'public, max-age=31536000, immutable'))
+  // Page-specific asset chunks absent from this build. Only the gated pages load
+  // them, and the public repo lists every one by name, so they need the cookie
+  // too. Hashed names never change, so the browser keeps them, privately.
+  if (req.path.startsWith('/assets/') && authed(req)) {
+    if (serveLocked(decodeURIComponent(req.path.slice(1)), res, 'private, max-age=31536000, immutable'))
       return;
   }
   next();
