@@ -82,6 +82,7 @@ const app = express();
 // App Platform fronts apps with MULTIPLE proxy hops — trusting only one made
 // req.ip a rotating edge IP and the rate limiter never accumulated.
 app.set('trust proxy', true);
+app.disable('x-powered-by'); // no "Express" banner telling scanners which exploits to try
 app.use(express.json({ limit: '10kb' }));
 
 // Path guard: no encoded slashes or backslashes, no dot-segments, no NULs,
