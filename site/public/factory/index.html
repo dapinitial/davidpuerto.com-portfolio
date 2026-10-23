@@ -7,8 +7,8 @@
   <meta name="description" content="Tokens in, a governed design system out. Change a token and watch the sheet rebuild and the checks rerun." />
   <meta name="color-scheme" content="dark" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%230b0916'/%3E%3Ccircle cx='16' cy='16' r='6' fill='%2312ce76'/%3E%3C/svg%3E" />
-  <script type="module" crossorigin src="/factory/assets/index-CY_3ybVS.js"></script>
-  <link rel="stylesheet" crossorigin href="/factory/assets/index-DBZkahlb.css">
+  <script type="module" crossorigin src="/factory/assets/index-BvF55NYf.js"></script>
+  <link rel="stylesheet" crossorigin href="/factory/assets/index-GCqLMbIU.css">
 </head>
 <body>
   <a class="f-skip" href="#sheet">Skip to the sheet</a>
@@ -19,7 +19,11 @@
     </div>
     <p class="f-top__line">Tokens in, a governed design system out.</p>
     <div class="f-top__actions">
-      <div class="f-seg" role="group" aria-label="Sheet theme">
+      <div class="f-seg" role="group" aria-label="View">
+        <button type="button" class="f-seg__btn" data-mode="tokens" aria-pressed="true">Tokens</button>
+        <button type="button" class="f-seg__btn" data-mode="map" aria-pressed="false">Map</button>
+      </div>
+      <div class="f-seg" role="group" aria-label="Sheet theme" data-only="tokens">
         <button type="button" class="f-seg__btn" data-view="dark" aria-pressed="true">Dark</button>
         <button type="button" class="f-seg__btn" data-view="light" aria-pressed="false">Light</button>
         <button type="button" class="f-seg__btn" data-view="both" aria-pressed="false">Both</button>
@@ -28,7 +32,7 @@
     </div>
   </header>
 
-  <main class="f-main">
+  <main class="f-main" id="tokens-view">
     <aside class="f-panel f-tokens" aria-labelledby="tokens-title">
       <details class="f-tokens__details" id="tokens-details" open>
         <summary class="f-panel__head">
@@ -95,6 +99,54 @@
       <ul class="f-judgment" id="judgment-list"></ul>
       <h3 class="f-sub">Drift</h3>
       <ul class="f-drift" id="drift-list"><li class="f-drift__empty">Nothing has moved yet.</li></ul>
+    </aside>
+  </main>
+
+  <main class="f-main f-main--map" id="map-view" hidden>
+    <aside class="f-panel f-audit" aria-labelledby="audit-title">
+      <div class="f-panel__head">
+        <h2 class="f-panel__title" id="audit-title">Audit</h2>
+        <span class="f-panel__hint" id="audit-source">Nothing loaded</span>
+      </div>
+      <div class="f-audit__body">
+        <p class="f-audit__lead">Run <code>factory audit</code> on a site, then drop its <code>audit.json</code> or <code>inventory.json</code> here. Nothing leaves this page.</p>
+        <div class="f-form__actions">
+          <label class="f-btn f-btn--ghost f-file">Open a file<input type="file" id="audit-file" accept="application/json,.json" /></label>
+          <button type="button" class="f-btn f-btn--ghost" id="audit-sample">Load the sample</button>
+        </div>
+        <dl class="f-stats" id="audit-stats" hidden></dl>
+        <h3 class="f-sub">Mined tokens</h3>
+        <ul class="f-mined" id="audit-mined"></ul>
+        <div class="f-form__actions">
+          <button type="button" class="f-btn" id="audit-use-tokens" disabled>Build a sheet from these tokens</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="f-panel f-map" aria-labelledby="map-title">
+      <div class="f-panel__head">
+        <h2 class="f-panel__title" id="map-title">Map</h2>
+        <span class="f-panel__hint" id="map-summary">Source components on the left, factory components on the right</span>
+      </div>
+      <div class="f-map__bar">
+        <div class="f-seg" role="group" aria-label="Filter">
+          <button type="button" class="f-seg__btn" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="f-seg__btn" data-filter="unmapped" aria-pressed="false">Unmapped</button>
+          <button type="button" class="f-seg__btn" data-filter="undecided" aria-pressed="false">Undecided</button>
+        </div>
+        <button type="button" class="f-btn f-btn--ghost" id="map-export" disabled>Download map.json</button>
+      </div>
+      <ol class="f-rows" id="map-rows"><li class="f-rows__empty">Load an audit to see its components.</li></ol>
+    </section>
+
+    <aside class="f-panel f-checks" aria-labelledby="audit-checks-title">
+      <div class="f-panel__head">
+        <h2 class="f-panel__title" id="audit-checks-title">Checks on the real site</h2>
+        <span class="f-panel__hint" id="audit-checks-summary"></span>
+      </div>
+      <ol class="f-check-list" id="audit-check-list"></ol>
+      <h3 class="f-sub">Cruft</h3>
+      <ul class="f-drift" id="audit-cruft"><li class="f-drift__empty">Nothing loaded.</li></ul>
     </aside>
   </main>
 
