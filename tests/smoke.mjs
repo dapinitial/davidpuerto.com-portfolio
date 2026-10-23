@@ -7,7 +7,7 @@
 import { chromium } from 'playwright';
 
 const BASE = (process.argv[2] || 'https://davidpuerto.com').replace(/\/$/, '');
-const PAGES = ['/', '/about-me/', '/about-me/?deck=1', '/contact/', '/login/', '/resume/', '/privacy/', '/terms/', '/since-2004/'];
+const PAGES = ['/', '/about-me/', '/about-me/?deck=1', '/contact/', '/login/', '/resume/', '/privacy/', '/terms/', '/since-2004/', '/factory/'];
 // a real browser's UA: GA4 drops hits from user agents that announce a bot
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36';
 

@@ -8,6 +8,8 @@ CodePen launcher, and a `meta.json` with provenance. Managed by the
 **Front door on CodePen:** "The Lab" index pen → [codepen.io/dapinitial/pen/yyMyewe ↗](https://codepen.io/dapinitial/pen/yyMyewe) (links to every component pen; regenerate with `node ~/.claude/skills/component-lab/hub.mjs lab <galleryUrl> <profileUrl>`).
 **Live gallery Artifact:** [The Lab ↗](https://claude.ai/code/artifact/15020758-6a4b-4dfd-88e6-0bfd9b6a55d4)
 
+**Factory:** the governed design-system demo that draws on these pieces lives at [`/factory/`](https://www.davidpuerto.com/factory/). Built from the separate `spacelab-factory` repo and copied into `site/public/factory/` by its `npm run publish:portfolio`.
+
 **Re-bundle any piece:** `node ~/.claude/skills/component-lab/bundle.mjs lab/<name>/<name>.config.json`
 **Preview:** serve over localhost (`python3 -m http.server`) — `file://` is blocked in Claude-in-Chrome.
 

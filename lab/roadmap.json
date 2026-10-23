@@ -1,17 +1,40 @@
 [
   {
+    "name": "factory",
+    "tagline": "Tokens in, a governed design system out. Live at /factory/.",
+    "tags": [
+      "system",
+      "tokens",
+      "governance",
+      "vite",
+      "gsap"
+    ]
+  },
+  {
     "name": "image-compare",
     "tagline": "Before/after slider — drag to wipe between two images.",
-    "tags": ["control", "web-component", "interactive"]
+    "tags": [
+      "control",
+      "web-component",
+      "interactive"
+    ]
   },
   {
     "name": "marquee-scroller",
     "tagline": "Seamless infinite marquee ticker.",
-    "tags": ["motion", "web-component", "marquee"]
+    "tags": [
+      "motion",
+      "web-component",
+      "marquee"
+    ]
   },
   {
     "name": "list-rotator",
     "tagline": "Rotating word/phrase swapper for headlines.",
-    "tags": ["text", "web-component", "animation"]
+    "tags": [
+      "text",
+      "web-component",
+      "animation"
+    ]
   }
 ]
