@@ -120,6 +120,14 @@ spacelab-lock .sl-again {
 spacelab-lock .sl-again:hover, spacelab-lock .sl-again:focus-visible { color: #00fffc; }
 @media (max-width: 480px) { spacelab-lock .sl-meta { white-space: normal; max-width: 22em; line-height: 1.8; } }
 
+/* a phone held upright: the lock takes the width, so the rings and clamps are
+   as wide under a thumb as the screen allows (short of the stack below), and
+   every button below it is a full thumb tall */
+@media (max-width: 600px) and (orientation: portrait) {
+  spacelab-lock .sl-lockbox, spacelab-lock .sl-ghost { width: min(100vw - 32px, 100svh - 240px); }
+  spacelab-lock .sl-hint, spacelab-lock .sl-enter, spacelab-lock .sl-again { min-height: 44px; }
+}
+
 spacelab-lock.sl-nogl .sl-field { display: none; }
 /* the lock is the whole page: nothing to scroll */
 html:has(spacelab-lock) { overflow: hidden; }

@@ -426,9 +426,11 @@ class SpacelabLock extends HTMLElement {
       g.focus({ preventScroll: true });
       set(toValue(e));
       const move = (ev) => set(toValue(ev));
-      const up = () => { g.removeEventListener('pointermove', move); g.removeEventListener('pointerup', up); };
+      // let go on up, and on cancel too (a system swipe mid-turn), so a ring never follows a finger that isn't on it
+      const up = () => { g.removeEventListener('pointermove', move); g.removeEventListener('pointerup', up); g.removeEventListener('pointercancel', up); };
       g.addEventListener('pointermove', move);
       g.addEventListener('pointerup', up);
+      g.addEventListener('pointercancel', up);
     });
     g.addEventListener('keydown', (e) => {
       const step = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[e.key];
