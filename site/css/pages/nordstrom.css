@@ -1,0 +1,89 @@
+/* Nordstrom case study — what the chapter frame (microsoft.css) and the deck
+   (deck.css) do not already cover: the results graph, the CodePen frames of the
+   long read, and the closing highlights. Accent is the silver set in case-study.css. */
+
+@layer page {
+  /* the results graph: expected in grey, actual in the study's accent */
+  .nd-graph {
+    margin: 32px 0;
+    color: var(--cs-accent, #d0d4dc);
+  }
+  .nd-graph svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .nd-graph figcaption {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #9a9499;
+  }
+
+  /* the sentence the study turns on, at statement size in the long read */
+  .nd-statement {
+    font-family: var(--font-family-heading);
+    font-size: clamp(24px, 2.6vw, 36px);
+    line-height: 1.25;
+    color: #fff0f4;
+  }
+
+  /* live prototypes, the long read only (an iframe inside a slide would take the wheel) */
+  .nd-pen {
+    margin: 32px 0;
+  }
+  .nd-pen iframe {
+    display: block;
+    width: 100%;
+    border: 0;
+    border-radius: 14px;
+    background: #111;
+  }
+
+  /* highlights and learnings side by side once there is room */
+  .nd-takeaways {
+    display: grid;
+    gap: 32px;
+    margin-top: 48px;
+  }
+  @media (min-width: 900px) {
+    .nd-takeaways { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* in the deck: a screenshot or the graph shares its slide with a heading and copy,
+     so it takes less height than deck.css gives a shot alone (deck.css loads after
+     this sheet, hence the extra class to win the tie) */
+  html.deck .deck-beat .ms-shot.nd-shot img { max-height: 44vh; }
+  html.deck .deck-beat .ms-shot.nd-shot-small img { max-height: 30vh; }
+  html.deck .deck-beat .nd-graph svg { max-height: 40vh; width: auto; max-width: 100%; margin-inline: auto; }
+  html.deck .deck-beat .nd-graph { margin: 12px 0 0; }
+  @media (max-height: 780px) {
+    html.deck .deck-beat .ms-shot.nd-shot img { max-height: 36vh; }
+    html.deck .deck-beat .ms-shot.nd-shot-small img { max-height: 24vh; }
+    html.deck .deck-beat .nd-graph svg { max-height: 32vh; }
+  }
+
+  /* a media slide in the deck: the copy on the left, the picture large on the right */
+  html.deck .deck-beat.nd-media .deck-copy {
+    display: grid !important;
+    columns: auto !important;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    column-gap: clamp(32px, 4vw, 72px);
+    row-gap: 14px;
+    align-items: center;
+    max-width: min(1240px, 100%) !important;
+    margin-inline: auto;
+  }
+  html.deck .deck-beat.nd-media .deck-copy > :not(figure) { grid-column: 1; margin: 0 !important; text-align: left !important; }
+  html.deck .deck-beat.nd-media .deck-copy > figure { grid-column: 2; grid-row: 1 / span 6; margin: 0; }
+  html.deck .deck-beat.nd-media .ms-shot.nd-shot img,
+  html.deck .deck-beat.nd-media .ms-shot.nd-shot-small img { width: 100%; max-height: 62vh; object-fit: contain; }
+  html.deck .deck-beat.nd-media .nd-graph svg { width: 100%; max-height: 52vh; }
+  @media (max-height: 780px) {
+    html.deck .deck-beat.nd-media .ms-shot.nd-shot img,
+    html.deck .deck-beat.nd-media .ms-shot.nd-shot-small img { max-height: 54vh; }
+    html.deck .deck-beat.nd-media .nd-graph svg { max-height: 44vh; }
+  }
+
+  /* the wireframe photo behind its slide, dimmed so the copy reads on it */
+  body:has(#nordstrom.cs-hero) .deck-art .ms-art img { filter: brightness(0.38) saturate(0.7); }
+}

@@ -7,6 +7,20 @@
     text-transform: uppercase;
   }
 
+  /* Headings carry the outline now (h1, h2 sections, h3 within), but keep the
+     sizes they had as h4 section titles and h6 labels (interior.css). */
+  .fb-h4 {
+    font-size: calc(1rem + 1vw);
+    line-height: calc(1rem + 1.6vw);
+    font-weight: 900;
+  }
+
+  .fb-h6 {
+    font-size: 18px;
+    line-height: 36px;
+    font-weight: 900;
+  }
+
   /* ---- Hero (leadIn + hero, flattened) ---- */
   .hero-wrapper {
     margin-bottom: 80vh;
@@ -146,7 +160,7 @@
   }
 
   .breakdown-of-role p {
-    color: #777;
+    color: #808080; /* was #777, 4.37 to 1 on the near-black ground; now 4.95 */
     font-family: 'Poppins';
     max-width: 100%;
     will-change: transform, opacity;
@@ -161,7 +175,7 @@
   }
 
   .breakdown-of-role ul li {
-    color: #777;
+    color: #808080;
     will-change: transform, opacity;
     font-family: 'Poppins';
     transform: translateZ(0);
@@ -243,9 +257,12 @@
   }
 
   /* ---- Image comparison wrapper (old inline style) ---- */
+  /* was min-width: 1600px, which pushed every screen narrower than that into a
+     sideways scroll (a phone zoomed the whole page out to fit it) */
   .image-compare-wrap {
     height: auto;
-    min-width: 1600px;
+    width: 100%;
+    max-width: 1600px;
     margin: 0 auto;
   }
 
@@ -380,7 +397,144 @@
 .back-story-art { margin: 0; }
 .back-story-art img { width: 100%; height: auto; display: block; border-radius: 6px; aspect-ratio: 4 / 3; object-fit: cover; }
 .back-story-eyebrow { font-family: var(--font-family-monospace, monospace); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.55; margin: 0 0 12px; }
-.back-story-copy h4 { font-size: clamp(36px, 4vw, 64px); line-height: 1.02; margin: 0 0 24px; }
-.back-story-copy h4 em { font-weight: 300; }
+.back-story-copy :is(h2, h4) { font-size: clamp(36px, 4vw, 64px); line-height: 1.02; margin: 0 0 24px; }
+.back-story-copy :is(h2, h4) em { font-weight: 300; }
 .back-story-copy p:not(.back-story-eyebrow) { font-family: 'Poppins', sans-serif; font-size: clamp(17px, 1.2vw, 20px); line-height: 1.65; max-width: 52ch; margin: 0 0 16px; }
 @media (max-width: 800px) { .back-story { grid-template-columns: 1fr; } }
+
+/* ---------- The deck, and the lead it shares with the system ----------
+   Page rules in the page layer; deck.css loads after this sheet, so the deck
+   rules carry an extra class to win the tie. */
+@layer page {
+  /* the lead sits on the dark ground between the breakdown and the backstory */
+  .fb-lead { background: #000; padding-block: clamp(48px, 8vh, 96px); }
+
+  /* a media slide: the copy on the left, the picture large on the right */
+  html.deck .deck-beat.fb-media .deck-copy {
+    display: grid !important;
+    columns: auto !important;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    column-gap: clamp(32px, 4vw, 72px);
+    row-gap: 14px;
+    align-items: center;
+    max-width: min(1240px, 100%) !important;
+    margin-inline: auto;
+  }
+  html.deck .deck-beat.fb-media .deck-copy > :not(figure) { grid-column: 1; margin: 0 !important; text-align: left !important; }
+  html.deck .deck-beat.fb-media .deck-copy > figure { grid-column: 2; grid-row: 1 / span 6; margin: 0; }
+  html.deck .deck-beat.fb-media .ms-shot.fb-shot img { width: 100%; max-height: 62vh; object-fit: contain; }
+  html.deck .deck-beat.fb-media .fb-why { grid-column: 1 / -1; }
+  @media (max-height: 780px) {
+    html.deck .deck-beat.fb-media .ms-shot.fb-shot img { max-height: 54vh; }
+  }
+
+  /* the eight personas and the six reasons, as compact grids */
+  .fb-personas,
+  .fb-why {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 14px 32px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 900px;
+    margin-inline: auto;
+  }
+  .fb-personas li,
+  .fb-why li { font-size: clamp(17px, 1.4vw, 24px); color: #c9c2c6; text-align: left; }
+  .fb-personas b { color: #fff0f4; font-weight: 600; margin-right: 0.35em; }
+  .fb-why li::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-right: 12px; border-radius: 50%; background: var(--cs-accent, #edb417); vertical-align: 0.15em; }
+
+  /* the last word: every distinct testimonial rises behind the headline without
+     stopping, scattered left and right as the long read's slowed pin lays them
+     out. Two equal runs stacked, each moved up its own height, loop seamlessly. */
+  html.deck .deck-beat.fb-wall { display: block !important; padding: 0; overflow: hidden; }
+  html.deck .deck-beat.fb-wall > * { max-width: none; }
+  .fb-wall-head {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 12px;
+    padding: 0 clamp(24px, 8vw, 160px);
+    text-align: center;
+    pointer-events: none;
+    background: radial-gradient(42% 34% at 50% 50%, rgb(0 0 0 / 0.88), rgb(0 0 0 / 0.55) 60%, rgb(0 0 0 / 0) 100%);
+    text-shadow: 1px 2px 10px rgb(0 0 0 / 0.6);
+  }
+  .fb-wall-head p { max-width: 28ch; margin: 0; }
+  .fb-wall-sky {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    mask-image: linear-gradient(transparent, #000 14%, #000 86%, transparent);
+  }
+  .fb-wall-run {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(48px, 9vh, 110px);
+    padding-bottom: clamp(48px, 9vh, 110px);
+    animation: fb-wall-rise 150s linear infinite;
+  }
+  .fb-wall-run img {
+    display: block;
+    width: calc(clamp(200px, 22vw, 400px) * var(--w, 1)); /* clear of the headline's column */
+    height: auto;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 18px 50px rgb(0 0 0 / 0.5);
+  }
+  .fb-wall-l { align-self: flex-start; margin-left: calc(3vw + var(--x, 0%)); }
+  .fb-wall-r { align-self: flex-end; margin-right: calc(3vw + var(--x, 0%)); }
+  @keyframes fb-wall-rise { to { transform: translateY(-100%); } }
+  /* off its slide the run waits where it is */
+  html.deck .deck-beat.fb-wall:not(.active) .fb-wall-run { animation-play-state: paused; }
+  @media (max-width: 700px) {
+    .fb-wall-run img { width: calc(54vw * var(--w, 1)); }
+    .fb-wall-head { background: radial-gradient(70% 30% at 50% 50%, rgb(0 0 0 / 0.92), rgb(0 0 0 / 0.6) 65%, rgb(0 0 0 / 0) 100%); }
+  }
+  /* still motion: the posts hold their places behind the headline */
+  html.deck.deck-still .fb-wall-run { animation: none; }
+  @media (prefers-reduced-motion: reduce) { .fb-wall-run { animation: none; } }
+
+  /* links under a two-up spread span the row and sit centred */
+  html.deck .deck-beat .deck-copy.deck-two-up > .ms-links { grid-column: 1 / -1; justify-content: center; text-align: center; }
+  /* on a phone a two-up spread stacks */
+  @media (max-width: 700px) {
+    html.deck .deck-beat.ms-read .deck-copy.deck-two-up { grid-template-columns: 1fr !important; gap: 16px !important; }
+  }
+
+  /* the before and after slide: the compare fills the slide below its caption */
+  html.deck .deck-beat.fb-compare { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding-inline: clamp(24px, 5vw, 96px); }
+  html.deck .deck-beat.fb-compare figcaption { text-align: center; font-family: 'Mona-Sans', sans-serif; font-weight: 900; font-size: clamp(28px, 3vw, 48px); color: #fff; }
+  html.deck .deck-beat.fb-compare figcaption em { font-weight: 200; color: var(--cs-accent, #edb417); }
+
+  /* the hero photo behind slide 2, dimmed so the copy reads on it */
+  body:has(.hero-wrapper) .deck-art .ms-art img { filter: brightness(0.42) saturate(0.85); }
+
+  /* Lyric Debugger gallery links: the coral ring sat on white at 2.45 to 1 and
+     the thumbnail's overflow clipped it. Draw it inside, dark on the white
+     panel, with a yellow inner line so it also shows over a dark screenshot. */
+  .justified-gallery .image-link { position: relative; display: block; }
+  .justified-gallery .image-link:focus-visible { outline: 3px solid #111; outline-offset: -3px; }
+  .justified-gallery .image-link:focus-visible::after { content: ''; position: absolute; inset: 3px; box-shadow: inset 0 0 0 3px var(--cs-accent, #edb417); pointer-events: none; }
+}
+
+/* The before and after slide. image-compare.css is unlayered (as is the sticky
+   whiteboard above), so this sits outside the layer too: the element keeps its old
+   942px minimum in the long read, and in a slide takes the screenshots' own
+   proportion at a height that fits. */
+html.deck .deck-beat.fb-compare image-compare { min-height: 0; aspect-ratio: 1.7; width: min(100%, 1200px, calc(64vh * 1.7)); height: auto; margin-inline: auto; }
+/* the long read: the same proportion, so a phone sees the whole screenshot
+   instead of a 942px tall crop of it */
+html:not(.deck) .image-compare-wrap image-compare { min-height: 0; aspect-ratio: 1.7; height: auto; }
+
+/* Contrast on the white panels, the smallest change that passes. accordion-list.css
+   and justified-gallery.css are unlayered, so these are too. Persona details were
+   #777 on white (4.48 to 1); the gallery caption was coral on the white panel
+   (2.45 to 1) and gets a dark band of its own. */
+.light-section accordion-list dd li { color: #707070; }
+.light-section .justified-gallery .image-link .thumb-info { color: #fff; background: #111; }

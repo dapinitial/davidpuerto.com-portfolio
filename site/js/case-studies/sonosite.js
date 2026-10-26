@@ -2,7 +2,40 @@
 // The wheel is the 2013 prototype's idea, remade in 2026 componentry: drag/spin it with a
 // pointer or thumb, momentum + friction under the pad, an oversized invisible hitbox (the
 // gloved-thumb principle), keyboard-nudgeable, and honest about reduced motion.
+// The page has no scroll-driven motion of its own, so nothing here steps aside for the deck:
+// the long read gets the shared chapter motion (which skips itself in the deck), and the
+// deck's own enter draws each sketch's ink as its slide arrives. The wheel works in both.
 import '../elements/accordion-list.js';
+import { initChapterMotion } from './chapter-motion.js';
+
+initChapterMotion();
+
+// --- The king: load three.js only when the chapter opener is near ------------
+// A WebGL-less browser or a failed load leaves the opener as copy alone.
+const piece = document.querySelector('glass-piece');
+if (piece) {
+  const hasGL = (() => {
+    try {
+      const c = document.createElement('canvas');
+      return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    } catch {
+      return false;
+    }
+  })();
+  if (!hasGL) {
+    piece.setAttribute('data-error', '');
+  } else {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        import('../elements/glass-piece.js').catch(() => piece.setAttribute('data-error', ''));
+      },
+      { rootMargin: '800px 0px' },
+    );
+    io.observe(piece);
+  }
+}
 
 const wheel = document.querySelector('.ss-wheel');
 if (wheel) {

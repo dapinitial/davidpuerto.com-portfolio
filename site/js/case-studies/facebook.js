@@ -3,6 +3,9 @@
 //   clientLayout/hero pin-reveal, useSplitTextAnimation (more-info),
 //   useFadeInOutAnimation (breakdown columns), useScrollScale (so-why row),
 //   usePinnedScroll (initial scribble) and the caseStudyFooter reveal.
+// In the deck (deck.js) the page's own scroll timelines step aside: the deck
+// owns the screen and draws its own motion. The long read keeps all of them, plus
+// the shared chapter motion for the lead's counters and five beats.
 import '../elements/list-rotator.js';
 import '../elements/accordion-list.js';
 import '../elements/marquee-scroller.js';
@@ -12,11 +15,16 @@ import '../elements/moving-gallery.js';
 import '../elements/zoom-gallery.js';
 import '../elements/slowed-pin.js';
 import { gsap, ScrollTrigger } from '../lib/gsap.js';
+import { initChapterMotion } from './chapter-motion.js';
 import { SplitText } from 'gsap/SplitText';
 
 gsap.registerPlugin(SplitText);
 
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+initChapterMotion();
+
+const DECK = document.documentElement.classList.contains('deck');
+
+if (!DECK && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   // Hero: pinned clip-path reveal (clientLayout/hero useEffect).
   const hero = document.querySelector('.hero');
   if (hero) {

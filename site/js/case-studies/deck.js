@@ -199,8 +199,8 @@ if (isDeck) {
     };
     // --- the word morph: words the next slide shares with this one travel to
     //     their new place; the rest fade. A FLIP on the Web Animations API,
-    //     after the pen David wrote years ago. Apple, Microsoft and About only.
-    const MORPH = /\/(case-studies\/(apple|microsoft)|about-me)\//.test(location.pathname) && !reduced;
+    //     after the pen David wrote years ago. Apple, Microsoft, Nordstrom, SonoSite, Facebook and About.
+    const MORPH = /\/(case-studies\/(apple|microsoft|nordstrom|sonosite|facebook)|about-me)\//.test(location.pathname) && !reduced;
     const STOP = new Set(['that', 'this', 'with', 'from', 'have', 'were', 'they', 'them', 'their', 'than', 'then', 'into', 'about', 'every', 'would', 'could', 'when', 'what', 'which', 'where', 'there', 'these', 'those', 'because', 'before', 'after', 'while', 'being', 'been', 'over', 'under', 'through']);
     const wordKey = (el) => { const t = el.textContent.toLowerCase().replace(/[^a-z0-9]/g, ''); return t.length >= 4 && !STOP.has(t) ? t : null; };
     if (MORPH) {

@@ -30,7 +30,7 @@
 (function () {
   try {
     var q = new URLSearchParams(location.search);
-    var deckPage = /^\/(about-me|case-studies\/(apple|microsoft|review))\/?$/.test(location.pathname);
+    var deckPage = /^\/(about-me|case-studies\/(apple|microsoft|review|nordstrom|sonosite|facebook))\/?$/.test(location.pathname);
     var stage = matchMedia('(min-width: 900px) and (pointer: fine), (min-width: 744px) and (min-height: 600px) and (pointer: coarse)').matches;
     if (deckPage && (q.get('deck') === '1' || q.get('talk') === '1' || (q.get('read') !== '1' && stage))) {
       var html = document.documentElement;
