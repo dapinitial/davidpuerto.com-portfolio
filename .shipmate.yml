@@ -17,3 +17,8 @@ protected:
 # it is still checked against protected.
 generated:
   - content-locked/
+
+# site-hardening live check (the sentinel runs it; see ~/.claude/skills/site-hardening)
+security_form: /api/contact
+security_resolve: rrayjhtbzeyaglpfijfj.supabase.co
+security_mail: davidpuerto.com
