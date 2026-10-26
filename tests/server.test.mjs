@@ -127,8 +127,10 @@ test('the admin password opens the admin and the case studies', async () => {
   assert.notEqual((await get('/case-studies/apple/', { headers: { cookie } })).status, 302, 'case study');
 });
 
-test('locked asset chunks need the cookie: the public repo lists their names', { skip: !process.env.CONTENT_KEY && 'no CONTENT_KEY' }, async () => {
+test('locked asset chunks need the cookie: the public repo lists their names', { skip: !process.env.CONTENT_KEY && 'no CONTENT_KEY' }, async (t) => {
   const chunk = readdirSync('content-locked/assets').map((f) => f.replace(/\.enc$/, '')).find((f) => f.endsWith('.js') && !existsSync(`dist/assets/${f}`));
+  // every locked chunk is also in this build: nothing to prove here until a build leaves one out
+  if (!chunk) return t.skip('no chunk is locked-only in this build');
   assert.equal((await get(`/assets/${chunk}`)).status, 404, 'without the cookie');
   const cookie = cookiesOf(await login(PASSWORD, '10.5.5.5'));
   const res = await get(`/assets/${chunk}`, { headers: { cookie } });

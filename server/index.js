@@ -9,6 +9,7 @@ import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import { contactEmail } from './contact-email.js';
 import { beacon, visits, visitsConfigured } from './visits.js';
+import { Blocklist } from './blocklist.mjs';
 
 const {
   PORT = 3000,
@@ -132,6 +133,16 @@ app.use((req, res, next) => {
   if (isProd) res.set('Strict-Transport-Security', 'max-age=31536000');
   // Camera is on-device for the a11y cursor; allow it only for this route.
   res.set('Permissions-Policy', isCursorLab ? 'camera=(self), microphone=(self)' : 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+
+// The fleet-wide blocklist (site-hardening skill): the known-bad ranges are built in and the
+// shared JSON is re-read hourly. A post from a blocked range gets the success shape and nothing
+// else happens, so a bot learns nothing; pages still render (the ranges are rented proxies, and
+// a real reader behind one still gets the site).
+const blocklist = new Blocklist({ url: process.env.BLOCKLIST_URL || 'https://raw.githubusercontent.com/dapinitial/site-hardening/main/blocklist.json' });
+app.use((req, res, next) => {
+  if (req.method === 'POST' && blocklist.has(clientIp(req))) return res.json({ success: true, ok: true });
   next();
 });
 
