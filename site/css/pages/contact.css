@@ -243,7 +243,7 @@
     outline: none;
     border-color: var(--ct-accent);
     background-color: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ct-accent) 22%, transparent), 0 0 24px color-mix(in srgb, var(--ct-accent) 18%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ct-accent) 60%, transparent), 0 0 24px color-mix(in srgb, var(--ct-accent) 18%, transparent);
   }
 
   .ct-actions {
