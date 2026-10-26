@@ -152,6 +152,21 @@
     animation-play-state: paused !important;
   }
 
+  /* Reduced motion, everywhere: the net under each component's own handling.
+     Important in the first layer outranks every later layer, so anything that
+     slips past a component still settles at once. JS motion checks the same
+     query on its own (js/main.js and each element). */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   /* Keyboard focus, everywhere: the coral ring. :focus-visible only, so a
      mouse or trackpad click never shows it. Components with their own
      focus style keep it (zero specificity here). */
