@@ -179,7 +179,7 @@ function alertIfNotable(row, notify) {
   if (alertTimes.length >= 10) return;
   alertTimes.push(now);
   alerted.add(row.session);
-  const when = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date());
+  const when = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', weekday: 'short', hour: 'numeric', minute: '2-digit' }).format(new Date());
   const who = `${row.network ?? 'unknown network'}${row.country ? `, ${row.country}` : ''} · ${row.device}, ${row.browser} on ${row.os}`;
   notify({
     subject: `Visit: ${reasons[0]}`,

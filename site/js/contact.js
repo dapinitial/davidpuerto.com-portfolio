@@ -1,15 +1,15 @@
-// Contact page: the locator (live Mountain clock, decoded coordinates) and the
+// Contact page: the locator (live Central clock, decoded coordinates) and the
 // form submission to /api/contact.
 import { note, track } from './lib/analytics.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// --- live local time (Mountain: Las Cruces), ticking every second ---------
+// --- live local time (Central: Austin), ticking every second ---------
 const clock = document.querySelector('[data-clock]');
 const tzEl = document.querySelector('[data-tz]');
 if (clock) {
-  const time = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-  const zone = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', timeZoneName: 'short' });
+  const time = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+  const zone = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Chicago', timeZoneName: 'short' });
   const tick = () => {
     clock.textContent = time.format(new Date());
     const tz = zone.formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value;
@@ -27,6 +27,10 @@ if (techweek) {
   url.searchParams.set('day', day);
   techweek.href = url.toString();
 }
+
+// --- iMessage opens Messages only on Apple devices; elsewhere the link is dead ---
+const imessage = document.querySelector('[data-imessage]');
+if (imessage && !/Mac|iPhone|iPad/.test(navigator.userAgent)) imessage.remove();
 
 // --- the coordinates decode in, digit by digit, once ---------------------
 const scramble = document.querySelector('[data-scramble]');
