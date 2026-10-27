@@ -329,7 +329,9 @@
     min-height: 0;
   }
 
-  .arc-col h4 {
+  .arc-col h3 {
+    /* an h3 under the map's h2; it keeps the line it had as an h4 */
+    line-height: calc(1rem + 1.6vw);
     margin: 0 0 8px;
     font-size: 11px;
     letter-spacing: 0.18em;
@@ -338,7 +340,7 @@
     font-weight: 500;
   }
 
-  .arc-col h4.on { color: var(--cs-accent, #fb836d); }
+  .arc-col h3.on { color: var(--cs-accent, #fb836d); }
 
   .arc-col ol {
     list-style: none;

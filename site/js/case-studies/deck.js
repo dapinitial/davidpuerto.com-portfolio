@@ -326,7 +326,7 @@ if (isDeck) {
           ${beats.map((b, i) => `<circle class="dot" data-i="${i}" cx="${px(i)}" cy="${py(i)}" r="6"><title>${i + 1}. ${esc(titleOf(b))}</title></circle>`).join('')}
         </svg>
         <div class="arc-list">
-          ${STAGES.map((n) => `<div class="arc-col" data-stage="${n}"><h4>${n}</h4><ol>${beats.map((b, i) => (stageOf(i) === n ? `<li><button type="button" data-i="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${esc(titleOf(b))}${genOf[i] ? `<em class="arc-gen">${GEN_SHORT[genOf[i].n]}</em>` : ''}</button></li>` : '')).join('')}</ol></div>`).join('')}
+          ${STAGES.map((n) => `<div class="arc-col" data-stage="${n}"><h3>${n}</h3><ol>${beats.map((b, i) => (stageOf(i) === n ? `<li><button type="button" data-i="${i}"><small>${String(i + 1).padStart(2, '0')}</small>${esc(titleOf(b))}${genOf[i] ? `<em class="arc-gen">${GEN_SHORT[genOf[i].n]}</em>` : ''}</button></li>` : '')).join('')}</ol></div>`).join('')}
         </div>
       </div>`;
     document.body.appendChild(toc);
@@ -366,7 +366,7 @@ if (isDeck) {
       toc.querySelectorAll('.dot').forEach((d) => { const k = Number(d.dataset.i); d.classList.toggle('now', k === i); d.classList.toggle('past', k < i); });
       toc.querySelectorAll('.arc-col button').forEach((btn) => { const k = Number(btn.dataset.i); btn.classList.toggle('now', k === i); btn.classList.toggle('past', k < i); if (k === i) btn.setAttribute('aria-current', 'step'); else btn.removeAttribute('aria-current'); });
       const st = stageOf(i);
-      toc.querySelectorAll('.arc-col h4').forEach((h) => h.classList.toggle('on', h.parentElement.dataset.stage === st));
+      toc.querySelectorAll('.arc-col h3').forEach((h) => h.classList.toggle('on', h.parentElement.dataset.stage === st));
       toc.querySelectorAll('.stage').forEach((t) => t.classList.toggle('on', t.dataset.stage === st));
       donePath.style.strokeDashoffset = `${doneLen * (1 - (beats.length > 1 ? i / (beats.length - 1) : 1))}`;
     };
