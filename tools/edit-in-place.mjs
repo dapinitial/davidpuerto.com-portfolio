@@ -16,7 +16,8 @@ const htmlFiles = (dir = SITE, out = []) => {
     const p = join(dir, n);
     if (n === 'node_modules' || n === 'public' || n.startsWith('.')) continue;
     if (statSync(p).isDirectory()) htmlFiles(p, out);
-    else if (n.endsWith('.html')) out.push(p);
+    // a backup beside a page (index.before-deck.html, index.full-<date>.html) is never an edit target
+    else if (n.endsWith('.html') && !/^index\..+\.html$/.test(n)) out.push(p);
   }
   return out;
 };

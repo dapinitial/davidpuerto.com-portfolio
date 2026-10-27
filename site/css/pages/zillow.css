@@ -18,6 +18,10 @@
   html.deck .deck-beat.ms-read.ms-media .deck-copy > figure.zl-tall { justify-self: center; width: fit-content; background: none; }
   html.deck .deck-beat.ms-read.ms-media .deck-copy > figure.zl-tall img { width: auto; max-width: 100%; }
 
+  /* Zillow blue is 4.27 to 1 on the page ground, under 4.5 for small text;
+     the eyebrow takes a lighter step of it (5.6 to 1) */
+  body:has(#zillow.cs-hero) .ms-eyebrow.accent { color: #3a8ee8; }
+
   /* the room behind slide 3, dimmed so the copy reads on it */
   body:has(#zillow.cs-hero) .deck-art .ms-art img { filter: brightness(0.38) saturate(0.8); }
 }
