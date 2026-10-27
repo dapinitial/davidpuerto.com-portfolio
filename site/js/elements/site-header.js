@@ -23,7 +23,7 @@ const CASE_STUDIES = [
   ['Facebook', '/case-studies/facebook/'],
   ['Nordstrom', '/case-studies/nordstrom/'],
   ['SonoSite', '/case-studies/sonosite/'],
-  // Zillow stays on the homepage; its study is out of the menu (Oct 2026).
+  ['Zillow', '/case-studies/zillow/'],
 ];
 
 const item = ([name, href]) =>

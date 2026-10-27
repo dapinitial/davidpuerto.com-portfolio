@@ -1,0 +1,23 @@
+/* Zillow case study: what the chapter frame (microsoft.css) and the deck
+   (deck.css) do not already cover. Accent is the blue set in case-study.css. */
+
+@layer page {
+  /* screenshots in the long read */
+  .zl-shot { margin: 32px 0; }
+  .zl-shot img { display: block; width: 100%; height: auto; border-radius: 12px; }
+  .zl-tall img { width: auto; max-width: 100%; max-height: 80vh; margin-inline: auto; }
+
+  /* coverage and the video side by side once there is room */
+  .zl-more { display: grid; gap: 32px; margin-top: 48px; }
+  .zl-more iframe { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; border: 0; border-radius: 12px; }
+  @media (min-width: 900px) {
+    .zl-more { grid-template-columns: 1fr 1fr; align-items: start; }
+  }
+
+  /* a portrait photo on a media slide: the frame hugs the photo, no letterbox */
+  html.deck .deck-beat.ms-read.ms-media .deck-copy > figure.zl-tall { justify-self: center; width: fit-content; background: none; }
+  html.deck .deck-beat.ms-read.ms-media .deck-copy > figure.zl-tall img { width: auto; max-width: 100%; }
+
+  /* the room behind slide 3, dimmed so the copy reads on it */
+  body:has(#zillow.cs-hero) .deck-art .ms-art img { filter: brightness(0.38) saturate(0.8); }
+}

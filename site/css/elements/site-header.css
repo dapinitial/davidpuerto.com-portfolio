@@ -173,7 +173,7 @@ site-header .logo:focus-visible .logo-shape.is-back { animation: back-nudge 0.6s
 
 /* ---------- Overlay nav ---------- */
 site-header .overlay {
-  /* Three main links or five studies have to fit any viewport: the item
+  /* Three main links or six studies have to fit any viewport: the item
      height and the gap scale with the screen instead of a fixed 120px + 8vh. */
   --nav-item: clamp(48px, 11svh, 120px);
   --nav-gap: clamp(4px, 3svh, 48px);
