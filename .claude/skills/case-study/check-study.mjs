@@ -39,7 +39,7 @@ for (const [w, h] of [[1454, 840], [1280, 720], [820, 1180]]) {
   await page.waitForTimeout(2000);
   const total = await page.evaluate(() => document.querySelectorAll('.deck-slot').length);
   if (!total) say(where, 'no deck: is the page in arriving.js, and does it mark [data-beat]?');
-  const climax = await page.evaluate(() => [...document.querySelectorAll('.deck-beat[data-stage="climax"]')].map((b) => b.dataset.title));
+  const climax = await page.evaluate(() => [...document.querySelectorAll('.deck-beat[data-stage="climax"]')].map((b) => b.dataset.title ?? b.querySelector('h1, h2, h3')?.textContent.trim()));
   if (total && !climax.length) say(where, 'no data-stage="climax": the arc has no crux');
   for (let i = 0; i < total; i++) {
     await page.evaluate((i) => document.querySelectorAll('.deck-slot')[i].scrollIntoView(), i);

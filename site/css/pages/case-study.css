@@ -472,12 +472,15 @@
   body:has(#nordstrom.cs-hero) { --cs-accent: var(--color-silver, #d0d4dc); --cs-glow: 208 212 220; }
   body:has(#sonosite.cs-hero) { --cs-accent: var(--color-secondary, #00a3bb); --cs-glow: 0 163 187; }
   body:has(#zillow.cs-hero) { --cs-accent: var(--color-zillow, #1277e1); --cs-glow: 18 119 225; }
+  body:has(#review.cs-hero) { --cs-accent: var(--color-primary, #fb836d); --cs-glow: 251 131 109; }
   body:has(#rebuild.cs-hero) { --cs-accent: var(--color-secondary, #00a3bb); }
   body:has(.about-hero) { --cs-accent: var(--color-primary, #fb836d); --cs-glow: 251 131 109; }
   body:has(.approach-hero) { --cs-accent: var(--color-secondary, #00a3bb); --cs-glow: 0 163 187; }
 
-  .ms-lead,
-  .ms-chapter {
+  /* body in front: microsoft.css loads later and sets the frame's accent to coral,
+     which every study borrowing the frame would otherwise take */
+  body .ms-lead,
+  body .ms-chapter {
     --ms-accent: var(--cs-accent);
   }
 

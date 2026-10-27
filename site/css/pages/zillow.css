@@ -19,8 +19,11 @@
   html.deck .deck-beat.ms-read.ms-media .deck-copy > figure.zl-tall img { width: auto; max-width: 100%; }
 
   /* Zillow blue is 4.27 to 1 on the page ground, under 4.5 for small text;
-     the eyebrow takes a lighter step of it (5.6 to 1) */
-  body:has(#zillow.cs-hero) .ms-eyebrow.accent { color: #3a8ee8; }
+     the eyebrow and the long read's small section labels take a lighter
+     step of it (5.6 to 1) */
+  body:has(#zillow.cs-hero) .ms-eyebrow.accent,
+  html:not(.deck) body:has(#zillow.cs-hero) .bodycopy :is(h2, h3, h4),
+  html:not(.deck) body:has(#zillow.cs-hero) .bodycopy :is(h2, h3, h4) em { color: #3a8ee8; }
 
   /* the room behind slide 3, dimmed so the copy reads on it */
   body:has(#zillow.cs-hero) .deck-art .ms-art img { filter: brightness(0.38) saturate(0.8); }
