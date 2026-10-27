@@ -1,16 +1,22 @@
 // Check a case study the way a visitor meets it, on the dev server.
-//   node .claude/skills/case-study/check-study.mjs <slug> [base]
+//   node .claude/skills/case-study/check-study.mjs <slug> [base] [--shots <dir>]
 // base defaults to http://localhost:5173. Walks every slide of the deck at two
 // laptop sizes and a tablet (?deck=1), then reads the long read (?read=1), and
 // prints one line per problem: a slide that scrolls inside itself, a page that
 // scrolls sideways, an em-dash, more than one h1, a skipped heading level, a
 // live iframe inside a slide, an uncaught page error. Exit 1 when any is found.
-// Waits for load, not network idle: a study streaming video never goes idle.
+// --shots saves every slide at each size, to look at: a clean check is not a
+// good-looking slide. Waits for load, not network idle: a study streaming video
+// never goes idle.
+import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
-const [slug, base = 'http://localhost:5173'] = process.argv.slice(2);
-if (!slug) {
-  console.error('usage: check-study.mjs <slug> [base]');
+const args = process.argv.slice(2);
+const at = args.indexOf('--shots');
+const shots = at >= 0 ? args.splice(at, 2)[1] : null;
+const [slug, base = 'http://localhost:5173'] = args;
+if (!slug || (at >= 0 && !shots)) {
+  console.error('usage: check-study.mjs <slug> [base] [--shots <dir>]');
   process.exit(2);
 }
 const url = `${base}/case-studies/${slug}/`;
@@ -18,6 +24,7 @@ if (!(await fetch(url).then(() => true, () => false))) {
   console.error(`nothing answers at ${base}: start the dev server (npm run dev) first`);
   process.exit(2);
 }
+if (shots) mkdirSync(shots, { recursive: true });
 const problems = [];
 const say = (where, what) => problems.push(`${where}: ${what}`);
 
@@ -49,6 +56,7 @@ for (const [w, h] of [[1454, 840], [1280, 720], [820, 1180]]) {
       };
     });
     if (!r) { say(where, `slide ${i + 1} never became active`); continue; }
+    if (shots) await page.screenshot({ path: `${shots}/${slug}-${w}x${h}-${String(i + 1).padStart(2, '0')}.png` });
     const at = `slide ${i + 1} (beat ${r.beat}, ${r.title})`;
     if (r.over > 4) say(where, `${at} overflows by ${r.over}px`);
     if (r.wide) say(where, `${at} scrolls sideways`);

@@ -616,3 +616,17 @@
 @media (max-width: 520px) {
   .results-table .cs-image { max-width: 100%; height: auto; margin-inline: 0; }
 }
+
+@layer page {
+  /* the pull-quote subheadings are h3s for the outline (they were h5s, a skip
+     from h2); they keep the size, weight and spacing they had */
+  .bodycopy h3.subheading {
+    color: #eee;
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: normal;
+    line-height: calc(1rem + 1.5vw);
+    margin: 0 auto 120px;
+  }
+  html.deck .deck-beat h3.subheading { line-height: calc(1rem + 1.5vw); }
+}

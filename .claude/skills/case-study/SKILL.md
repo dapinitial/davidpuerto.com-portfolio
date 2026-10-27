@@ -46,6 +46,7 @@ deck.js reads, and its header comment is the authority:
 - `deck-only` and `read-only` on any element: shown in one mode only.
 - `ms-read`: a read slide; deck.js wraps everything but the heading into `.deck-copy`. Exactly two shown paragraphs split into two columns; one over 320 characters becomes `deck-long`.
 - `ms-statement` (one sentence, with the letter scramble), `ms-left`, `ms-cols`, `ms-split`: shapes, see `deck-grooming`.
+- `ms-media`: a read slide with its figure large beside the copy.
 - `figure.ms-art`: the picture moves to a fixed layer behind the slide. `figure.ms-reel` with a `<video>`: plays on its slide, pauses off it. `ms-shot`: a screenshot. `p.ms-links`: buttons to open things.
 - `<hand-mark>`: the drawn underline, one per paragraph at most. `svg .ink`: lines that draw when the slide arrives. `[data-count]`: numbers that count up.
 - In the long read, `initChapterMotion()` from chapter-motion.js gives counters, beat numerals and the headings coming into focus. A page script steps aside when `html.deck` is set, since deck.js owns the screen.
@@ -68,10 +69,10 @@ A new slug goes in every one of these, or something quietly breaks:
 - **CodePen's `/full/` address refuses to be framed.** Use `/embed/<id>?default-tab=result&theme-id=dark`. The CSP allows `frame-src codepen.io`.
 - **Never put a live iframe on a slide:** it takes the wheel and the deck stops. Put a link (`ms-links deck-only`) on the slide and the iframe `read-only` in the long read.
 - **Headless browsers get 403 from CodePen.** Check embeds in David's Chrome. Do not get around it with a spoofed referer; that is bot-check circumvention. Use the study's own images.
-- **A small picture on a big slide** looks lost. Give the slide a media layout: copy on the left, picture large on the right (`nd-media`, `fb-media`).
+- **A small picture on a big slide** looks lost. Add `ms-media` to the `ms-read` slide: the copy on the left, its figure large on the right, stacked when narrow (deck.css). Nordstrom, Facebook and SonoSite still carry their own earlier versions (`nd-media`, `fb-media`, `ss-media`).
 - **A photo behind copy** needs dimming (`filter: brightness(0.4)`) so the text reads.
 - **A fixed `min-width` on a wrapper** (Facebook's compare slider had 1600px) makes every smaller screen scroll sideways. Look for it.
-- **Two paragraphs on a phone** split into two thin columns and overflow. Stack them under 700px.
+- **Two paragraphs on a phone** split into two thin columns and overflow. deck.css stacks them under 700px, and `ms-links` under a two-up spread spans the row.
 - **Something that loops** (the Facebook wall): two equal runs stacked, each moved up its own height with a CSS keyframe, `animation-play-state: paused` when the slide is not `.active`, and held still under `html.deck-still` and reduced motion.
 - **Duplicate assets:** hash them (`md5 -r`) before showing a set; Facebook's 45 testimonials were 26 distinct posts.
 - **Headings:** one h1 (the title, in the long read), then h2 sections, no skipped levels. Restyle with a class rather than choosing a level for its look.
@@ -85,7 +86,7 @@ With `npm run dev` running:
 node .claude/skills/case-study/check-study.mjs <slug> [http://localhost:5173]
 ```
 
-It walks every slide at 1454×840, 1280×720 and a tablet, then the long read on a phone, and names any slide that overflows, a page that scrolls sideways, a live iframe on a slide, an em-dash, a wrong h1 count, a skipped heading, a title without the dot, and page errors. Clean means it says `clean`. Then look at screenshots of the slides that changed; a passing check is not a good-looking slide. A study streaming video never goes network idle, so wait for `load`. A phone gets the long read unless `?deck=1` forces the deck.
+It walks every slide at 1454×840, 1280×720 and a tablet, then the long read on a phone, and names any slide that overflows, a page that scrolls sideways, a live iframe on a slide, an em-dash, a wrong h1 count, a skipped heading, a title without the dot, and page errors. Clean means it says `clean`. Then add `--shots <dir>` (a scratch folder, never the repo: the pictures hold study content) and look at every slide that changed; a passing check is not a good-looking slide. A study streaming video never goes network idle, so wait for `load`. A phone gets the long read unless `?deck=1` forces the deck.
 
 To measure how far a study sits from Apple and Microsoft, use the Spacelab Factory:
 

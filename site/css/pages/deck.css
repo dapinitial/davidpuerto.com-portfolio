@@ -2544,3 +2544,36 @@ html.deck .deck-beat.cs-splash neon-text .bright {
   html.deck li.deck-beat .ms-d-body figure.ms-shot { display: flex; flex-direction: column; gap: 14px; }
   html.deck li.deck-beat .ms-d-body figure.ms-shot figcaption { position: relative; z-index: 1; margin-top: 8px; }
 }
+@layer page {
+  /* links under a two-up spread span the row and sit centred */
+  html.deck .deck-beat .deck-copy.deck-two-up > .ms-links { grid-column: 1 / -1; justify-content: center; text-align: center; }
+  /* on a phone a two-up spread stacks: two columns a few words wide overflow the slide */
+  @media (max-width: 700px) {
+    html.deck .deck-beat.ms-read .deck-copy.deck-two-up { grid-template-columns: 1fr !important; gap: 16px !important; }
+  }
+
+  /* a media slide (ms-media): the copy on the left, its picture large on the right,
+     for a screenshot too small to carry a slide on its own; stacked when narrow */
+  html.deck .deck-beat.ms-read.ms-media .deck-copy {
+    display: grid !important;
+    columns: auto !important;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    column-gap: clamp(32px, 4vw, 72px);
+    row-gap: 14px;
+    align-items: center;
+    max-width: min(1240px, 100%) !important;
+    margin-inline: auto;
+  }
+  html.deck .deck-beat.ms-read.ms-media .deck-copy > :not(figure) { grid-column: 1; margin: 0 !important; text-align: left !important; }
+  html.deck .deck-beat.ms-read.ms-media .deck-copy > figure { grid-column: 2; grid-row: 1 / span 6; margin: 0; }
+  html.deck .deck-beat.ms-read.ms-media .deck-copy > figure img { width: 100%; max-height: 62vh; object-fit: contain; }
+  html.deck .deck-beat.ms-read.ms-media .deck-copy > .ms-links { justify-content: flex-start; }
+  @media (max-height: 780px) {
+    html.deck .deck-beat.ms-read.ms-media .deck-copy > figure img { max-height: 54vh; }
+  }
+  @media (max-width: 900px) {
+    html.deck .deck-beat.ms-read.ms-media .deck-copy { grid-template-columns: minmax(0, 1fr); }
+    html.deck .deck-beat.ms-read.ms-media .deck-copy > figure { grid-column: 1; grid-row: auto; }
+    html.deck .deck-beat.ms-read.ms-media .deck-copy > figure img { max-height: 38vh; }
+  }
+}

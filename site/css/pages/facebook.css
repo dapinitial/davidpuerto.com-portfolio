@@ -500,13 +500,6 @@
   html.deck.deck-still .fb-wall-run { animation: none; }
   @media (prefers-reduced-motion: reduce) { .fb-wall-run { animation: none; } }
 
-  /* links under a two-up spread span the row and sit centred */
-  html.deck .deck-beat .deck-copy.deck-two-up > .ms-links { grid-column: 1 / -1; justify-content: center; text-align: center; }
-  /* on a phone a two-up spread stacks */
-  @media (max-width: 700px) {
-    html.deck .deck-beat.ms-read .deck-copy.deck-two-up { grid-template-columns: 1fr !important; gap: 16px !important; }
-  }
-
   /* the before and after slide: the compare fills the slide below its caption */
   html.deck .deck-beat.fb-compare { display: flex; flex-direction: column; justify-content: center; gap: 16px; padding-inline: clamp(24px, 5vw, 96px); }
   html.deck .deck-beat.fb-compare figcaption { text-align: center; font-family: 'Mona-Sans', sans-serif; font-weight: 900; font-size: clamp(28px, 3vw, 48px); color: #fff; }
