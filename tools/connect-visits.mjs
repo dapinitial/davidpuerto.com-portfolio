@@ -1,5 +1,5 @@
 // Connect the visit log to its database: npm run visits:connect
-// Reads the davidpuerto-visits project's secret key from the Supabase CLI (or
+// Reads the visit log project's secret key from the Supabase CLI (or
 // asks for it without echoing), then stores it in .env for local runs and as
 // an encrypted secret on the DigitalOcean app (which redeploys). The key is
 // never printed.
@@ -9,7 +9,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const APP_ID = 'b0d2f2ad-49e3-4335-9f5f-e032c3f963ed'; // davidpuerto-com, .do/app.yaml
-const REF = 'rrayjhtbzeyaglpfijfj'; // Supabase project davidpuerto-visits
+const REF = 'svpqolfcjbujzmngabjg'; // Supabase project for the visit log, in the davidpuerto.com organization (moved Oct 27 2026)
 const URL = `https://${REF}.supabase.co`;
 
 const ask = (prompt) =>
@@ -22,15 +22,19 @@ const ask = (prompt) =>
     let value = '';
     const onData = (chunk) => {
       for (const ch of chunk) {
+        // Enter before anything arrived is a stray key press, not an empty answer
+        if ((ch === '\r' || ch === '\n') && !value) continue;
         if (ch === '\r' || ch === '\n') {
           stdin.setRawMode(false);
           stdin.pause();
           stdin.off('data', onData);
           process.stdout.write('\n');
-          return resolve(value.trim());
+          // a terminal pastes inside ESC[200~ … ESC[201~ markers; keep only the key's own characters
+          return resolve(value.replace(/\u001b\[20[01]~/g, '').replace(/[^\x21-\x7e]/g, ''));
         }
         if (ch === '\u0003') process.exit(130);
-        value = ch === '\u007f' ? value.slice(0, -1) : value + ch;
+        if (ch === '\u007f') value = value.slice(0, -1);
+        else { value += ch; process.stdout.write('•'); }
       }
     };
     stdin.on('data', onData);
@@ -47,10 +51,10 @@ else {
     console.error('Run this in a terminal: npm run visits:connect');
     process.exit(1);
   }
-  key = await ask('Paste the secret key (Supabase → davidpuerto-visits → Settings → API keys): ');
+  key = await ask('Paste the secret key (Supabase → davidpuerto.com → the visit log project → Settings → API keys): ');
 }
 if (!key || key.includes(' ')) {
-  console.error('No key. Nothing changed.');
+  console.error(`No key (${key.length} characters arrived). Copy it with the copy button beside the secret key, then paste. Nothing changed.`);
   process.exit(1);
 }
 
