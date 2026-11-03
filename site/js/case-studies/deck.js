@@ -376,7 +376,11 @@ if (isDeck) {
       cur = i;
       // the visit log hears about a slide once it has stayed up for a moment
       clearTimeout(noteT);
-      noteT = setTimeout(() => { if (cur === i) note('slide', { n: i + 1, of: beats.length }); }, 800);
+      noteT = setTimeout(() => {
+        if (cur !== i) return;
+        const title = beats[i].querySelector('h1, h2, h3')?.textContent.replace(/\s+/g, ' ').trim().slice(0, 60);
+        note('slide', { n: i + 1, of: beats.length, ...(title ? { title } : {}) });
+      }, 800);
       beats.forEach((b, k) => b.classList.toggle('active', k === i));
       // a reel keeps playing after its slide has gone; stop every video that is not on the active slide
       beats.forEach((b, k) => { if (k !== i) b.querySelectorAll('video').forEach((v) => { if (!v.paused) v.pause(); }); });

@@ -8,6 +8,7 @@ const statusEl = document.querySelector('.dash-status');
 const bodyEl = document.querySelector('.dash-body');
 const chartEl = document.querySelector('.timeline-chart');
 const switcher = document.querySelector('.range-switcher');
+const calm = matchMedia('(prefers-reduced-motion: reduce)');
 
 /* ---------- timeline: inline SVG area/line chart ---------- */
 function chartSVG(timeline) {
@@ -187,9 +188,15 @@ addEventListener('resize', () => {
 });
 
 async function load(range) {
-  statusEl.hidden = false;
-  statusEl.textContent = 'crunching…';
-  bodyEl.hidden = true;
+  // a new range dims what is there until the numbers change; only the first load has nothing to show
+  const refreshing = !bodyEl.hidden;
+  if (refreshing) {
+    bodyEl.classList.add('is-refreshing');
+    bodyEl.setAttribute('aria-busy', 'true');
+  } else {
+    statusEl.hidden = false;
+    statusEl.textContent = 'crunching…';
+  }
   try {
     const res = await fetch(`/api/admin/stats?range=${range}`);
     if (res.status === 401) {
@@ -197,6 +204,8 @@ async function load(range) {
       return;
     }
     if (res.status === 503) {
+      statusEl.hidden = false;
+      bodyEl.hidden = true;
       statusEl.textContent = 'Analytics not configured yet — add the GA env vars.';
       return;
     }
@@ -206,7 +215,12 @@ async function load(range) {
     bodyEl.hidden = false; // visible first, so the chart can measure its card
     render(lastData);
   } catch {
+    statusEl.hidden = false;
+    bodyEl.hidden = true;
     statusEl.textContent = 'Could not load analytics — try again in a minute.';
+  } finally {
+    bodyEl.classList.remove('is-refreshing');
+    bodyEl.removeAttribute('aria-busy');
   }
 }
 
@@ -244,6 +258,7 @@ function renderVisits() {
         <dl><dt>Address</dt><dd>${esc(v.ip ?? 'forgotten')}</dd><dt>Network no.</dt><dd>${esc(v.asn ?? '')}</dd><dt>Screen</dt><dd>${esc(v.screen ?? '')}</dd><dt>Visit id</dt><dd>${esc(v.session)}</dd></dl>
       </details>
     </li>`).join('') : '<li class="row-empty">No visits in this range yet.</li>';
+  if (!calm.matches) visitList.animate({ opacity: [0, 1] }, { duration: 200, easing: 'ease-out' });
 }
 
 async function loadVisits(range) {
@@ -288,13 +303,28 @@ switcher.addEventListener('click', (e) => {
 
 /* ---------- tabs: arrow keys move between them, as a tablist should ---------- */
 const tabs = [...document.querySelectorAll('.dash-tabs [role="tab"]')];
+const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
+let leaving = null;
+// the old panel fades out, then the new one fades in (.dash-panel in admin.css)
+function showPanel(next) {
+  const now = panels.find((p) => !p.hidden);
+  const swap = () => {
+    leaving?.cancel();
+    leaving = null;
+    panels.forEach((p) => { p.hidden = p !== next; });
+  };
+  leaving?.cancel();
+  if (now === next || calm.matches || bodyEl.hidden) return swap();
+  leaving = now.animate({ opacity: [1, 0] }, { duration: 120, easing: 'ease-in', fill: 'forwards' });
+  leaving.onfinish = swap;
+}
 function selectTab(tab, focus = false) {
   tabs.forEach((t) => {
     const on = t === tab;
     t.setAttribute('aria-selected', String(on));
     t.tabIndex = on ? 0 : -1;
-    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
   });
+  showPanel(document.getElementById(tab.getAttribute('aria-controls')));
   if (focus) tab.focus();
   tab.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   history.replaceState(null, '', `#${tab.id.replace('tab-', '')}`);

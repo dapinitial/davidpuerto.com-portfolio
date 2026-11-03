@@ -163,6 +163,17 @@
 
   .dash-panel[hidden] { display: none; }
 
+  .dash-body { transition: opacity 0.2s ease-out; }
+  .dash-body.is-refreshing { opacity: 0.4; pointer-events: none; }
+
+  /* a panel, and the first numbers, fade up each time they appear */
+  @media (prefers-reduced-motion: no-preference) {
+    .dash-panel, .dash-status { animation: dash-in 0.24s ease-out; }
+  }
+  @keyframes dash-in {
+    from { opacity: 0; transform: translateY(6px); }
+  }
+
   /* ---------- cards ---------- */
   .dash-card,
   .dash-list {

@@ -63,6 +63,11 @@ test('path traversal and encoded slashes are refused', async () => {
     '/assets/%',
     '/assets/%5c..%5cserver',
     '/assets/%00',
+    '//admin/',
+    '///admin/',
+    '//admin/index.html',
+    '//case-studies/apple/',
+    '/case-studies//apple/',
   ]) assert.equal((await get(p)).status, 400, p);
 });
 

@@ -183,7 +183,7 @@ function alertIfNotable(row, notify) {
   const who = `${row.network ?? 'unknown network'}${row.country ? `, ${row.country}` : ''} · ${row.device}, ${row.browser} on ${row.os}`;
   notify({
     subject: `Visit: ${reasons[0]}`,
-    message: `${when} Mountain. Someone ${reasons.join(', and ')}.\n\n${who}\nPage: ${row.path ?? ''}${row.referrer ? `\nFrom: ${row.referrer}` : ''}\n\nThe whole visit: https://davidpuerto.com/admin/#visits`,
+    message: `${when} Central. Someone ${reasons.join(', and ')}.\n\n${who}\nPage: ${row.path ?? ''}${row.referrer ? `\nFrom: ${row.referrer}` : ''}\n\nThe whole visit: https://davidpuerto.com/admin/#visits`,
   });
 }
 
@@ -223,9 +223,15 @@ function story(session, hs) {
     if (h.event === 'view' || !steps.length) steps.push({ path: h.path, at: h.at, seconds: null, did: [] });
     const step = steps.at(-1);
     if (h.event === 'leave') step.seconds = h.detail?.s ?? null;
+    else if (h.event === 'slide') (step.slides ??= []).push(h.detail ?? {});
     else if (h.event !== 'view') step.did.push(describe(h));
   }
-  for (const s of steps) s.did = [...new Set(s.did.filter(Boolean))];
+  for (const s of steps) {
+    s.did = [...new Set(s.did.filter(Boolean))];
+    // a deck is one line, and its scroll marks only repeat the slides
+    if (s.slides) s.did = [slidesLine(s.slides), ...s.did.filter((d) => !d.startsWith('scrolled'))];
+    delete s.slides;
+  }
   const tag = hs.find((h) => h.tag)?.tag ?? null;
   const referrer = hs.find((h) => h.referrer)?.referrer ?? null;
   const seconds = steps.reduce((n, s) => n + (s.seconds ?? 0), 0);
@@ -255,7 +261,6 @@ function describe(h) {
   const d = h.detail ?? {};
   switch (h.event) {
     case 'scroll': return `scrolled ${d.pct}%`;
-    case 'slide': return `reached slide ${d.n} of ${d.of}`;
     case 'video': return `${d.state === 'ended' ? 'finished' : 'played'} a video${d.pct ? ` (${d.pct}%)` : ''}`;
     case 'outbound': return `left for ${d.host}`;
     case 'pdf': return `opened ${d.file}`;
@@ -269,6 +274,47 @@ function describe(h) {
     case 'lock_timeout': return 'ran out of time on the lock';
     default: return h.event.replace(/_/g, ' ');
   }
+}
+
+function slidesLine(slides) {
+  const seen = new Set(slides.map((d) => d.n));
+  const of = slides.at(-1).of;
+  return seen.size >= of ? `saw all ${of} slides` : `saw ${seen.size} of ${of} slides, up to slide ${Math.max(...seen)}`;
+}
+
+const deckName = (path) => {
+  if (path?.startsWith('/about-me')) return 'the About deck';
+  const study = path?.match(/^\/case-studies\/([a-z]+)/)?.[1];
+  return study ? `the ${study[0].toUpperCase()}${study.slice(1)} deck` : 'a deck';
+};
+const slideName = (d) => `slide ${d.n}${d.title ? ` ("${d.title}")` : ''}`;
+const minutes = (s) => (s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, '0')}s`);
+
+// What happened in each deck: how much of it was seen, and where they lingered.
+// Time on a slide is the gap to the next slide or to leaving, so it counts a tab
+// left open as well; a gap over ten minutes says nothing and is skipped.
+function deckReads(hs) {
+  const decks = new Map();
+  hs.forEach((h, i) => {
+    if (h.event !== 'slide' || !h.detail?.n) return;
+    if (!decks.has(h.path)) decks.set(h.path, { path: h.path, seen: new Set(), deepest: h.detail, longest: null, seconds: 0 });
+    const deck = decks.get(h.path);
+    deck.seen.add(h.detail.n);
+    deck.of = h.detail.of;
+    if (h.detail.n >= deck.deepest.n) deck.deepest = h.detail;
+    const next = hs.slice(i + 1).find((x) => x.path === h.path && (x.event === 'slide' || x.event === 'leave'));
+    const gap = next ? Math.round((Date.parse(next.at) - Date.parse(h.at)) / 1000) : 0;
+    if (gap <= 600 && gap > deck.seconds) { deck.longest = h.detail; deck.seconds = gap; }
+  });
+  return [...decks.values()];
+}
+
+function deckSentence({ path, seen, of, deepest, longest, seconds }) {
+  const name = deckName(path);
+  const read = seen.size >= of ? `Read all ${of} slides of ${name}.`
+    : deepest.n >= of ? `Reached the end of ${name}, seeing ${seen.size} of ${of} slides.`
+    : `Got to ${slideName(deepest)} of ${of} in ${name}.`;
+  return seconds >= 20 && seen.size > 1 ? `${read} Stayed longest on ${slideName(longest)}, ${minutes(seconds)}.` : read;
 }
 
 // Networks that name an employer. The owner strings come from the public ASN table.
@@ -285,8 +331,6 @@ function readAs({ kind, tag, referrer, steps, hs, seconds, network }) {
   if (kind === 'bot') return 'A bot or scanner, not a person.';
   if (kind === 'cloud') return 'From a cloud server: most likely automated, possibly someone on a VPN.';
   const paths = steps.map((s) => s.path ?? '');
-  const slides = hs.filter((h) => h.event === 'slide');
-  const deepest = slides.reduce((m, h) => (h.detail?.n > (m?.detail?.n ?? 0) ? h : m), null);
   const parts = [];
   if (tag) parts.push(`Opened the link you tagged "${tag}".`);
   const employer = EMPLOYERS.find(([re]) => re.test(network ?? ''));
@@ -297,7 +341,7 @@ function readAs({ kind, tag, referrer, steps, hs, seconds, network }) {
     const want = gate.detail?.to?.match(/^\/case-studies\/([a-z]+)/)?.[1];
     parts.push(want ? `Reached the password gate for the ${want[0].toUpperCase()}${want.slice(1)} study and didn't go in.` : "Reached the password gate and didn't go in.");
   }
-  if (deepest) parts.push(`Went through a deck to slide ${deepest.detail.n} of ${deepest.detail.of}${deepest.detail.n >= deepest.detail.of ? ', the whole thing' : ''}.`);
+  parts.push(...deckReads(hs).map(deckSentence));
   if (paths.some((p) => p.startsWith('/resume')) || hs.some((h) => h.event === 'pdf')) parts.push('Checked the résumé, the way a recruiter skims.');
   if (hs.some((h) => h.event === 'contact_submit')) parts.push('Wrote to you.');
   if (paths.every((p) => p.startsWith('/lock')) && /facebook/i.test(referrer ?? '')) parts.push('Came from the Facebook share to play with the lock.');

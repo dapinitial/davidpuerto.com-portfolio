@@ -86,15 +86,16 @@ app.set('trust proxy', true);
 app.disable('x-powered-by'); // no "Express" banner telling scanners which exploits to try
 app.use(express.json({ limit: '10kb' }));
 
-// Path guard: no encoded slashes or backslashes, no dot-segments, no NULs,
-// and a malformed escape is a 400, not a crash. Closes traversal like
-// /assets/..%2Fcase-studies/... and /admin%2Findex.html before any gate or
-// static handler sees the request.
+// Path guard: no encoded slashes or backslashes, no doubled slashes, no
+// dot-segments, no NULs, and a malformed escape is a 400, not a crash. Closes
+// traversal like /assets/..%2Fcase-studies/... and /admin%2Findex.html before
+// any gate or static handler sees the request. A doubled slash matters as much:
+// //admin/ missed the /admin gate and the static handler served the page.
 app.use((req, res, next) => {
   const raw = req.originalUrl.split('?')[0];
   let decoded;
   try { decoded = decodeURIComponent(raw); } catch { return res.status(400).send('Bad request'); }
-  if (/%2f|%5c|%00/i.test(raw) || decoded.includes('\\') || decoded.includes('\0') || decoded.split('/').some((seg) => seg === '..' || seg === '.')) {
+  if (/%2f|%5c|%00/i.test(raw) || decoded.includes('//') || decoded.includes('\\') || decoded.includes('\0') || decoded.split('/').some((seg) => seg === '..' || seg === '.')) {
     return res.status(400).send('Bad request');
   }
   next();
@@ -203,7 +204,9 @@ app.get(['/login', '/login/'], (req, res, next) => {
   next();
 });
 
-app.post('/api/login', rateLimit('login', 5, 15 * 60_000), async (req, res) => {
+// The second limit is for a botnet that rotates addresses: bcrypt is the costliest thing this
+// server does, and guesses from a thousand addresses never reach the per-address limit.
+app.post('/api/login', rateLimit('login', 5, 15 * 60_000), rateLimit('login', 100, 15 * 60_000, { everyone: true }), async (req, res) => {
   const password = String(req.body?.password ?? '');
   const admin = Boolean(ADMIN_PASSWORD_HASH) && (await bcrypt.compare(password, ADMIN_PASSWORD_HASH));
   const ok = admin || (await bcrypt.compare(password, PASSWORD_HASH));
