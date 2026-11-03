@@ -268,6 +268,7 @@ function describe(h) {
     case 'access_request': return `asked for the password${d.study ? ` to ${d.study}` : ''}`;
     case 'contact_start': return 'started the contact form';
     case 'case_study_unlock': return 'unlocked the case studies';
+    case 'login_fail': return 'tried a wrong password';
     case 'lock_try': return `tried ${d.combo}`;
     case 'lock_clamp': return `pressed the ${d.ring} clamp`;
     case 'lock_open': return 'picked the lock';
@@ -337,10 +338,13 @@ function readAs({ kind, tag, referrer, steps, hs, seconds, network }) {
   if (employer) parts.push(`On ${employer[1]}'s network.`);
   // the password gate: they wanted a study and didn't have the password
   const gate = hs.find((h) => h.event === 'view' && h.path?.startsWith('/login'));
+  const misses = hs.filter((h) => h.event === 'login_fail').length;
+  const tries = `${misses} wrong ${misses === 1 ? 'try' : 'tries'}`;
   if (gate && !hs.some((h) => h.event === 'case_study_unlock')) {
     const want = gate.detail?.to?.match(/^\/case-studies\/([a-z]+)/)?.[1];
-    parts.push(want ? `Reached the password gate for the ${want[0].toUpperCase()}${want.slice(1)} study and didn't go in.` : "Reached the password gate and didn't go in.");
-  }
+    const where = want ? `the password gate for the ${want[0].toUpperCase()}${want.slice(1)} study` : 'the password gate';
+    parts.push(misses ? `Reached ${where}: ${tries}, and didn't get in.` : `Reached ${where} and didn't go in.`);
+  } else if (misses) parts.push(`Got in after ${tries}.`);
   parts.push(...deckReads(hs).map(deckSentence));
   if (paths.some((p) => p.startsWith('/resume')) || hs.some((h) => h.event === 'pdf')) parts.push('Checked the résumé, the way a recruiter skims.');
   if (hs.some((h) => h.event === 'contact_submit')) parts.push('Wrote to you.');

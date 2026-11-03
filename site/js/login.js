@@ -62,6 +62,8 @@ form.addEventListener('submit', async (e) => {
     } else if (res.status === 429) {
       status.textContent = 'Too many tries. Wait fifteen minutes, or ask me for it.';
     } else {
+      // only that a try failed: what was typed is never sent anywhere but the check above
+      note('login_fail');
       status.textContent = 'That is not it. Try again, or ask me for it.';
     }
   } catch {
