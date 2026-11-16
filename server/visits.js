@@ -191,9 +191,20 @@ function alertIfNotable(row, notify) {
 export async function visits(days) {
   const since = new Date(Date.now() - days * 86_400_000).toISOString();
   const cols = 'at,session,kind,event,path,detail,tag,referrer,ip,network,asn,country,device,browser,os,screen';
-  const r = await fetch(`${VISITS_URL}/rest/v1/hits?select=${cols}&at=gte.${since}&order=at.asc&limit=10000`, { headers: authHeaders() });
-  if (!r.ok) throw new Error(`visits ${r.status}: ${await r.text()}`);
-  const rows = await r.json();
+  // Supabase answers at most 1000 rows a request, whatever the limit asks for, so
+  // read newest first, a page at a time: a busy range then loses its oldest
+  // visits past the cap, never today's. Back to oldest first for the stories.
+  const PAGE = 1000;
+  const CAP = 20_000;
+  const rows = [];
+  for (let offset = 0; offset < CAP; offset += PAGE) {
+    const r = await fetch(`${VISITS_URL}/rest/v1/hits?select=${cols}&at=gte.${since}&order=at.desc,id.desc&limit=${PAGE}&offset=${offset}`, { headers: authHeaders() });
+    if (!r.ok) throw new Error(`visits ${r.status}: ${await r.text()}`);
+    const page = await r.json();
+    rows.push(...page);
+    if (page.length < PAGE) break;
+  }
+  rows.reverse();
   const bySession = new Map();
   for (const h of rows) {
     if (!bySession.has(h.session)) bySession.set(h.session, []);
