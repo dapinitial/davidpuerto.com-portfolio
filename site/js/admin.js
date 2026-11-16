@@ -225,13 +225,22 @@ async function load(range) {
 }
 
 /* ---------- visits: one story per visit, from the site's own log ---------- */
-const visitList = document.querySelector('.visit-list');
+const visitList = document.querySelector('.visit-days');
 const visitCount = document.querySelector('[data-visits="count"]');
 const visitFilter = document.querySelector('.visits-filter');
 let visitData = null;
 const KIND = { real: 'Person', cloud: 'Cloud server', bot: 'Bot', preview: 'Link preview', test: 'Our checks' };
 const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 const when = (iso) => new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
+const clock = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
+// the calendar day in Central, the time every line here already shows
+const dayKey = (d) => new Date(d).toLocaleDateString('en-CA', { timeZone: 'America/Chicago' });
+const dayName = (key) => {
+  if (key === dayKey(Date.now())) return 'Today';
+  if (key === dayKey(Date.now() - 86_400_000)) return 'Yesterday';
+  return new Date(`${key}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' });
+};
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 const dur = (s) => (s == null ? '' : s < 60 ? `${s}s` : `${Math.floor(s / 60)}m ${String(s % 60).padStart(2, '0')}s`);
 const host = (url) => { try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; } };
 
@@ -241,10 +250,10 @@ function renderVisits() {
   const shown = mode === 'all' ? visitData : mode === 'notable' ? visitData.filter((v) => v.notable?.length) : visitData.filter((v) => v.kind === 'real');
   const hidden = visitData.length - shown.length;
   visitCount.textContent = `${shown.length} visit${shown.length === 1 ? '' : 's'}${hidden ? ` · ${hidden} more under Everything` : ''}`;
-  visitList.innerHTML = shown.length ? shown.map((v) => `
+  const card = (v) => `
     <li class="visit kind-${v.kind}">
       <div class="visit-head">
-        <time datetime="${v.start}">${when(v.start)}</time>
+        <time datetime="${v.start}" title="${when(v.start)}">${clock(v.start)}</time>
         <span class="visit-kind">${KIND[v.kind] ?? v.kind}</span>
         ${v.tag ? `<span class="visit-tag">${esc(v.tag)}</span>` : ''}
         ${v.notable?.length ? `<span class="visit-star" title="${esc(v.notable.join('; '))}">★ notable</span>` : ''}
@@ -257,7 +266,24 @@ function renderVisits() {
       <details class="visit-more"><summary>Details</summary>
         <dl><dt>Address</dt><dd>${esc(v.ip ?? 'forgotten')}</dd><dt>Network no.</dt><dd>${esc(v.asn ?? '')}</dd><dt>Screen</dt><dd>${esc(v.screen ?? '')}</dd><dt>Visit id</dt><dd>${esc(v.session)}</dd></dl>
       </details>
-    </li>`).join('') : '<li class="row-empty">No visits in this range yet.</li>';
+    </li>`;
+  // newest day first, each under its own heading, so a long range scans by day
+  const days = new Map();
+  for (const v of shown) {
+    const key = dayKey(v.start);
+    if (!days.has(key)) days.set(key, []);
+    days.get(key).push(v);
+  }
+  visitList.innerHTML = shown.length ? [...days].map(([key, vs]) => {
+    const people = vs.filter((v) => v.kind === 'real').length;
+    const tally = people === vs.length ? plural(vs.length, 'visit') : `${people} ${people === 1 ? 'person' : 'people'} · ${plural(vs.length, 'visit')}`;
+    return `
+    <div class="visit-day">
+      <h2>${dayName(key)} <span>${tally}</span></h2>
+      <ol class="visit-list">${vs.map(card).join('')}
+      </ol>
+    </div>`;
+  }).join('') : '<p class="row-empty">No visits in this range yet.</p>';
   if (!calm.matches) visitList.animate({ opacity: [0, 1] }, { duration: 200, easing: 'ease-out' });
 }
 
