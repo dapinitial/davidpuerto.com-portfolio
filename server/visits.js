@@ -107,8 +107,7 @@ export function beacon(clientIp, notify) {
     if (!event || !/^[a-z0-9_]+$/.test(event)) return;
     const ip = clientIp(req);
     const ua = req.get('user-agent') ?? '';
-    const day = new Date().toISOString().slice(0, 10);
-    const session = createHash('sha256').update(`${COOKIE_SECRET}|${day}|${ip}|${ua}`).digest('base64url').slice(0, 16);
+    const session = sessionOf(ip, ua);
     const net = network(ip);
     const detail = b.d && typeof b.d === 'object' ? b.d : null;
     const row = {
@@ -129,19 +128,58 @@ export function beacon(clientIp, notify) {
       ua: clip(ua, 400),
       screen: clip(b.s, 20),
     };
-    try {
-      const r = await fetch(`${VISITS_URL}/rest/v1/hits`, {
-        method: 'POST',
-        headers: { ...authHeaders(), 'content-type': 'application/json', prefer: 'return=minimal' },
-        body: JSON.stringify(row),
-      });
-      if (!r.ok) console.error('visit log: insert', r.status, await r.text());
-      else if (notify) alertIfNotable(row, notify);
-    } catch (err) {
-      console.error('visit log: insert failed', err.message);
-    }
+    await insert(row, notify);
   };
 }
+
+// a visit is one address and one browser string on one day, hashed one way
+const sessionOf = (ip, ua) =>
+  createHash('sha256').update(`${COOKIE_SECRET}|${new Date().toISOString().slice(0, 10)}|${ip}|${ua}`).digest('base64url').slice(0, 16);
+
+async function insert(row, notify) {
+  try {
+    const r = await fetch(`${VISITS_URL}/rest/v1/hits`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'content-type': 'application/json', prefer: 'return=minimal' },
+      body: JSON.stringify(row),
+    });
+    if (!r.ok) console.error('visit log: insert', r.status, await r.text());
+    else if (notify) alertIfNotable(row, notify);
+  } catch (err) {
+    console.error('visit log: insert failed', err.message);
+  }
+}
+
+/* ---------- the admin's sign-in, written by the server itself ---------- */
+// Every pass and failure of the admin's second step, the lockouts and the one-time
+// setup. Unlike the beacons these ignore Do Not Track: they are the security record
+// of someone holding the admin password, and the Privacy page says so. Same
+// session hash as the visitor's beacons, so they join that visit's story. Never
+// what was typed: only the method (passkey, code, recovery) and why it failed.
+export const securityLog = (clientIp, notify) => (req, event, detail = null) => {
+  if (!visitsConfigured) return;
+  const ip = clientIp(req);
+  const ua = req.get('user-agent') ?? '';
+  const net = network(ip);
+  insert({
+    session: sessionOf(ip, ua),
+    kind: label({ ua, net: net.network }),
+    event,
+    path: '/login/',
+    detail,
+    tag: null,
+    referrer: null,
+    ip: isIP(ip) ? ip : null,
+    network: net.network ?? null,
+    asn: net.asn ?? null,
+    country: net.country ?? null,
+    device: device(ua),
+    browser: browser(ua),
+    os: os(ua),
+    ua: clip(ua, 400),
+    screen: null,
+  }, notify);
+};
 
 const authHeaders = () => ({
   apikey: VISITS_KEY,
@@ -152,9 +190,15 @@ const authHeaders = () => ({
 const alerted = new Set(); // session ids already emailed today
 const alertTimes = []; // when each alert in the last hour went out
 let alertedDay = '';
+// someone holding the admin password is worth an email from any network, bots included
+const SECURITY = {
+  admin_second_fail: "failed the admin's second step",
+  admin_locked: "was locked out of the admin's second step",
+  admin_enrolled: "set up the admin's second step",
+};
 function notableReasons({ kind, network, tag, event, path, detail }) {
-  if (kind !== 'real') return [];
-  const out = [];
+  const out = SECURITY[event] ? [SECURITY[event]] : [];
+  if (kind !== 'real') return out;
   const employer = EMPLOYERS.find(([re]) => re.test(network ?? ''));
   if (employer) out.push(`on ${employer[1]}'s network`);
   if (tag) out.push(`opened the link tagged "${tag}"`);
@@ -280,6 +324,10 @@ function describe(h) {
     case 'contact_start': return 'started the contact form';
     case 'case_study_unlock': return 'unlocked the case studies';
     case 'login_fail': return 'tried a wrong password';
+    case 'admin_second_ok': return `passed the admin's second step${d.method ? ` (${d.method})` : ''}`;
+    case 'admin_second_fail': return `failed the admin's second step${d.reason ? ` (${d.reason})` : ''}`;
+    case 'admin_locked': return "was locked out of the admin's second step";
+    case 'admin_enrolled': return "set up the admin's second step";
     case 'lock_try': return `tried ${d.combo}`;
     case 'lock_clamp': return `pressed the ${d.ring} clamp`;
     case 'lock_open': return 'picked the lock';
@@ -336,8 +384,20 @@ const EMPLOYERS = [
   [/NVIDIA/i, 'Nvidia'], [/ORACLE-CORP/i, 'Oracle'], [/LINKEDIN/i, 'LinkedIn'], [/ATLASSIAN/i, 'Atlassian'],
 ];
 
+// The admin sign-in comes first, whatever kind of visit it was.
+function adminSentence(hs) {
+  const fails = hs.filter((h) => h.event === 'admin_second_fail').length;
+  const times = fails === 1 ? 'once' : `${fails} times`;
+  const parts = [];
+  if (hs.some((h) => h.event === 'admin_enrolled')) parts.push("Set up the admin's second step.");
+  if (hs.some((h) => h.event === 'admin_second_ok')) parts.push(fails ? `Signed in to the admin after failing the second step ${times}.` : 'Signed in to the admin.');
+  else if (fails) parts.push(`Failed the admin's second step ${times}${hs.some((h) => h.event === 'admin_locked') ? ', and was locked out' : ''}.`);
+  return parts.join(' ');
+}
+const readAs = (visit) => [adminSentence(visit.hs), guess(visit)].filter(Boolean).join(' ');
+
 // A guess, always shown as one. Plain rules, in order of how much they say.
-function readAs({ kind, tag, referrer, steps, hs, seconds, network }) {
+function guess({ kind, tag, referrer, steps, hs, seconds, network }) {
   if (kind === 'test') return 'Our own checks.';
   if (kind === 'preview') return 'A link preview being built, after someone shared the link.';
   if (kind === 'bot') return 'A bot or scanner, not a person.';

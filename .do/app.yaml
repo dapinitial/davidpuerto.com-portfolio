@@ -26,6 +26,10 @@ services:
       - key: PASSWORD_HASH
         type: SECRET
         scope: RUN_TIME
+      # the admin's second step: encrypts the authenticator secret (npm run admin:factor-key)
+      - key: ADMIN_FACTOR_KEY
+        type: SECRET
+        scope: RUN_TIME
       - key: GMAIL_USER
         type: SECRET
         scope: RUN_TIME

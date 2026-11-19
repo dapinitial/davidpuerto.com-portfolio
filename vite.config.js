@@ -85,6 +85,7 @@ export default defineConfig({
         since: page('since-2004/index.html'),
         lock: page('lock/index.html'),
         login: page('login/index.html'),
+        loginSetup: page('login/setup/index.html'),
         admin: page('admin/index.html'),
         notfound: page('404.html'),
         servererror: page('500.html'),

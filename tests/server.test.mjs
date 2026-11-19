@@ -10,11 +10,16 @@ import { spawn } from 'node:child_process';
 import { randomBytes } from 'node:crypto';
 import { existsSync, readdirSync } from 'node:fs';
 import bcrypt from 'bcryptjs';
+import { totpCode, stepAt } from '../server/second-factor.js';
+import { softPasskey } from './lib/authenticator.mjs';
 
 const PORT = 3939;
 const BASE = `http://127.0.0.1:${PORT}`;
 const PASSWORD = randomBytes(12).toString('base64url');
 const ADMIN_PASSWORD = randomBytes(12).toString('base64url');
+// the admin's second step, against a software passkey; a short challenge life for the expiry test
+const FACTOR = { rpID: 'localhost', origin: 'http://localhost:5173' };
+const CHALLENGE_TTL_MS = 400;
 let server;
 
 before(async () => {
@@ -27,6 +32,11 @@ before(async () => {
       COOKIE_SECRET: randomBytes(32).toString('base64'),
       PASSWORD_HASH: bcrypt.hashSync(PASSWORD, 4),
       ADMIN_PASSWORD_HASH: bcrypt.hashSync(ADMIN_PASSWORD, 4),
+      ADMIN_FACTOR_STORE: 'memory',
+      ADMIN_FACTOR_KEY: randomBytes(32).toString('base64'),
+      ADMIN_RP_ID: FACTOR.rpID,
+      ADMIN_ORIGINS: FACTOR.origin,
+      ADMIN_CHALLENGE_TTL_MS: String(CHALLENGE_TTL_MS),
       ...(process.env.CONTENT_KEY && { CONTENT_KEY: process.env.CONTENT_KEY }),
     },
     stdio: ['ignore', 'pipe', 'inherit'],
@@ -123,13 +133,113 @@ test('the shared case-study password never opens the admin', async () => {
   assert.equal((await login(PASSWORD, '10.3.3.4', '/admin/')).status, 401, 'asking for the admin with it');
 });
 
-test('the admin password opens the admin and the case studies', async () => {
-  const res = await login(ADMIN_PASSWORD, '10.4.4.4', '/admin/');
+const post = (path, body, { cookie = '', ip = '10.0.0.1' } = {}) =>
+  fetch(BASE + path, { method: 'POST', headers: { 'content-type': 'application/json', 'do-connecting-ip': ip, ...(cookie && { cookie }) }, body: JSON.stringify(body ?? {}) });
+// the admin password: the first factor, which leaves only the dp_second cookie
+const adminPassword = async (ip) => {
+  const res = await login(ADMIN_PASSWORD, ip, '/admin/');
   assert.equal(res.status, 200);
-  const cookie = cookiesOf(res);
-  assert.match(cookie, /dp_admin=/);
-  assert.equal((await get('/admin/', { headers: { cookie } })).status, 200, 'admin page');
-  assert.notEqual((await get('/case-studies/apple/', { headers: { cookie } })).status, 302, 'case study');
+  return { cookie: cookiesOf(res), body: await res.json() };
+};
+const enrolled = {}; // the passkey, the authenticator secret and the recovery codes, from the setup test
+const wrongCode = () => {
+  const now = stepAt(Date.now());
+  const good = new Set([now - 1, now, now + 1].map((s) => totpCode(enrolled.secret, s)));
+  return ['000000', '111111', '222222', '999999'].find((c) => !good.has(c));
+};
+
+test('the admin password alone opens nothing: no admin or case-study cookie until the second step', async () => {
+  const { cookie, body } = await adminPassword('10.4.4.4');
+  assert.equal(body.setup, true, 'nothing enrolled yet, so the setup opens');
+  assert.match(cookie, /dp_second=/);
+  assert.doesNotMatch(cookie, /dp_admin=|cs_auth=/);
+  assert.equal((await get('/admin/', { headers: { cookie } })).status, 302, 'admin page');
+  assert.equal((await get('/api/admin/stats', { headers: { cookie } })).status, 401, 'admin data');
+  assert.equal((await get('/case-studies/apple/', { headers: { cookie } })).status, 302, 'case study');
+});
+
+test('the one-time setup enrols a passkey and an authenticator, shows ten recovery codes once, then closes', async () => {
+  const ip = '10.4.4.5';
+  const { cookie } = await adminPassword(ip);
+  const setup = await post('/api/second/setup', {}, { cookie, ip });
+  assert.equal(setup.status, 200);
+  assert.match(setup.headers.get('cache-control'), /no-store/);
+  const { secret } = await setup.json();
+  const key = softPasskey(FACTOR);
+  const regOpts = await (await post('/api/second/setup/passkey/options', {}, { cookie, ip })).json();
+  assert.equal((await post('/api/second/setup/passkey', { response: key.register(regOpts) }, { cookie, ip })).status, 200);
+  const done = await post('/api/second/setup/finish', { code: totpCode(secret, stepAt(Date.now())) }, { cookie, ip });
+  assert.equal(done.status, 200);
+  const { recoveryCodes } = await done.json();
+  assert.equal(recoveryCodes.length, 10);
+  const signedIn = cookiesOf(done);
+  assert.match(signedIn, /dp_admin=/);
+  assert.match(signedIn, /cs_auth=/);
+  assert.equal((await get('/admin/', { headers: { cookie: signedIn } })).status, 200, 'admin page');
+  assert.notEqual((await get('/case-studies/apple/', { headers: { cookie: signedIn } })).status, 302, 'case study');
+  Object.assign(enrolled, { key, secret, recoveryCodes });
+  // one time only: the next sign-in is a second step, and the setup refuses
+  const again = await adminPassword('10.4.4.6');
+  assert.equal(again.body.setup, false);
+  assert.deepEqual(again.body.second, { passkey: true, code: true });
+  assert.equal((await post('/api/second/setup', {}, { cookie: again.cookie, ip: '10.4.4.6' })).status, 410);
+});
+
+test('a wrong authenticator code is refused, and no cookie is issued', async () => {
+  const ip = '10.7.0.1';
+  const { cookie } = await adminPassword(ip);
+  const res = await post('/api/second/code', { code: wrongCode() }, { cookie, ip });
+  assert.equal(res.status, 401);
+  assert.equal((await res.json()).error, 'wrong code');
+  assert.doesNotMatch(cookiesOf(res), /dp_admin=|cs_auth=/);
+});
+
+test('a replayed authenticator code is refused', async () => {
+  const code = totpCode(enrolled.secret, stepAt(Date.now()) + 1);
+  const first = await adminPassword('10.7.0.2');
+  const ok = await post('/api/second/code', { code }, { cookie: first.cookie, ip: '10.7.0.2' });
+  assert.equal(ok.status, 200);
+  assert.match(cookiesOf(ok), /dp_admin=/);
+  const second = await adminPassword('10.7.0.3');
+  const replay = await post('/api/second/code', { code }, { cookie: second.cookie, ip: '10.7.0.3' });
+  assert.equal(replay.status, 401);
+  assert.equal((await replay.json()).error, 'code already used');
+  assert.doesNotMatch(cookiesOf(replay), /dp_admin=/);
+});
+
+test('an expired passkey challenge is refused; a fresh one signs in', async () => {
+  const ip = '10.7.0.4';
+  const { cookie } = await adminPassword(ip);
+  const stale = await (await post('/api/second/passkey/options', {}, { cookie, ip })).json();
+  await new Promise((r) => setTimeout(r, CHALLENGE_TTL_MS + 150));
+  const late = await post('/api/second/passkey', { response: enrolled.key.sign(stale) }, { cookie, ip });
+  assert.equal(late.status, 401);
+  assert.equal((await late.json()).error, 'expired challenge');
+  assert.doesNotMatch(cookiesOf(late), /dp_admin=/);
+  const fresh = await (await post('/api/second/passkey/options', {}, { cookie, ip })).json();
+  const ok = await post('/api/second/passkey', { response: enrolled.key.sign(fresh) }, { cookie, ip });
+  assert.equal(ok.status, 200);
+  assert.match(cookiesOf(ok), /dp_admin=/);
+});
+
+test('lockout: five wrong codes end the sign-in, and the sixth try is rate limited', async () => {
+  const ip = '10.7.0.5';
+  const { cookie } = await adminPassword(ip);
+  for (let i = 0; i < 4; i++) assert.equal((await (await post('/api/second/code', { code: wrongCode() }, { cookie, ip })).json()).error, 'wrong code');
+  assert.equal((await (await post('/api/second/code', { code: wrongCode() }, { cookie, ip })).json()).error, 'locked');
+  const sixth = await post('/api/second/code', { code: totpCode(enrolled.secret, stepAt(Date.now()) + 1) }, { cookie, ip });
+  assert.equal(sixth.status, 429);
+  assert.doesNotMatch(cookiesOf(sixth), /dp_admin=/);
+});
+
+test('a recovery code signs in once', async () => {
+  const [code] = enrolled.recoveryCodes;
+  const a = await adminPassword('10.7.0.6');
+  const ok = await post('/api/second/code', { code }, { cookie: a.cookie, ip: '10.7.0.6' });
+  assert.equal(ok.status, 200);
+  assert.equal((await ok.json()).recoveryLeft, 9);
+  const b = await adminPassword('10.7.0.7');
+  assert.equal((await (await post('/api/second/code', { code }, { cookie: b.cookie, ip: '10.7.0.7' })).json()).error, 'code already used');
 });
 
 test('locked asset chunks need the cookie: the public repo lists their names', { skip: !process.env.CONTENT_KEY && 'no CONTENT_KEY' }, async (t) => {

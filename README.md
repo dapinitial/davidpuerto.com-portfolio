@@ -154,8 +154,21 @@ GA_CLIENT_EMAIL=      # service account email
 GA_PRIVATE_KEY=       # service account PEM private key
 ```
 
-`/admin` is gated behind the same login as the case studies (same password,
-same cookie). `/api/admin/stats?range=7|28|90` proxies the GA4 Data API with a
+`/admin` has its own password (`ADMIN_PASSWORD_HASH`, `npm run admin:password`),
+then a second step: a passkey, with an authenticator code or a recovery code as
+the fallback (`server/second-factor.js`). The admin and case-study cookies are
+issued only after both. To turn it on:
+
+1. Run `server/sql/admin_factors.sql` once in the visit log's Supabase project.
+2. `npm run admin:factor-key` sets `ADMIN_FACTOR_KEY` on the app (never printed;
+   it refuses to replace a key that is already set).
+3. Deploy, sign in with the admin password, and the one-time setup page
+   (`/login/setup/`) enrols a passkey and an authenticator and shows ten
+   recovery codes once. After that it closes.
+
+Lost the passkey and spent every recovery code? `delete from public.admin_factors;`
+in Supabase opens the setup again. Locally the factors live in memory and the
+setup runs again after each restart. `/api/admin/stats?range=7|28|90` proxies the GA4 Data API with a
 10-minute in-memory cache; until the env vars exist it answers
 `503 {"error":"Analytics not configured"}`. Visitors with Do Not Track enabled
 are never tracked.

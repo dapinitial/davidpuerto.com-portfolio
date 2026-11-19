@@ -29,8 +29,8 @@ A plain multi-page Vite site with light-DOM web components and one small Express
 | Terms, privacy | `site/terms/`, `site/privacy/`, styled by `legal.css`; each has an "Effective" date to move when it changes |
 | Résumé | `site/resume/` links `/images/pdf/resume__davidPuerto.pdf` |
 | Pre-paint loader | `site/public/boot/arriving.js` (its `deckPage` list holds deck pages hidden until deck.js lays them out) |
-| Server | `server/index.js`: gate, login, contact, headers, locked files; `server/visits.js`: the visit log and alerts; `server/contact-email.js`; `server/blocklist.mjs` |
-| Admin | `site/admin/`, `site/js/admin.js` |
+| Server | `server/index.js`: gate, login, contact, headers, locked files; `server/second-factor.js`: the admin's second step (passkey, authenticator code, recovery codes; schema in `server/sql/admin_factors.sql`); `server/visits.js`: the visit log, alerts and the admin sign-in record; `server/contact-email.js`; `server/blocklist.mjs` |
+| Admin | `site/admin/`, `site/js/admin.js`; its second step is on the login card (`site/js/login.js`) and the one-time setup is `site/login/setup/`, `site/js/login-setup.js` |
 | Factory demo | `site/public/factory/`, built files copied in by `npm run publish:portfolio` in the spacelab-factory repo; commit only that folder |
 | Dev tools | `tools/edit-in-place.mjs` (Cmd + double-click a line on the dev server to edit its source), `tools/voice.py` and `voice/edits.jsonl` (the voice log) |
 | Tests | `tests/server.test.mjs` (`npm test`), `tests/smoke.mjs` |

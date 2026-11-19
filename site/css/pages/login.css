@@ -236,4 +236,36 @@
   .lg-request .lg-input input { padding-right: 16px; }
   .lg-request input:disabled { opacity: 0.6; }
   .lg-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  /* the admin's second step, and its one-time setup (login/setup/) */
+  .login-form[hidden],
+  .lg-actions[hidden],
+  .lg-step[hidden] { display: none; }
+  .lg-second .lg-input input,
+  .lg-setup .lg-input input { padding-right: 16px; letter-spacing: 0.08em; }
+  .lg-step { display: grid; gap: 12px; padding-top: 16px; border-top: 1px solid var(--lg-line); }
+  .lg-step h2 {
+    margin: 0;
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #fff0f4;
+  }
+  .lg-step p { margin: 0; color: var(--lg-mute); font-size: 14px; line-height: 1.5; }
+  .lg-step p a { color: var(--lg-accent); }
+  .lg-qr { width: 176px; padding: 12px; border-radius: 10px; background: #fff; line-height: 0; }
+  .lg-qr svg { width: 100%; height: auto; }
+  .lg-key,
+  .lg-codes {
+    margin: 0;
+    font-family: var(--font-family-monospace, ui-monospace, monospace);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    color: #fff0f4;
+    overflow-wrap: anywhere;
+  }
+  .lg-codes { display: grid; grid-template-columns: repeat(2, max-content); gap: 8px 24px; padding: 0; list-style: none; }
+  .lg-done { color: var(--lg-accent); }
 }

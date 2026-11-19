@@ -44,6 +44,24 @@
         </div>
         <p class="lg-help">Need the password? <button type="button" class="lg-ask" aria-expanded="false" aria-controls="lg-request">Ask me for it</button> or email <a href="mailto:me@davidpuerto.com?subject=Password%20for%20davidpuerto.com">me@davidpuerto.com</a></p>
       </form>
+      <form class="login-form lg-second" hidden novalidate>
+        <p class="lg-eyebrow"><span class="lg-live" aria-hidden="true"></span><span>Admin <span class="lg-sep" aria-hidden="true">//</span> second step</span></p>
+        <h1>One more <em>step</em>.</h1>
+        <p class="lg-nda">Use your passkey. No passkey on this device? Type the code from your authenticator, or one of your recovery codes.</p>
+        <div class="lg-actions">
+          <button type="button" class="glass-button lg-passkey"><span>Use passkey</span></button>
+        </div>
+        <label class="lg-field">
+          <span class="lg-label">Code</span>
+          <span class="lg-input">
+            <input type="text" name="code" placeholder="123456 or a recovery code" autocomplete="one-time-code" autocapitalize="off" spellcheck="false" maxlength="20" required>
+          </span>
+        </label>
+        <div class="lg-actions">
+          <button type="submit" class="glass-button"><span>Verify</span></button>
+          <p class="form-status" role="alert"></p>
+        </div>
+      </form>
       <form class="lg-request" id="lg-request" hidden novalidate>
         <p class="lg-request-lead">Leave your name and email. I reply with the password, usually the same day.</p>
         <label class="lg-field"><span class="lg-label">Name</span><span class="lg-input"><input type="text" name="name" autocomplete="name" maxlength="200" placeholder="Who's asking"></span></label>

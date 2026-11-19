@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <title>Admin setup · David Puerto</title>
+  <meta name="robots" content="noindex">
+  <!-- no analytics on this page: it shows the authenticator key and the recovery codes -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/interior.css">
+  <link rel="stylesheet" href="/css/elements/site-header.css">
+  <link rel="stylesheet" href="/css/elements/scroll-progress.css">
+  <link rel="stylesheet" href="/css/elements/infinity-loader.css">
+  <link rel="stylesheet" href="/css/elements/glass-button.css">
+  <link rel="stylesheet" href="/css/pages/login.css">
+  <script type="module" src="/js/main.js"></script>
+  <script type="module" src="/js/login-setup.js"></script>
+</head>
+<body>
+  <site-header></site-header>
+  <main>
+    <section class="login-hero dark-section">
+      <form class="login-form lg-setup" novalidate>
+        <p class="lg-eyebrow"><span class="lg-live" aria-hidden="true"></span><span>Admin <span class="lg-sep" aria-hidden="true">//</span> one-time setup</span></p>
+        <h1>Set up <em>the admin</em>.</h1>
+        <p class="lg-nda" data-setup="lead">The admin password is only the first step now. Set up a passkey and an authenticator here, once. After that this page closes.</p>
+
+        <div class="lg-step" data-step="passkey" hidden>
+          <h2>1 · Passkey</h2>
+          <p>Your Mac or iPhone keeps it and asks for Touch ID or Face ID. It is the everyday way in.</p>
+          <div class="lg-actions">
+            <button type="button" class="glass-button" data-action="passkey"><span>Make a passkey</span></button>
+            <p class="form-status" role="status" data-status="passkey"></p>
+          </div>
+        </div>
+
+        <div class="lg-step" data-step="code" hidden>
+          <h2>2 · Authenticator</h2>
+          <p>The way in from a device without the passkey. Scan this with your authenticator app, or <a data-setup="uri" href="#">open it in your authenticator</a>.</p>
+          <div class="lg-qr" data-setup="qr" aria-hidden="true"></div>
+          <p>Or type this setup key:</p>
+          <p class="lg-key" data-setup="key"></p>
+          <label class="lg-field">
+            <span class="lg-label">The six digits it shows</span>
+            <span class="lg-input"><input type="text" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="123456" required></span>
+          </label>
+          <div class="lg-actions">
+            <button type="submit" class="glass-button"><span>Finish</span></button>
+            <p class="form-status" role="alert" data-status="code"></p>
+          </div>
+        </div>
+
+        <div class="lg-step" data-step="codes" hidden>
+          <h2>3 · Recovery codes</h2>
+          <p>Each one works once, when you have neither the passkey nor the authenticator. They show only this once. Keep them in your password manager.</p>
+          <ol class="lg-codes" data-setup="codes"></ol>
+          <div class="lg-actions">
+            <button type="button" class="glass-button" data-action="copy"><span>Copy them</span></button>
+            <a class="glass-button" href="/admin/"><span>Go to the admin</span></a>
+            <p class="form-status" role="status" data-status="codes"></p>
+          </div>
+        </div>
+
+        <p class="form-status" role="alert" data-status="page"></p>
+      </form>
+    </section>
+    <p class="site-mark"><a href="/since-2004/">&copy; 2004&ndash;<span data-year>2026</span> David A. Puerto</a> <span aria-hidden="true">&middot;</span> <a href="/privacy/">Privacy</a> <span aria-hidden="true">&middot;</span> <a href="/terms/">Terms</a></p>
+  </main>
+</body>
+</html>

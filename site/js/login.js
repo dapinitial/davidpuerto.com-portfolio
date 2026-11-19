@@ -1,4 +1,8 @@
 // Login page: POST /api/login, then hard-redirect to the gated destination.
+// The admin password leads to a second step on the same card: a passkey, or an
+// authenticator or recovery code (server/second-factor.js), and the very first
+// time to the one-time setup page.
+import { startAuthentication } from '@simplewebauthn/browser';
 import { note, track } from './lib/analytics.js';
 import { InfinityLoader } from './elements/infinity-loader.js';
 
@@ -48,17 +52,11 @@ form.addEventListener('submit', async (e) => {
     });
     if (res.ok) {
       const data = await res.json();
-      const dest = data.redirectTo || '/case-studies/microsoft/';
-      track('case_study_unlock', { study: dest });
-      // the same page change as every other link: the loop comes up over Login,
-      // and the study arrives behind the same cover (js/main.js, boot/arriving.js)
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return location.assign(dest);
-      try {
-        sessionStorage.setItem('dp-arriving', '1');
-        sessionStorage.setItem('dp-loop-t0', String(Date.now()));
-      } catch { /* private mode: the loader still shows */ }
-      InfinityLoader.show();
-      setTimeout(() => location.assign(dest), 420);
+      if (data.setup) return location.assign('/login/setup/');
+      if (data.second) return showSecond(data.second);
+      arrive(data.redirectTo);
+    } else if (res.status === 503) {
+      status.textContent = 'The admin is closed for a moment. Try again later.';
     } else if (res.status === 429) {
       status.textContent = 'Too many tries. Wait fifteen minutes, or ask me for it.';
     } else {
@@ -68,6 +66,89 @@ form.addEventListener('submit', async (e) => {
     }
   } catch {
     status.textContent = 'Network trouble. Try again in a moment.';
+  }
+});
+
+// In to the study or the admin: the same page change as every other link. The
+// loop comes up over Login, and the page arrives behind the same cover
+// (js/main.js, boot/arriving.js).
+function arrive(to) {
+  const dest = to || '/case-studies/microsoft/';
+  track('case_study_unlock', { study: dest });
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return location.assign(dest);
+  try {
+    sessionStorage.setItem('dp-arriving', '1');
+    sessionStorage.setItem('dp-loop-t0', String(Date.now()));
+  } catch { /* private mode: the loader still shows */ }
+  InfinityLoader.show();
+  setTimeout(() => location.assign(dest), 420);
+}
+
+// The second step. Every answer from the server is one of: in, a wrong try,
+// locked or expired (start over with the password), or too many tries.
+const second = document.querySelector('.lg-second');
+const sStatus = second.querySelector('.form-status');
+const passkeyButton = second.querySelector('.lg-passkey');
+const post = (url, body) => fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) });
+
+function showSecond({ passkey }) {
+  form.hidden = true;
+  document.querySelector('.lg-request')?.setAttribute('hidden', '');
+  second.hidden = false;
+  passkeyButton.closest('.lg-actions').hidden = !passkey;
+  (passkey ? passkeyButton : second.code).focus();
+}
+function startOver(message) {
+  sStatus.textContent = message;
+  setTimeout(() => {
+    second.hidden = true;
+    form.hidden = false;
+    status.textContent = message;
+    input.value = '';
+    input.focus();
+  }, 1600);
+}
+async function answer(res) {
+  const data = await res.json().catch(() => ({}));
+  if (res.ok) {
+    // a recovery code was spent: say how many are left before going on
+    if (data.recoveryLeft == null) return arrive(data.redirectTo);
+    sStatus.textContent = `In. ${data.recoveryLeft} recovery ${data.recoveryLeft === 1 ? 'code' : 'codes'} left.`;
+    return setTimeout(() => arrive(data.redirectTo), 1800);
+  }
+  if (res.status === 429) sStatus.textContent = 'Too many tries. Wait fifteen minutes.';
+  else if (data.error === 'locked') startOver('Too many wrong tries. Start again with the password.');
+  else if (data.error === 'expired') startOver('That took too long. Start again with the password.');
+  else if (data.error === 'expired challenge') sStatus.textContent = 'The passkey took too long. Try it again.';
+  else if (data.error === 'code already used') sStatus.textContent = 'That code was already used. Wait for the next one.';
+  else sStatus.textContent = 'That did not work. Try again.';
+}
+
+passkeyButton.addEventListener('click', async () => {
+  sStatus.textContent = '';
+  passkeyButton.disabled = true;
+  try {
+    const res = await post('/api/second/passkey/options');
+    if (!res.ok) return answer(res);
+    const response = await startAuthentication({ optionsJSON: await res.json() });
+    await answer(await post('/api/second/passkey', { response }));
+  } catch {
+    // the passkey sheet was closed, or this device has none for the site
+    sStatus.textContent = 'No passkey. Use a code instead.';
+    second.code.focus();
+  } finally {
+    passkeyButton.disabled = false;
+  }
+});
+
+second.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  sStatus.textContent = '';
+  if (!second.code.value.trim()) return second.code.focus();
+  try {
+    await answer(await post('/api/second/code', { code: second.code.value }));
+  } catch {
+    sStatus.textContent = 'Network trouble. Try again in a moment.';
   }
 });
 

@@ -1,14 +1,16 @@
 // davidpuerto.com server — static dist/ + gated case studies + tiny API.
 // Auth is a stateless HMAC-signed cookie: no session store, survives
-// restarts/deploys, nothing to leak.
-import { createDecipheriv, createHmac, createSign, timingSafeEqual } from 'node:crypto';
+// restarts/deploys, nothing to leak. The admin needs a second step first
+// (server/second-factor.js): a passkey, or an authenticator or recovery code.
+import { createDecipheriv, createHmac, createSign, randomBytes, timingSafeEqual } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import { contactEmail } from './contact-email.js';
-import { beacon, visits, visitsConfigured } from './visits.js';
+import { beacon, securityLog, visits, visitsConfigured } from './visits.js';
+import { createSecondFactor, memoryStore, supabaseStore } from './second-factor.js';
 import { Blocklist } from './blocklist.mjs';
 
 const {
@@ -58,6 +60,38 @@ const getCookie = (req, name) =>
 const adminAuthed = (req) => isValidToken(getCookie(req, 'dp_admin'), 'admin');
 // the admin password opens the case studies too
 const authed = (req) => adminAuthed(req) || isValidToken(getCookie(req, 'cs_auth'));
+
+/* ---------- the admin's second step ----------
+   ADMIN_FACTOR_KEY (32 bytes, base64; npm run admin:factor-key) encrypts the
+   authenticator secret and keys the recovery-code hashes. The factors live in
+   the visit log's Supabase project (server/sql/admin_factors.sql). Without
+   either, the admin password answers 503: the admin never falls back to one
+   factor. Local runs keep the factors in memory, under a key made at boot.
+   ADMIN_FACTOR_STORE=memory does the same in production mode, for the tests,
+   and only with ADMIN_RP_ID=localhost: on the real domain, factors that vanish
+   at a restart would reopen the setup to anyone holding the password. */
+const { ADMIN_FACTOR_KEY, ADMIN_FACTOR_STORE, VISITS_URL, VISITS_KEY } = process.env;
+const memoryFactors = !isProd || (ADMIN_FACTOR_STORE === 'memory' && process.env.ADMIN_RP_ID === 'localhost');
+const factorKey = ADMIN_FACTOR_KEY ? Buffer.from(ADMIN_FACTOR_KEY, 'base64') : memoryFactors ? randomBytes(32) : null;
+const factorStore = memoryFactors ? memoryStore() : VISITS_URL && VISITS_KEY ? supabaseStore(VISITS_URL, VISITS_KEY) : null;
+let second = null;
+try {
+  if (factorKey && factorStore) {
+    second = createSecondFactor({
+      store: factorStore,
+      key: factorKey,
+      cookieSecret: COOKIE_SECRET,
+      rpID: process.env.ADMIN_RP_ID || (isProd ? 'davidpuerto.com' : 'localhost'),
+      origins: process.env.ADMIN_ORIGINS?.split(',').map((o) => o.trim()) ?? (isProd ? ['https://davidpuerto.com', 'https://www.davidpuerto.com'] : ['http://localhost:5173', 'http://localhost:3001']),
+      challengeTtl: Number(process.env.ADMIN_CHALLENGE_TTL_MS) || undefined,
+      log: (req, event, detail) => adminLog(req, event, detail),
+    });
+  }
+} catch (err) {
+  console.error('admin second step:', err.message);
+}
+if (!second) console.error('admin second step not configured: the admin password will answer 503');
+else if (memoryFactors) console.log('admin second step: factors in memory, gone at restart');
 
 /* ---------- tiny in-memory rate limiter ---------- */
 const hits = new Map(); // key -> { n, reset }
@@ -213,6 +247,26 @@ app.post('/api/login', rateLimit('login', 5, 15 * 60_000), rateLimit('login', 10
   if (!ok) return res.status(401).json({ success: false });
   // the shared password never opens the admin, whatever redirectTo asks for
   if (!admin && String(req.body?.redirectTo ?? '').startsWith('/admin')) return res.status(401).json({ success: false });
+  if (!admin) {
+    issueCookies(res, false);
+    return res.json({ success: true, redirectTo: safeRedirect(req.body?.redirectTo) });
+  }
+  // The admin password is only the first factor: no cookie opens anything yet,
+  // not even the case studies. A short-lived dp_second cookie carries the sign-in
+  // to the second step, or to the one-time setup while nothing is enrolled.
+  if (!second) return res.status(503).json({ success: false, error: 'Second step not configured' });
+  try {
+    const started = await second.start(safeRedirect(req.body?.redirectTo));
+    res.cookie('dp_second', started.cookie, { httpOnly: true, secure: isProd, sameSite: 'strict', maxAge: second.pendingTtl, path: '/' });
+    res.json({ success: true, second: started.methods, setup: started.setup });
+  } catch (err) {
+    console.error('admin second step: start failed', err.message);
+    res.status(503).json({ success: false, error: 'Second step unavailable' });
+  }
+});
+
+// The signed cookies, exactly as before; for the admin, only once both factors pass.
+function issueCookies(res, admin) {
   if (admin) {
     res.cookie('dp_admin', makeToken('admin', ADMIN_MAX_AGE), {
       httpOnly: true,
@@ -229,12 +283,40 @@ app.post('/api/login', rateLimit('login', 5, 15 * 60_000), rateLimit('login', 10
     maxAge: MAX_AGE,
     path: '/',
   });
-  res.json({ success: true, redirectTo: safeRedirect(req.body?.redirectTo) });
-});
+}
+
+// The second step, rate limited like the password: five tries per address per
+// fifteen minutes, a hundred site-wide. Asking for a challenge or the setup has
+// its own, looser count, so it can't spend the tries.
+const secondLimit = [rateLimit('second', 5, 15 * 60_000), rateLimit('second', 100, 15 * 60_000, { everyone: true })];
+const secondAsk = rateLimit('second-ask', 20, 15 * 60_000);
+const secondStep = (handler) => async (req, res) => {
+  res.set('Cache-Control', 'no-store'); // the setup secret and the recovery codes never sit in a cache
+  if (!second) return res.status(503).json({ error: 'Second step not configured' });
+  try {
+    const out = await handler(getCookie(req, 'dp_second'), req.body ?? {}, req);
+    if (out.pass) {
+      issueCookies(res, true);
+      res.clearCookie('dp_second', { path: '/' });
+    }
+    res.status(out.status).json(out.body);
+  } catch (err) {
+    console.error('admin second step failed:', err.message);
+    res.status(502).json({ error: 'Server error' });
+  }
+};
+app.post('/api/second/passkey/options', secondAsk, secondStep((c, b, req) => second.passkeyOptions(c, req)));
+app.post('/api/second/passkey', ...secondLimit, secondStep((c, b, req) => second.passkey(c, b.response, req)));
+app.post('/api/second/code', ...secondLimit, secondStep((c, b, req) => second.code(c, b.code, req)));
+app.post('/api/second/setup', secondAsk, secondStep((c, b, req) => second.setupStart(c, req)));
+app.post('/api/second/setup/passkey/options', secondAsk, secondStep((c, b, req) => second.setupPasskeyOptions(c, req)));
+app.post('/api/second/setup/passkey', ...secondLimit, secondStep((c, b, req) => second.setupPasskey(c, b.response, req)));
+app.post('/api/second/setup/finish', ...secondLimit, secondStep((c, b, req) => second.setupFinish(c, b.code, req)));
 
 app.post('/api/logout', (req, res) => {
   res.clearCookie('cs_auth', { path: '/' });
   res.clearCookie('dp_admin', { path: '/' });
+  res.clearCookie('dp_second', { path: '/' });
   res.json({ success: true });
 });
 
@@ -377,6 +459,8 @@ const statsCache = new Map(); // range -> { data, exp }
 // a notable visit (an employer's network, a tagged link, the password gate) emails David once per visit
 const notify = ({ subject, message }) => sendContactEmail({ name: 'Visit log', from: '', message, subject }).catch((err) => console.error('visit alert failed:', err.message));
 app.post('/api/v', rateLimit('visit', 240, 60_000), beacon(clientIp, notify));
+// the admin's second step writes its own lines: every pass, failure, lockout and the setup
+const adminLog = securityLog(clientIp, notify);
 app.get('/api/admin/visits', async (req, res) => {
   if (!adminAuthed(req)) return res.status(401).json({ error: 'Unauthorized' });
   if (!visitsConfigured) return res.status(503).json({ error: 'Visit log not configured' });
